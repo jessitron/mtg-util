@@ -55,5 +55,6 @@ rows = con.execute("select name, manaValue from cards where name = ?", ("Lightni
 
 - `cards` has one row per printing, so `group by name` (or filter on `uuid`) when you want one row per card. `mtgjson-card` already does this.
 - Multi-face cards have one row per face (`side` is `a` or `b`). `name` is the full `A // B` name; `faceName` is one face.
+- Names keep their diacritics ("Lim-Dûl's Vault"), so an exact lookup for "Lim-Dul's Vault" finds nothing. Use `like`, or match the `asciiName` column.
 - List-valued columns (`colors`, `keywords`, `subtypes`, `printings`) are comma-separated text.
 - SQL with `$` or backticks inside double quotes gets expanded by the shell; use single quotes around the SQL and double the quotes inside SQL strings.
