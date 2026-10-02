@@ -58,7 +58,7 @@ def main():
     if unlabeled:
         print(f"Skipping {len(unlabeled)} card(s) still marked `?` in {args.labels}: {', '.join(unlabeled)}", file=sys.stderr)
     if not labels:
-        sys.exit(f"No labeled cards. Replace the `?` in {args.labels} with weak, balanced, or powerful.")
+        sys.exit(f"No labeled cards. Replace the `?` in {args.labels} with a score from 0 to 2, or weak, balanced, or powerful.")
 
     try:
         cards = ScryfallCatalog(os.path.join(HERE, "scryfall-cache.json")).find(list(labels))
@@ -70,7 +70,7 @@ def main():
     if args.dry_run:
         print(f"SYSTEM PROMPT FOR CLAUDE\n{CLAUDE_SYSTEM_PROMPT}\n")
         for item in labeled:
-            print(f"--- {item.card.name} (yours: {item.expected.label}, edhrec rank {item.card.edhrec_rank})\n{item.card.facts()}\n")
+            print(f"--- {item.card.name} (yours: {item.score:.1f}, edhrec rank {item.card.edhrec_rank})\n{item.card.facts()}\n")
         print(f"Would run: {', '.join(arms)}", file=sys.stderr)
         return
     if not os.environ.get(KEY_VARIABLE):

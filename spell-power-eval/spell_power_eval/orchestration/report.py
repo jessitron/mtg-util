@@ -20,7 +20,7 @@ def text_report(evaluation: Evaluation) -> str:
     for labeled in evaluation.cards:
         name = labeled.card.name
         rank = labeled.card.edhrec_rank
-        rows.append([name, labeled.expected.label, *(_cell(evaluation, name, c, labeled.expected) for c in evaluation.classifiers), str(rank) if rank else "-"])
+        rows.append([name, f"{labeled.score:.1f} {labeled.expected.label}", *(_cell(evaluation, name, c, labeled.expected) for c in evaluation.classifiers), str(rank) if rank else "-"])
 
     summary = [["classifier", "exact", "mean steps off", "mean score error", "failed"]]
     for classifier in evaluation.classifiers:
@@ -51,7 +51,7 @@ def results_json(evaluation: Evaluation, models: dict) -> dict:
                 if attempt.error
                 else {"power": attempt.verdict.power.label, "score": attempt.verdict.score, "confidence": attempt.verdict.confidence, "detail": attempt.verdict.detail}
             )
-        cards.append({"name": labeled.card.name, "yours": labeled.expected.label, "edhrec_rank": labeled.card.edhrec_rank, "answers": answers})
+        cards.append({"name": labeled.card.name, "yours": labeled.expected.label, "yours_score": labeled.score, "edhrec_rank": labeled.card.edhrec_rank, "answers": answers})
     scorecards = {
         c: {
             "exact": s.exact,

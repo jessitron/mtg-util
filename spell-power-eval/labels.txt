@@ -1,6 +1,9 @@
-# One card per line:  <weak|balanced|powerful|?> | <card name>
+# One card per line:  <score> | <card name>
+# A score runs from 0 (weak) through 1 (balanced) to 2 (powerful), with decimals: 1.4 | Serra Angel.
+# The words weak, balanced, and powerful also work, as 0, 1, and 2.
 #
 # Judge each card against its own mana cost: does what it does match what that much mana should buy?
+# `./run --page` makes a page with a slider per card that writes these lines for you.
 # Label first, before you look at any model's answer, so the models can't anchor you.
 # A `?` means "not judged yet". Those cards are skipped (and cost nothing).
 # Swap in any cards you like; names must match Scryfall exactly (a front face alone is fine).

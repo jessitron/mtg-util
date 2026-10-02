@@ -2,7 +2,7 @@
 
 Which classifier agrees best with you about whether a Magic spell is **weak**, **balanced**, or **powerful** for its mana cost?
 
-You label a few cards by hand. The script asks each classifier about the same cards, then compares their answers to yours. Every classifier gives a **score from 0 to 2** (0 weak, 1 balanced, 2 powerful, decimals allowed) and the label is that score rounded.
+You score a few cards by hand. The script asks each classifier about the same cards, then compares their answers to yours. You and every classifier give a **score from 0 to 2** (0 weak, 1 balanced, 2 powerful, decimals allowed) and the label is that score rounded.
 
 | Arm | What it is |
 | --- | ---------- |
@@ -15,8 +15,8 @@ Background on Jev and why we compare it: `references/jev.md` in the infra repo. 
 
 ## Usage
 
-0. Want to look at the cards first? `./run --page` writes `cards.html` (card images, rules text, and weak / balanced / powerful buttons). Open it with `open cards.html`. It remembers your picks in the browser and builds the `labels.txt` lines for you to copy. It shows no model answers and no popularity rank, so nothing anchors you.
-1. Edit `labels.txt`. Replace each `?` with `weak`, `balanced`, or `powerful`. **Label before you look at any model's answer**, so the models can't anchor you. Add or swap cards freely; a card marked `?` is skipped and costs nothing.
+0. Want to look at the cards first? `./run --page` writes `cards.html`: card images, rules text, and a 0-2 slider per card (with quick buttons for weak, balanced, and powerful). Open it with `open cards.html`. It remembers your scores in the browser, starts from any scores already in `labels.txt`, and builds the `labels.txt` lines for you to copy. It shows no model answers and no popularity rank, so nothing anchors you.
+1. Edit `labels.txt`. Replace each `?` with a score from 0 to 2 (`1.4 | Serra Angel`), or with `weak`, `balanced`, or `powerful` (0, 1, and 2). **Label before you look at any model's answer**, so the models can't anchor you. Add or swap cards freely; a card marked `?` is skipped and costs nothing.
 2. Look at what the models will be asked (free; calls Scryfall once, no model):
    ```
    ./run --dry-run
@@ -27,7 +27,7 @@ Background on Jev and why we compare it: `references/jev.md` in the infra repo. 
    ./run haiku opus       # just these arms
    ```
 
-The report prints a card-by-card table (each cell is the score, its label, and ✓ if the label matched yours), then one summary line per arm: exact matches, **mean steps off** (a weak card called balanced is 1 step off, called powerful is 2), and **mean score error** (the average distance from your 0, 1, or 2). The score error is finer: it separates 1.9 from 1.1 where the label would not. Each run also writes `results/<timestamp>.json` with every classifier's reason (Claude) or probabilities (Jev), plus a confusion count per arm.
+The report prints a card-by-card table (each cell is the score, its label, and ✓ if the label matched yours), then one summary line per arm: exact matches, **mean steps off** (a weak card called balanced is 1 step off, called powerful is 2), and **mean score error** (the average distance from your score). The score error is the finer measure: your 1.4 and a model's 1.6 are close even if the labels differ. "Exact" and "steps off" compare labels, which are your score and the model's score rounded. Each run also writes `results/<timestamp>.json` with every classifier's reason (Claude) or probabilities (Jev), plus a confusion count per arm.
 
 The `edhrec rank` column comes from Scryfall (lower means more popular in Commander). It is context for your labels, not ground truth, and no classifier sees it.
 

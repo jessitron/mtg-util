@@ -55,8 +55,8 @@ class CardFactsTest(unittest.TestCase):
 
 class ScorecardTest(unittest.TestCase):
     def test_counts_exact_and_steps_and_failures(self):
-        weak = LabeledCard(card("A"), Power.WEAK)
-        strong = LabeledCard(card("B"), Power.POWERFUL)
+        weak = LabeledCard(card("A"), 0.0)
+        strong = LabeledCard(card("B"), 2.0)
         score = Scorecard.of("x", [(weak, Verdict(Power.POWERFUL, 1.8)), (strong, Verdict(Power.POWERFUL, 2.0)), (weak, None)])
         self.assertEqual((score.answered, score.failed, score.exact), (2, 1, 1))
         self.assertEqual(score.mean_ordinal_error, 1.0)
@@ -72,9 +72,13 @@ class LabelsFileTest(unittest.TestCase):
         return LabelsFile(f.name).read()
 
     def test_reads_labels_skips_comments_and_reports_unjudged(self):
-        labels, unlabeled = self.read("# hi\n\nweak | Cancel\n? | Sol Ring\nPowerful|Lightning Bolt\n")
-        self.assertEqual(labels, {"Cancel": Power.WEAK, "Lightning Bolt": Power.POWERFUL})
+        labels, unlabeled = self.read("# hi\n\nweak | Cancel\n? | Sol Ring\nPowerful|Lightning Bolt\n1.4 | Serra Angel\n")
+        self.assertEqual(labels, {"Cancel": 0.0, "Lightning Bolt": 2.0, "Serra Angel": 1.4})
         self.assertEqual(unlabeled, ["Sol Ring"])
+
+    def test_a_score_outside_zero_to_two_is_an_error(self):
+        with self.assertRaisesRegex(ValueError, ":1: a score runs from 0"):
+            self.read("2.5 | Sol Ring\n")
 
     def test_names_lists_judged_and_unjudged_in_file_order(self):
         with tempfile.NamedTemporaryFile("w", suffix=".txt", delete=False) as f:
@@ -88,17 +92,19 @@ class LabelsFileTest(unittest.TestCase):
 
 
 class CardsPageTest(unittest.TestCase):
-    def test_lists_cards_with_choices_and_hides_model_inputs(self):
-        page = cards_page([card("Serra Angel", power="4", toughness="4", image_url="http://img/a.jpg", edhrec_rank=9451), card('A <b> "Card"')], {"Serra Angel": Power.WEAK})
+    def test_lists_cards_with_sliders_and_hides_model_inputs(self):
+        page = cards_page([card("Serra Angel", power="4", toughness="4", image_url="http://img/a.jpg", edhrec_rank=9451), card('A <b> "Card"')], {"Serra Angel": 1.4})
         self.assertIn('<img src="http://img/a.jpg"', page)
         self.assertIn('Serra Angel</b> {3}{W}{W} (mana value 5)', page)
-        self.assertEqual(page.count('type="radio"'), 6)
-        self.assertRegex(page, r'value="weak" data-card="Serra Angel" checked')
+        self.assertEqual(page.count('type="range" min="0" max="2" step="0.1"'), 2)
+        self.assertEqual(page.count('data-score="'), 6)  # weak, balanced, powerful quick-set buttons per card
+        self.assertIn('const fromFile = {"Serra Angel": 1.4};', page)
         self.assertNotIn("9451", page)  # popularity would anchor the human
         self.assertIn("A &lt;b&gt; &quot;Card&quot;", page)  # card text is escaped
 
     def test_names_in_the_script_survive_a_closing_script_tag(self):
-        self.assertNotIn("</script>x", cards_page([card("</script>x")], {}).split("const names")[1].split("const out")[0])
+        script = cards_page([card("</script>x")], {"</script>x": 1.0}).split("<script>")[1]
+        self.assertNotIn("</script>x", script)
 
 
 class ScryfallTest(unittest.TestCase):
@@ -201,7 +207,7 @@ class EvaluationTest(unittest.TestCase):
             raise RuntimeError("boom")
 
     def setUp(self):
-        self.cards = [LabeledCard(card("A", edhrec_rank=5), Power.WEAK), LabeledCard(card("B"), Power.BALANCED)]
+        self.cards = [LabeledCard(card("A", edhrec_rank=5), 0.0), LabeledCard(card("B"), 1.0)]
 
     def test_one_failing_classifier_does_not_stop_the_others(self):
         evaluation = evaluate(self.cards, [self.Broken(), AlwaysBalanced()])
@@ -213,7 +219,7 @@ class EvaluationTest(unittest.TestCase):
         self.assertIn("1.0 balanced ✗", text)
         self.assertIn("1.0 balanced ✓", text)
         self.assertIn("broken on A: RuntimeError: boom", text)
-        self.assertRegex(text, r"A\s+weak\s+ERROR\s+1.0 balanced ✗\s+5")
+        self.assertRegex(text, r"A\s+0.0 weak\s+ERROR\s+1.0 balanced ✗\s+5")
 
     def test_results_json_keeps_the_reasons(self):
         results = results_json(evaluate(self.cards, [AlwaysBalanced()]), {})

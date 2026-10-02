@@ -9,10 +9,14 @@ from .ports import Verdict
 
 @dataclass(frozen=True)
 class LabeledCard:
-    """A card with the human's verdict: the ground truth."""
+    """A card with the human's score: the ground truth. 0 is weak, 1 balanced, 2 powerful, and decimals say how much."""
 
     card: Card
-    expected: Power
+    score: float
+
+    @property
+    def expected(self) -> Power:
+        return Power.nearest(self.score)
 
 
 @dataclass(frozen=True)
@@ -39,7 +43,7 @@ class Scorecard:
             answered += 1
             exact += verdict.power == labeled.expected
             error += abs(verdict.power.value - labeled.expected.value)
-            score_error += abs(verdict.score - labeled.expected.value)
+            score_error += abs(verdict.score - labeled.score)
             confusion[(labeled.expected.label, verdict.power.label)] += 1
         return cls(classifier, answered, failed, exact, error, score_error, dict(confusion))
 
@@ -54,5 +58,5 @@ class Scorecard:
 
     @property
     def mean_score_error(self) -> float:
-        """Average distance between the classifier's 0-2 score and your label (0, 1, or 2)."""
+        """Average distance between the classifier's 0-2 score and your 0-2 score."""
         return self.score_error_total / self.answered if self.answered else 0.0

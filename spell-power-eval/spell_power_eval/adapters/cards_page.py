@@ -17,18 +17,17 @@ PAGE = """<!doctype html>
   .card img {{ width: 100%; border-radius: 4%; }}
   .facts {{ font-size: .9rem; margin: .5rem 0; }}
   .facts .text {{ white-space: pre-line; }}
-  .choices {{ display: flex; gap: .4rem; }}
-  .choices label {{ flex: 1; text-align: center; padding: .45rem; border: 2px solid #ccc; border-radius: .4rem; cursor: pointer; }}
-  .choices input {{ display: none; }}
-  .choices input:checked + span {{ font-weight: bold; }}
-  .choices label:has(input:checked) {{ color: #fff; border-color: transparent; }}
-  .choices label.weak:has(input:checked) {{ background: #b5533c; }}
-  .choices label.balanced:has(input:checked) {{ background: #6b7b8c; }}
-  .choices label.powerful:has(input:checked) {{ background: #2f7d4f; }}
+  input[type=range] {{ width: 100%; margin: .5rem 0 0; accent-color: #4a6fa5; }}
+  .unset input[type=range] {{ opacity: .4; accent-color: #999; }}
+  .quick {{ display: flex; gap: .4rem; }}
+  .quick button {{ flex: 1; padding: .35rem; border: 1px solid #bbb; border-radius: .4rem; background: #fafafa; cursor: pointer; }}
+  .readout {{ display: flex; justify-content: space-between; align-items: center; margin-top: .3rem; min-height: 1.6rem; font-weight: bold; }}
+  .readout .clear {{ border: 0; background: none; color: #666; text-decoration: underline; cursor: pointer; font-weight: normal; }}
+  .unset .readout .value {{ color: #999; font-weight: normal; }}
   footer {{ padding: 0 1rem 1rem; font-size: .8rem; color: #666; }}
 </style></head><body>
 <header>
-  <p><b>Weak, balanced, or powerful, for its mana cost?</b> Pick one per card. Your picks are remembered in this browser. Paste the text below into <code>labels.txt</code>.</p>
+  <p><b>Weak, balanced, or powerful, for its mana cost?</b> Score each card from 0 (weak) through 1 (balanced) to 2 (powerful). Use the slider for in-between cards. Your scores are remembered in this browser. Paste the text below into <code>labels.txt</code>.</p>
   <textarea id="out" readonly></textarea>
   <button id="copy">Copy</button>
 </header>
@@ -38,14 +37,38 @@ PAGE = """<!doctype html>
 <footer>Card images and text from Scryfall. Card names, art, and text belong to Wizards of the Coast.</footer>
 <script>
   const names = {names};
+  const fromFile = {from_file};  // scores already in labels.txt
   const out = document.getElementById("out");
-  const key = n => "spell-power:" + n;
+  const key = n => "spell-power-score:" + n;
+  const oldKey = n => "spell-power:" + n;  // the first version of this page stored words
+  const oldWords = {{weak: 0, balanced: 1, powerful: 2}};
+  const words = ["weak", "balanced", "powerful"];
+  const stored = n => {{
+    const v = localStorage.getItem(key(n));
+    if (v !== null) return v === "" ? null : Number(v);  // "" marks a card you cleared
+    const old = localStorage.getItem(oldKey(n));
+    return old in oldWords ? oldWords[old] : null;
+  }};
+  for (const [n, s] of Object.entries(fromFile)) if (localStorage.getItem(key(n)) === null && stored(n) === null) localStorage.setItem(key(n), String(s));  // what you already set in the browser wins, even a clear
   function render() {{
-    out.value = names.map(n => (localStorage.getItem(key(n)) || "?") + " | " + n).join("\\n");
+    out.value = names.map(n => (stored(n) === null ? "?" : stored(n).toFixed(1)) + " | " + n).join("\\n");
   }}
-  document.querySelectorAll("input[type=radio]").forEach(r => {{
-    if (localStorage.getItem(key(r.dataset.card)) === r.value) r.checked = true;
-    r.addEventListener("change", () => {{ localStorage.setItem(key(r.dataset.card), r.value); render(); }});
+  document.querySelectorAll(".judge").forEach(box => {{
+    const name = box.dataset.card, slider = box.querySelector("input[type=range]");
+    const value = box.querySelector(".value");
+    function show(v) {{
+      box.classList.toggle("unset", v === null);
+      if (v === null) {{ slider.value = 1; value.textContent = "not judged yet"; return; }}
+      slider.value = v;
+      value.textContent = v.toFixed(1) + " \\u00b7 " + words[Math.min(Math.max(Math.round(v), 0), 2)];
+    }}
+    function set(v) {{ localStorage.setItem(key(name), String(v)); show(v); render(); }}
+    slider.addEventListener("input", () => set(Number(slider.value)));
+    box.querySelectorAll(".quick button").forEach(b => b.addEventListener("click", () => set(Number(b.dataset.score))));
+    box.querySelector(".clear").addEventListener("click", () => {{
+      localStorage.setItem(key(name), ""); localStorage.removeItem(oldKey(name)); show(null); render();
+    }});
+    show(stored(name));
   }});
   document.getElementById("copy").addEventListener("click", () => {{ out.select(); document.execCommand("copy"); }});
   render();
@@ -53,24 +76,31 @@ PAGE = """<!doctype html>
 """
 
 
-def _card_html(card: Card, chosen: "Power | None") -> str:
+def _card_html(card: Card) -> str:
     name = html.escape(card.name)
     image = f'<img src="{html.escape(card.image_url)}" alt="{name}" loading="lazy">' if card.image_url else ""
     stats = f" {html.escape(card.power)}/{html.escape(card.toughness)}" if card.power is not None and card.toughness is not None else ""
-    buttons = "".join(
-        f'<label class="{p.label}"><input type="radio" name="{name}" value="{p.label}" data-card="{name}"'
-        f'{" checked" if p == chosen else ""}><span>{p.label}</span></label>'
-        for p in Power
-    )
+    quick = "".join(f'<button type="button" data-score="{p.value}">{p.label}</button>' for p in Power)
     return (
         f'<section class="card">{image}'
         f'<div class="facts"><b>{name}</b> {html.escape(card.mana_cost)} (mana value {int(card.mana_value)})<br>'
         f'{html.escape(card.type_line)}{stats}<div class="text">{html.escape(card.oracle_text)}</div></div>'
-        f'<div class="choices">{buttons}</div></section>'
+        f'<div class="judge unset" data-card="{name}">'
+        f'<div class="quick">{quick}</div>'
+        f'<input type="range" min="0" max="2" step="0.1" value="1" aria-label="Score for {name}">'
+        f'<div class="readout"><span class="value">not judged yet</span><button type="button" class="clear">clear</button></div>'
+        f"</div></section>"
     )
 
 
-def cards_page(cards: list[Card], chosen: dict[str, Power]) -> str:
-    # json.dumps output is safe inside <script> only with "</" escaped
-    names = json.dumps([c.name for c in cards]).replace("</", "<\\/")
-    return PAGE.format(cards="\n".join(_card_html(c, chosen.get(c.name)) for c in cards), names=names)
+def _script_json(value) -> str:
+    return json.dumps(value).replace("</", "<\\/")  # json.dumps is safe inside <script> only with "</" escaped
+
+
+def cards_page(cards: list[Card], chosen: dict[str, float]) -> str:
+    """`chosen` holds the scores already in labels.txt; the page starts from them for any card you haven't touched in this browser."""
+    return PAGE.format(
+        cards="\n".join(_card_html(c) for c in cards),
+        names=_script_json([c.name for c in cards]),
+        from_file=_script_json(chosen),
+    )
