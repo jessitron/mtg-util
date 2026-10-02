@@ -16,6 +16,9 @@ A collection of MTG-related utility scripts, plus accumulated knowledge about Sc
 - **Be a good API citizen.** Scryfall asks for a `User-Agent` and `Accept` header, a delay of 50-100ms between requests, and use of bulk data for large jobs. Cache responses locally when practical.
 - **No secrets in the repo.** Read tokens and credentials from environment variables; document the variable names in the script's README.
 
+- **Verify outside links in a browser.** Sites like Gatherer are JS apps that answer 200 to any URL, so `curl` proves nothing. Open the link in Chrome before committing it.
+- **Test against a throwaway server.** Don't POST to the user's running server or touch their `selected.txt`; start another copy with `PORT=<other> ./run` (it kills only the server on its own port).
+
 ## Keeping docs current
 
 - Script behavior changes → update that script's README.
