@@ -1,0 +1,989 @@
+{
+  "models": {
+    "always-balanced": "",
+    "haiku": "claude-haiku-4-5",
+    "sonnet": "claude-sonnet-5-5",
+    "jev-choice": "",
+    "jev-score": ""
+  },
+  "cards": [
+    {
+      "name": "Ancestral Recall",
+      "image_url": "https://cards.scryfall.io/normal/front/2/3/2398892d-28e9-4009-81ec-0d544af79d2b.jpg?1783939333",
+      "mana_cost": "{U}",
+      "yours": "powerful",
+      "yours_score": 2.0,
+      "edhrec_rank": null,
+      "answers": {
+        "always-balanced": {
+          "power": "balanced",
+          "score": 1.0,
+          "confidence": null,
+          "detail": "no reading of the card",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0
+          },
+          "cost_usd": 0.0
+        },
+        "haiku": {
+          "power": "powerful",
+          "score": 2.0,
+          "confidence": null,
+          "detail": "Ancestral Recall draws three cards for just one blue mana, which is absurdly efficient compared to typical card draw spells that cost 2-4 mana for the same effect, making it one of the most powerful spells ever printed.",
+          "usage": {
+            "input_tokens": 463,
+            "output_tokens": 67
+          },
+          "cost_usd": 0.000798
+        },
+        "sonnet": {
+          "power": "powerful",
+          "score": 2.0,
+          "confidence": null,
+          "detail": "Drawing three cards for a single mana is far more card advantage than one mana should ever buy, since comparable draw spells cost three or more mana for similar value, so it is strongly undercosted.",
+          "usage": {
+            "input_tokens": 592,
+            "output_tokens": 73
+          },
+          "cost_usd": 0.001914
+        },
+        "jev-choice": {
+          "power": "powerful",
+          "score": 1.81,
+          "confidence": 0.77,
+          "detail": "weak 0.04, balanced 0.11, powerful 0.85",
+          "usage": {
+            "input_tokens": 453,
+            "output_tokens": 44
+          },
+          "cost_usd": 1.9026e-05
+        },
+        "jev-score": {
+          "power": "powerful",
+          "score": 1.76,
+          "confidence": 0.64,
+          "detail": "weak 0.04, balanced 0.15, powerful 0.81",
+          "usage": {
+            "input_tokens": 429,
+            "output_tokens": 19
+          },
+          "cost_usd": 1.8018e-05
+        }
+      }
+    },
+    {
+      "name": "Swords to Plowshares",
+      "image_url": "https://cards.scryfall.io/normal/front/f/7/f7e12477-d59f-442b-a678-1be746d0b7be.jpg?1789599810",
+      "mana_cost": "{W}",
+      "yours": "powerful",
+      "yours_score": 1.8,
+      "edhrec_rank": 11,
+      "answers": {
+        "always-balanced": {
+          "power": "balanced",
+          "score": 1.0,
+          "confidence": null,
+          "detail": "no reading of the card",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0
+          },
+          "cost_usd": 0.0
+        },
+        "haiku": {
+          "power": "powerful",
+          "score": 2.0,
+          "confidence": null,
+          "detail": "Swords to Plowshares exiles a creature for one white mana with minimal drawback, providing efficient creature removal that has defined the format for decades and is played in virtually every white deck that can cast it.",
+          "usage": {
+            "input_tokens": 475,
+            "output_tokens": 58
+          },
+          "cost_usd": 0.000765
+        },
+        "sonnet": {
+          "power": "powerful",
+          "score": 2.0,
+          "confidence": null,
+          "detail": "For a single white mana at instant speed, it permanently exiles any creature, and the life gain drawback is minor, so it is far more efficient than what one mana normally buys and is a staple in every white deck.",
+          "usage": {
+            "input_tokens": 604,
+            "output_tokens": 76
+          },
+          "cost_usd": 0.001968
+        },
+        "jev-choice": {
+          "power": "powerful",
+          "score": 1.4,
+          "confidence": 0.25,
+          "detail": "weak 0.10, balanced 0.40, powerful 0.50",
+          "usage": {
+            "input_tokens": 464,
+            "output_tokens": 44
+          },
+          "cost_usd": 1.9488e-05
+        },
+        "jev-score": {
+          "power": "balanced",
+          "score": 1.45,
+          "confidence": 0.18,
+          "detail": "weak 0.09, balanced 0.37, powerful 0.54",
+          "usage": {
+            "input_tokens": 440,
+            "output_tokens": 19
+          },
+          "cost_usd": 1.848e-05
+        }
+      }
+    },
+    {
+      "name": "Demonic Tutor",
+      "image_url": "https://cards.scryfall.io/normal/front/a/2/a24b4cb6-cebb-428b-8654-74347a6a8d63.jpg?1783915679",
+      "mana_cost": "{1}{B}",
+      "yours": "powerful",
+      "yours_score": 2.0,
+      "edhrec_rank": 63,
+      "answers": {
+        "always-balanced": {
+          "power": "balanced",
+          "score": 1.0,
+          "confidence": null,
+          "detail": "no reading of the card",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0
+          },
+          "cost_usd": 0.0
+        },
+        "haiku": {
+          "power": "powerful",
+          "score": 2.0,
+          "confidence": null,
+          "detail": "Demonic Tutor is one of the most efficient tutors ever printed, searching for any card for just two mana, which is dramatically undercosted compared to tutors that cost three or more mana or have restrictive conditions.",
+          "usage": {
+            "input_tokens": 479,
+            "output_tokens": 63
+          },
+          "cost_usd": 0.000794
+        },
+        "sonnet": {
+          "power": "powerful",
+          "score": 2.0,
+          "confidence": null,
+          "detail": "For two mana, it finds any card in your library with no restriction, which gives perfect consistency and flexibility at only the cost of a card and a sorcery-speed turn, so it is far more efficient than what that mana normally buys.",
+          "usage": {
+            "input_tokens": 610,
+            "output_tokens": 84
+          },
+          "cost_usd": 0.00206
+        },
+        "jev-choice": {
+          "power": "powerful",
+          "score": 1.65,
+          "confidence": 0.54,
+          "detail": "weak 0.05, balanced 0.25, powerful 0.70",
+          "usage": {
+            "input_tokens": 466,
+            "output_tokens": 44
+          },
+          "cost_usd": 1.9572e-05
+        },
+        "jev-score": {
+          "power": "powerful",
+          "score": 1.59,
+          "confidence": 0.39,
+          "detail": "weak 0.06, balanced 0.29, powerful 0.65",
+          "usage": {
+            "input_tokens": 442,
+            "output_tokens": 19
+          },
+          "cost_usd": 1.8564e-05
+        }
+      }
+    },
+    {
+      "name": "Sign in Blood",
+      "image_url": "https://cards.scryfall.io/normal/front/b/8/b89d9372-8682-4a61-a003-8bccfbb6cbb4.jpg?1783909613",
+      "mana_cost": "{B}{B}",
+      "yours": "balanced",
+      "yours_score": 1.0,
+      "edhrec_rank": 233,
+      "answers": {
+        "always-balanced": {
+          "power": "balanced",
+          "score": 1.0,
+          "confidence": null,
+          "detail": "no reading of the card",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0
+          },
+          "cost_usd": 0.0
+        },
+        "haiku": {
+          "power": "powerful",
+          "score": 1.8,
+          "confidence": null,
+          "detail": "Sign in Blood is a well-costed card draw spell that efficiently converts mana into cards with a modest life payment, making it a staple in black decks across multiple formats.",
+          "usage": {
+            "input_tokens": 471,
+            "output_tokens": 53
+          },
+          "cost_usd": 0.000736
+        },
+        "sonnet": {
+          "power": "balanced",
+          "score": 1.4,
+          "confidence": null,
+          "detail": "Drawing two cards for two mana at sorcery speed with only a 2 life drawback is an efficient, widely played card advantage spell, though the double-black cost and life loss keep it from being absurd.",
+          "usage": {
+            "input_tokens": 603,
+            "output_tokens": 79
+          },
+          "cost_usd": 0.001996
+        },
+        "jev-choice": {
+          "power": "balanced",
+          "score": 1.22,
+          "confidence": 0.37,
+          "detail": "weak 0.10, powerful 0.32, balanced 0.58",
+          "usage": {
+            "input_tokens": 460,
+            "output_tokens": 42
+          },
+          "cost_usd": 1.932e-05
+        },
+        "jev-score": {
+          "power": "balanced",
+          "score": 1.14,
+          "confidence": 0.31,
+          "detail": "weak 0.16, balanced 0.54, powerful 0.30",
+          "usage": {
+            "input_tokens": 436,
+            "output_tokens": 19
+          },
+          "cost_usd": 1.8312e-05
+        }
+      }
+    },
+    {
+      "name": "Peer Review",
+      "image_url": "https://cards.scryfall.io/normal/front/2/9/29e7ec16-0c16-48aa-8e09-ce6e0d5bd40b.jpg?1789060173",
+      "mana_cost": "{2}{W/U}",
+      "yours": "balanced",
+      "yours_score": 0.5,
+      "edhrec_rank": 26008,
+      "answers": {
+        "always-balanced": {
+          "power": "balanced",
+          "score": 1.0,
+          "confidence": null,
+          "detail": "no reading of the card",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0
+          },
+          "cost_usd": 0.0
+        },
+        "haiku": {
+          "power": "balanced",
+          "score": 1.0,
+          "confidence": null,
+          "detail": "For three mana, this spell offers modest value\u2014a 2/2 creature token and a surveil effect\u2014which is fairly typical of efficient but unexciting blue-white cards, hitting the floor of playability in Limited and casual formats but not strong enough to see significant Constructed play.",
+          "usage": {
+            "input_tokens": 535,
+            "output_tokens": 76
+          },
+          "cost_usd": 0.000915
+        },
+        "sonnet": {
+          "power": "balanced",
+          "score": 0.5,
+          "confidence": null,
+          "detail": "Three mana for a vanilla 2/2 token plus surveil 1 at sorcery speed is a below-rate deal; the surveil adds a little value, but it's still weaker than typical 3-mana token makers or creatures and would rarely be played as a stand-alone card.",
+          "usage": {
+            "input_tokens": 685,
+            "output_tokens": 103
+          },
+          "cost_usd": 0.0024
+        },
+        "jev-choice": {
+          "power": "balanced",
+          "score": 0.81,
+          "confidence": 0.62,
+          "detail": "weak 0.22, balanced 0.75, powerful 0.03",
+          "usage": {
+            "input_tokens": 513,
+            "output_tokens": 42
+          },
+          "cost_usd": 2.1546000000000003e-05
+        },
+        "jev-score": {
+          "power": "balanced",
+          "score": 0.9,
+          "confidence": 0.58,
+          "detail": "weak 0.19, balanced 0.72, powerful 0.09",
+          "usage": {
+            "input_tokens": 489,
+            "output_tokens": 19
+          },
+          "cost_usd": 2.0538e-05
+        }
+      }
+    },
+    {
+      "name": "Aqueous Aria",
+      "image_url": "https://cards.scryfall.io/normal/front/f/a/fac8ac39-ecb4-4142-bf37-131c65660a9b.jpg?1783903694",
+      "mana_cost": "{4}{U}",
+      "yours": "weak",
+      "yours_score": 0.4,
+      "edhrec_rank": 22355,
+      "answers": {
+        "always-balanced": {
+          "power": "balanced",
+          "score": 1.0,
+          "confidence": null,
+          "detail": "no reading of the card",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0
+          },
+          "cost_usd": 0.0
+        },
+        "haiku": {
+          "power": "balanced",
+          "score": 1.0,
+          "confidence": null,
+          "detail": "Creating a 3/3 flyer for 5 mana is reasonable but unspectacular, as it's roughly on the power level of cards like Mulldrifter-style effects without any additional value or utility.",
+          "usage": {
+            "input_tokens": 527,
+            "output_tokens": 60
+          },
+          "cost_usd": 0.000827
+        },
+        "sonnet": {
+          "power": "balanced",
+          "score": 0.8,
+          "confidence": null,
+          "detail": "Five mana for a vanilla 3/3 flyer at sorcery speed is roughly par to slightly below par, since 5-mana 3/3 flyers are common-level fare, though the card's modal flexibility isn't counted here.",
+          "usage": {
+            "input_tokens": 674,
+            "output_tokens": 90
+          },
+          "cost_usd": 0.002248
+        },
+        "jev-choice": {
+          "power": "balanced",
+          "score": 1.03,
+          "confidence": 0.25,
+          "detail": "weak 0.24, balanced 0.49, powerful 0.27",
+          "usage": {
+            "input_tokens": 511,
+            "output_tokens": 42
+          },
+          "cost_usd": 2.1462e-05
+        },
+        "jev-score": {
+          "power": "balanced",
+          "score": 0.93,
+          "confidence": 0.24,
+          "detail": "weak 0.29, balanced 0.49, powerful 0.22",
+          "usage": {
+            "input_tokens": 487,
+            "output_tokens": 19
+          },
+          "cost_usd": 2.0454e-05
+        }
+      }
+    },
+    {
+      "name": "Vibrant Idea",
+      "image_url": "https://cards.scryfall.io/normal/front/c/0/c0bd30c4-3cdf-4eda-8be5-0fb5e5ddddbf.jpg?1783903689",
+      "mana_cost": "{4}{U}",
+      "yours": "weak",
+      "yours_score": 0.1,
+      "edhrec_rank": 19004,
+      "answers": {
+        "always-balanced": {
+          "power": "balanced",
+          "score": 1.0,
+          "confidence": null,
+          "detail": "no reading of the card",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0
+          },
+          "cost_usd": 0.0
+        },
+        "haiku": {
+          "power": "weak",
+          "score": 0.4,
+          "confidence": null,
+          "detail": "Drawing two cards for five mana is below rate\u2014typical blue card draw costs 2-3 mana per card, making this about 40% more expensive than it should be for this effect alone.",
+          "usage": {
+            "input_tokens": 513,
+            "output_tokens": 59
+          },
+          "cost_usd": 0.000808
+        },
+        "sonnet": {
+          "power": "weak",
+          "score": 0.3,
+          "confidence": null,
+          "detail": "Drawing two cards for five mana at sorcery speed is far below the usual rate (Divination costs three), so as a stand-alone card it is clearly overpriced and only playable because it's attached to a creature.",
+          "usage": {
+            "input_tokens": 658,
+            "output_tokens": 81
+          },
+          "cost_usd": 0.002126
+        },
+        "jev-choice": {
+          "power": "weak",
+          "score": 0.31,
+          "confidence": 0.59,
+          "detail": "weak 0.73, powerful 0.04, balanced 0.23",
+          "usage": {
+            "input_tokens": 497,
+            "output_tokens": 42
+          },
+          "cost_usd": 2.0874000000000004e-05
+        },
+        "jev-score": {
+          "power": "weak",
+          "score": 0.46,
+          "confidence": 0.3,
+          "detail": "weak 0.61, balanced 0.31, powerful 0.08",
+          "usage": {
+            "input_tokens": 473,
+            "output_tokens": 19
+          },
+          "cost_usd": 1.9866e-05
+        }
+      }
+    },
+    {
+      "name": "Awaken the Ages",
+      "image_url": "https://cards.scryfall.io/normal/front/8/d/8de79312-2046-425e-9919-49afe19be81b.jpg?1783903663",
+      "mana_cost": "{5}{R}",
+      "yours": "weak",
+      "yours_score": 0.2,
+      "edhrec_rank": 23723,
+      "answers": {
+        "always-balanced": {
+          "power": "balanced",
+          "score": 1.0,
+          "confidence": null,
+          "detail": "no reading of the card",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0
+          },
+          "cost_usd": 0.0
+        },
+        "haiku": {
+          "power": "balanced",
+          "score": 0.5,
+          "confidence": null,
+          "detail": "Creating two 2/2 tokens for six mana is below the rate of comparable token generators like Bitterblossom effects or mass token spells, lacking evasion or additional value to justify the investment.",
+          "usage": {
+            "input_tokens": 523,
+            "output_tokens": 61
+          },
+          "cost_usd": 0.000828
+        },
+        "sonnet": {
+          "power": "weak",
+          "score": 0.1,
+          "confidence": null,
+          "detail": "Paying six mana for two vanilla 2/2 tokens is far below the rate expected at that cost, since a 3-mana card can give similar stats, so the spell alone is very weak.",
+          "usage": {
+            "input_tokens": 672,
+            "output_tokens": 74
+          },
+          "cost_usd": 0.002084
+        },
+        "jev-choice": {
+          "power": "weak",
+          "score": 0.67,
+          "confidence": 0.21,
+          "detail": "weak 0.47, balanced 0.39, powerful 0.14",
+          "usage": {
+            "input_tokens": 506,
+            "output_tokens": 42
+          },
+          "cost_usd": 2.1252000000000003e-05
+        },
+        "jev-score": {
+          "power": "balanced",
+          "score": 0.68,
+          "confidence": 0.0,
+          "detail": "weak 0.47, balanced 0.38, powerful 0.15",
+          "usage": {
+            "input_tokens": 482,
+            "output_tokens": 19
+          },
+          "cost_usd": 2.0244e-05
+        }
+      }
+    },
+    {
+      "name": "Exsanguinate",
+      "image_url": "https://cards.scryfall.io/normal/front/f/1/f11d7311-4066-4a5d-ba28-9857fa707a0b.jpg?1783909073",
+      "mana_cost": "{X}{B}{B}",
+      "yours": "balanced",
+      "yours_score": 1.3,
+      "edhrec_rank": 275,
+      "answers": {
+        "always-balanced": {
+          "power": "balanced",
+          "score": 1.0,
+          "confidence": null,
+          "detail": "no reading of the card",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0
+          },
+          "cost_usd": 0.0
+        },
+        "haiku": {
+          "power": "powerful",
+          "score": 1.7,
+          "confidence": null,
+          "detail": "Exsanguinate is a flexible finisher that scales with mana investment and provides both damage and life gain, making it powerful in the mid-to-late game while being reasonable early as a life drain tool, though the high black mana requirement and sorcery speed prevent it from being universally broken.",
+          "usage": {
+            "input_tokens": 480,
+            "output_tokens": 80
+          },
+          "cost_usd": 0.00088
+        },
+        "sonnet": {
+          "power": "balanced",
+          "score": 1.3,
+          "confidence": null,
+          "detail": "Exsanguinate is a scalable drain finisher that costs X+BB, which is fair-to-good in multiplayer and as a top-end finisher, but it is slow and does nothing to the board, so it is solid rather than an auto-include staple in every deck.",
+          "usage": {
+            "input_tokens": 614,
+            "output_tokens": 98
+          },
+          "cost_usd": 0.002208
+        },
+        "jev-choice": {
+          "power": "powerful",
+          "score": 1.58,
+          "confidence": 0.5,
+          "detail": "balanced 0.24, weak 0.09, powerful 0.67",
+          "usage": {
+            "input_tokens": 469,
+            "output_tokens": 44
+          },
+          "cost_usd": 1.9698e-05
+        },
+        "jev-score": {
+          "power": "powerful",
+          "score": 1.52,
+          "confidence": 0.27,
+          "detail": "weak 0.10, balanced 0.29, powerful 0.61",
+          "usage": {
+            "input_tokens": 445,
+            "output_tokens": 19
+          },
+          "cost_usd": 1.8690000000000002e-05
+        }
+      }
+    },
+    {
+      "name": "Oracle's Gift",
+      "image_url": "https://cards.scryfall.io/normal/front/a/9/a95b6baf-01e6-49c3-9a26-394b127d53c3.jpg?1783903689",
+      "mana_cost": "{X}{X}{U}",
+      "yours": "balanced",
+      "yours_score": 1.0,
+      "edhrec_rank": 13860,
+      "answers": {
+        "always-balanced": {
+          "power": "balanced",
+          "score": 1.0,
+          "confidence": null,
+          "detail": "no reading of the card",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0
+          },
+          "cost_usd": 0.0
+        },
+        "haiku": {
+          "power": "powerful",
+          "score": 1.8,
+          "confidence": null,
+          "detail": "Oracle's Gift scales efficiently with mana investment, creating multiple tokens with significant power boost in a single spell, making it a strong rate for token generation and board development.",
+          "usage": {
+            "input_tokens": 544,
+            "output_tokens": 49
+          },
+          "cost_usd": 0.000789
+        },
+        "sonnet": {
+          "power": "balanced",
+          "score": 0.8,
+          "confidence": null,
+          "detail": "For 2X+1 mana you get X tokens that are each X/X (X\u00b2 power, X\u00b2 toughness), so 5 mana yields only two 2/2s, while 7 mana yields three 3/3s, which is fair but slow, and the late-game payoff is reasonable but not exceptional.",
+          "usage": {
+            "input_tokens": 696,
+            "output_tokens": 431
+          },
+          "cost_usd": 0.005702
+        },
+        "jev-choice": {
+          "power": "powerful",
+          "score": 1.4300000000000002,
+          "confidence": 0.47,
+          "detail": "weak 0.22, powerful 0.65, balanced 0.13",
+          "usage": {
+            "input_tokens": 525,
+            "output_tokens": 44
+          },
+          "cost_usd": 2.205e-05
+        },
+        "jev-score": {
+          "power": "balanced",
+          "score": 1.35,
+          "confidence": 0.02,
+          "detail": "weak 0.25, balanced 0.16, powerful 0.59",
+          "usage": {
+            "input_tokens": 501,
+            "output_tokens": 19
+          },
+          "cost_usd": 2.1042000000000003e-05
+        }
+      }
+    },
+    {
+      "name": "Vicious Verse",
+      "image_url": "https://cards.scryfall.io/normal/front/7/e/7e324816-552f-455d-97c4-5ea6b26d2e6e.jpg?1789127576",
+      "mana_cost": "{B/R}",
+      "yours": "weak",
+      "yours_score": 0.4,
+      "edhrec_rank": 27982,
+      "answers": {
+        "always-balanced": {
+          "power": "balanced",
+          "score": 1.0,
+          "confidence": null,
+          "detail": "no reading of the card",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0
+          },
+          "cost_usd": 0.0
+        },
+        "haiku": {
+          "power": "weak",
+          "score": 0.3,
+          "confidence": null,
+          "detail": "Vicious Verse is a one-mana spell that deals only 1 damage, which is significantly below the rate typical for constructed Magic - even the worst burn spells usually deal 2+ damage at this cost or have additional utility.",
+          "usage": {
+            "input_tokens": 523,
+            "output_tokens": 66
+          },
+          "cost_usd": 0.000853
+        },
+        "sonnet": {
+          "power": "weak",
+          "score": 0.1,
+          "confidence": null,
+          "detail": "A one-mana sorcery that deals only 1 damage to an opponent's face has almost no impact on the board or the game, so it is far below what a single mana normally buys and is only worth anything as the throwaway half of a two-faced card.",
+          "usage": {
+            "input_tokens": 669,
+            "output_tokens": 89
+          },
+          "cost_usd": 0.002228
+        },
+        "jev-choice": {
+          "power": "balanced",
+          "score": 0.8400000000000001,
+          "confidence": 0.49,
+          "detail": "weak 0.25, powerful 0.09, balanced 0.66",
+          "usage": {
+            "input_tokens": 502,
+            "output_tokens": 42
+          },
+          "cost_usd": 2.1084e-05
+        },
+        "jev-score": {
+          "power": "balanced",
+          "score": 0.93,
+          "confidence": 0.52,
+          "detail": "weak 0.20, balanced 0.67, powerful 0.13",
+          "usage": {
+            "input_tokens": 478,
+            "output_tokens": 19
+          },
+          "cost_usd": 2.0076e-05
+        }
+      }
+    },
+    {
+      "name": "Rocket Volley",
+      "image_url": "https://cards.scryfall.io/normal/front/5/c/5c88391d-271f-4021-a5d9-158ebc1e6357.jpg?1783903667",
+      "mana_cost": "{1}{R}",
+      "yours": "balanced",
+      "yours_score": 1.0,
+      "edhrec_rank": 17657,
+      "answers": {
+        "always-balanced": {
+          "power": "balanced",
+          "score": 1.0,
+          "confidence": null,
+          "detail": "no reading of the card",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0
+          },
+          "cost_usd": 0.0
+        },
+        "haiku": {
+          "power": "powerful",
+          "score": 1.5,
+          "confidence": null,
+          "detail": "Destroying a single nonbasic land for two mana is efficient rate but narrow in scope, as it only hits a fraction of lands and does nothing against basic lands or creatures, making it situational despite reasonable cost.",
+          "usage": {
+            "input_tokens": 517,
+            "output_tokens": 60
+          },
+          "cost_usd": 0.000817
+        },
+        "sonnet": {
+          "power": "weak",
+          "score": 0.3,
+          "confidence": null,
+          "detail": "A two-mana sorcery that only destroys a nonbasic land is a narrow, situational effect that is dead in most games, though it can hit utility lands or dual lands; it's weaker than Wasteland-style effects and costs more than Stone Rain-style cards that hit any land.",
+          "usage": {
+            "input_tokens": 662,
+            "output_tokens": 105
+          },
+          "cost_usd": 0.002374
+        },
+        "jev-choice": {
+          "power": "balanced",
+          "score": 1.19,
+          "confidence": 0.42,
+          "detail": "balanced 0.61, weak 0.10, powerful 0.29",
+          "usage": {
+            "input_tokens": 498,
+            "output_tokens": 42
+          },
+          "cost_usd": 2.0916e-05
+        },
+        "jev-score": {
+          "power": "balanced",
+          "score": 1.13,
+          "confidence": 0.5,
+          "detail": "weak 0.10, balanced 0.67, powerful 0.23",
+          "usage": {
+            "input_tokens": 474,
+            "output_tokens": 19
+          },
+          "cost_usd": 1.9908e-05
+        }
+      }
+    },
+    {
+      "name": "Forum's Favor",
+      "image_url": "https://cards.scryfall.io/normal/front/7/9/79a70863-860f-4a7b-9cb2-d3546b689d44.jpg?1783903704",
+      "mana_cost": "{W}",
+      "yours": "balanced",
+      "yours_score": 0.8,
+      "edhrec_rank": 22213,
+      "answers": {
+        "always-balanced": {
+          "power": "balanced",
+          "score": 1.0,
+          "confidence": null,
+          "detail": "no reading of the card",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0
+          },
+          "cost_usd": 0.0
+        },
+        "haiku": {
+          "power": "balanced",
+          "score": 1.0,
+          "confidence": null,
+          "detail": "Forum's Favor is a modest combat trick that provides a temporary boost with flying evasion, which is reasonable value for one white mana but is vulnerable to instant-speed removal and doesn't generate long-term advantage.",
+          "usage": {
+            "input_tokens": 523,
+            "output_tokens": 59
+          },
+          "cost_usd": 0.000818
+        },
+        "sonnet": {
+          "power": "weak",
+          "score": 0.3,
+          "confidence": null,
+          "detail": "A one-mana sorcery that gives a creature +1/+0 and flying for a single turn is a minor evasion trick that can't act as a combat trick or protect anything, so as a stand-alone card it would almost never see play.",
+          "usage": {
+            "input_tokens": 670,
+            "output_tokens": 86
+          },
+          "cost_usd": 0.0022
+        },
+        "jev-choice": {
+          "power": "balanced",
+          "score": 1.38,
+          "confidence": 0.28,
+          "detail": "powerful 0.43, weak 0.05, balanced 0.52",
+          "usage": {
+            "input_tokens": 505,
+            "output_tokens": 42
+          },
+          "cost_usd": 2.1210000000000002e-05
+        },
+        "jev-score": {
+          "power": "balanced",
+          "score": 1.41,
+          "confidence": 0.26,
+          "detail": "weak 0.04, balanced 0.51, powerful 0.45",
+          "usage": {
+            "input_tokens": 481,
+            "output_tokens": 19
+          },
+          "cost_usd": 2.0202e-05
+        }
+      }
+    },
+    {
+      "name": "Seed Suture",
+      "image_url": "https://cards.scryfall.io/normal/front/5/e/5e77fbf0-9d1f-4e7d-a02e-43065d11b0d9.jpg?1789692643",
+      "mana_cost": "{G/W}",
+      "yours": "balanced",
+      "yours_score": 0.5,
+      "edhrec_rank": 27669,
+      "answers": {
+        "always-balanced": {
+          "power": "balanced",
+          "score": 1.0,
+          "confidence": null,
+          "detail": "no reading of the card",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0
+          },
+          "cost_usd": 0.0
+        },
+        "haiku": {
+          "power": "powerful",
+          "score": 1.5,
+          "confidence": null,
+          "detail": "Seed Suture is slightly undercosted for its effects\u2014granting a +1/+1 counter and 1 life are both relevant effects, and while modest, the combination is solid for a single mana, making it a reasonable efficiency play.",
+          "usage": {
+            "input_tokens": 529,
+            "output_tokens": 70
+          },
+          "cost_usd": 0.000879
+        },
+        "sonnet": {
+          "power": "balanced",
+          "score": 0.5,
+          "confidence": null,
+          "detail": "A one-mana sorcery that gives a permanent +1/+1 counter and 1 life is a small, slow effect that is below the usual standard, since it is card disadvantage and sorcery-speed with no protection, though the hybrid cost and permanence keep it marginally playable in aggressive counter decks.",
+          "usage": {
+            "input_tokens": 672,
+            "output_tokens": 113
+          },
+          "cost_usd": 0.002474
+        },
+        "jev-choice": {
+          "error": "URLError: <urlopen error [Errno 60] Operation timed out>"
+        },
+        "jev-score": {
+          "power": "balanced",
+          "score": 1.14,
+          "confidence": 0.4,
+          "detail": "weak 0.13, balanced 0.60, powerful 0.27",
+          "usage": {
+            "input_tokens": 484,
+            "output_tokens": 19
+          },
+          "cost_usd": 2.0328000000000003e-05
+        }
+      }
+    }
+  ],
+  "scorecards": {
+    "always-balanced": {
+      "exact": 7,
+      "answered": 14,
+      "failed": 0,
+      "mean_ordinal_error": 0.5,
+      "mean_score_error": 0.5142857142857142,
+      "cost_usd": 0.0,
+      "confusion": {
+        "powerful->balanced": 3,
+        "balanced->balanced": 7,
+        "weak->balanced": 4
+      }
+    },
+    "haiku": {
+      "exact": 7,
+      "answered": 14,
+      "failed": 0,
+      "mean_ordinal_error": 0.5,
+      "mean_score_error": 0.40714285714285714,
+      "cost_usd": 0.011507,
+      "confusion": {
+        "powerful->powerful": 3,
+        "balanced->powerful": 5,
+        "balanced->balanced": 2,
+        "weak->balanced": 2,
+        "weak->weak": 2
+      }
+    },
+    "sonnet": {
+      "exact": 11,
+      "answered": 14,
+      "failed": 0,
+      "mean_ordinal_error": 0.21428571428571427,
+      "mean_score_error": 0.21428571428571427,
+      "cost_usd": 0.033982,
+      "confusion": {
+        "powerful->powerful": 3,
+        "balanced->balanced": 5,
+        "weak->balanced": 1,
+        "weak->weak": 3,
+        "balanced->weak": 2
+      }
+    },
+    "jev-choice": {
+      "exact": 9,
+      "answered": 13,
+      "failed": 1,
+      "mean_ordinal_error": 0.3076923076923077,
+      "mean_score_error": 0.36153846153846164,
+      "cost_usd": 0.000267498,
+      "confusion": {
+        "powerful->powerful": 3,
+        "balanced->balanced": 4,
+        "weak->balanced": 2,
+        "weak->weak": 2,
+        "balanced->powerful": 2
+      }
+    },
+    "jev-score": {
+      "exact": 9,
+      "answered": 14,
+      "failed": 0,
+      "mean_ordinal_error": 0.35714285714285715,
+      "mean_score_error": 0.38499999999999995,
+      "cost_usd": 0.00027472200000000003,
+      "confusion": {
+        "powerful->powerful": 2,
+        "powerful->balanced": 1,
+        "balanced->balanced": 6,
+        "weak->balanced": 3,
+        "weak->weak": 1,
+        "balanced->powerful": 1
+      }
+    }
+  }
+}

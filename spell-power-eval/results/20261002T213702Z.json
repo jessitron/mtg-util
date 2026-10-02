@@ -1,0 +1,732 @@
+{
+  "models": {
+    "always-balanced": "",
+    "haiku": "claude-haiku-4-5",
+    "sonnet": "claude-sonnet-5-5",
+    "jev-choice": "",
+    "jev-score": ""
+  },
+  "cards": [
+    {
+      "name": "Lightning Bolt",
+      "image_url": "https://cards.scryfall.io/normal/front/7/6/7673784e-db4b-43a1-8d55-1bb9fc1e284f.jpg?1783903008",
+      "mana_cost": "{R}",
+      "yours": "powerful",
+      "yours_score": 1.8,
+      "edhrec_rank": 157,
+      "answers": {
+        "always-balanced": {
+          "power": "balanced",
+          "score": 1.0,
+          "confidence": null,
+          "detail": "no reading of the card",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0
+          },
+          "cost_usd": 0.0
+        },
+        "haiku": {
+          "power": "powerful",
+          "score": 2.0,
+          "confidence": null,
+          "detail": "Lightning Bolt is one of the most efficient damage spells ever printed, dealing 3 damage for just one red mana, which is significantly above the typical rate of 1 damage per mana and has enabled its use as a staple in virtually every constructed format where it's legal.",
+          "usage": {
+            "input_tokens": 467,
+            "output_tokens": 74
+          },
+          "cost_usd": 0.000837
+        },
+        "sonnet": {
+          "power": "powerful",
+          "score": 2.0,
+          "confidence": null,
+          "detail": "Three damage to any target at instant speed for a single mana is an exceptionally efficient removal and reach spell that is played in nearly every red deck, well above what one mana typically buys.",
+          "usage": {
+            "input_tokens": 602,
+            "output_tokens": 70
+          },
+          "cost_usd": 0.001904
+        },
+        "jev-choice": {
+          "power": "powerful",
+          "score": 1.53,
+          "confidence": 0.3,
+          "detail": "balanced 0.47, powerful 0.53, weak 0.00",
+          "usage": {
+            "input_tokens": 455,
+            "output_tokens": 44
+          },
+          "cost_usd": 1.9109999999999998e-05
+        },
+        "jev-score": {
+          "power": "powerful",
+          "score": 1.59,
+          "confidence": 0.38,
+          "detail": "weak 0.00, balanced 0.41, powerful 0.59",
+          "usage": {
+            "input_tokens": 431,
+            "output_tokens": 19
+          },
+          "cost_usd": 1.8102e-05
+        }
+      }
+    },
+    {
+      "name": "Sol Ring",
+      "image_url": "https://cards.scryfall.io/normal/front/8/e/8ee443cc-e17a-493b-9c93-1f9e141a30e4.jpg?1789644446",
+      "mana_cost": "{1}",
+      "yours": "powerful",
+      "yours_score": 2.0,
+      "edhrec_rank": 1,
+      "answers": {
+        "always-balanced": {
+          "power": "balanced",
+          "score": 1.0,
+          "confidence": null,
+          "detail": "no reading of the card",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0
+          },
+          "cost_usd": 0.0
+        },
+        "haiku": {
+          "power": "powerful",
+          "score": 2.0,
+          "confidence": null,
+          "detail": "Sol Ring produces two colorless mana for just one mana investment, providing exceptional acceleration that speeds up games disproportionately compared to its trivial cost, making it a staple in nearly every format that allows it.",
+          "usage": {
+            "input_tokens": 463,
+            "output_tokens": 58
+          },
+          "cost_usd": 0.000753
+        },
+        "sonnet": {
+          "power": "powerful",
+          "score": 2.0,
+          "confidence": null,
+          "detail": "For just one mana, Sol Ring returns the investment immediately and nets a huge mana advantage every turn from turn one, accelerating the player by several turns, which is far beyond what a 1-mana card should provide.",
+          "usage": {
+            "input_tokens": 595,
+            "output_tokens": 81
+          },
+          "cost_usd": 0.002
+        },
+        "jev-choice": {
+          "power": "powerful",
+          "score": 1.95,
+          "confidence": 0.94,
+          "detail": "weak 0.01, balanced 0.03, powerful 0.96",
+          "usage": {
+            "input_tokens": 454,
+            "output_tokens": 44
+          },
+          "cost_usd": 1.9068e-05
+        },
+        "jev-score": {
+          "power": "powerful",
+          "score": 1.91,
+          "confidence": 0.86,
+          "detail": "weak 0.02, balanced 0.04, powerful 0.93",
+          "usage": {
+            "input_tokens": 430,
+            "output_tokens": 19
+          },
+          "cost_usd": 1.8060000000000003e-05
+        }
+      }
+    },
+    {
+      "name": "Llanowar Elves",
+      "image_url": "https://cards.scryfall.io/normal/front/6/a/6a0b230b-d391-4998-a3f7-7b158a0ec2cd.jpg?1783909057",
+      "mana_cost": "{G}",
+      "yours": "powerful",
+      "yours_score": 1.8,
+      "edhrec_rank": 58,
+      "answers": {
+        "always-balanced": {
+          "power": "balanced",
+          "score": 1.0,
+          "confidence": null,
+          "detail": "no reading of the card",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0
+          },
+          "cost_usd": 0.0
+        },
+        "haiku": {
+          "power": "powerful",
+          "score": 2.0,
+          "confidence": null,
+          "detail": "Llanowar Elves is the gold standard for green mana acceleration at one mana, providing immediate ramp that enables faster spellcasting and is a staple in nearly every green deck that can play it.",
+          "usage": {
+            "input_tokens": 503,
+            "output_tokens": 60
+          },
+          "cost_usd": 0.000803
+        },
+        "sonnet": {
+          "power": "powerful",
+          "score": 1.8,
+          "confidence": null,
+          "detail": "A one-mana 1/1 that taps for G accelerates your mana development by a full turn, which is a staple effect in green decks, even though it is fragile and weak late in the game.",
+          "usage": {
+            "input_tokens": 633,
+            "output_tokens": 71
+          },
+          "cost_usd": 0.001976
+        },
+        "jev-choice": {
+          "power": "powerful",
+          "score": 1.6400000000000001,
+          "confidence": 0.49,
+          "detail": "powerful 0.66, weak 0.02, balanced 0.32",
+          "usage": {
+            "input_tokens": 483,
+            "output_tokens": 44
+          },
+          "cost_usd": 2.0286000000000002e-05
+        },
+        "jev-score": {
+          "power": "powerful",
+          "score": 1.72,
+          "confidence": 0.58,
+          "detail": "weak 0.02, balanced 0.23, powerful 0.75",
+          "usage": {
+            "input_tokens": 459,
+            "output_tokens": 19
+          },
+          "cost_usd": 1.9278e-05
+        }
+      }
+    },
+    {
+      "name": "Grizzly Bears",
+      "image_url": "https://cards.scryfall.io/normal/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "mana_cost": "{1}{G}",
+      "yours": "balanced",
+      "yours_score": 0.7,
+      "edhrec_rank": 8119,
+      "answers": {
+        "always-balanced": {
+          "power": "balanced",
+          "score": 1.0,
+          "confidence": null,
+          "detail": "no reading of the card",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0
+          },
+          "cost_usd": 0.0
+        },
+        "haiku": {
+          "power": "balanced",
+          "score": 1.0,
+          "confidence": null,
+          "detail": "Grizzly Bears is a straightforward vanilla creature that perfectly exemplifies what two mana should buy in green\u2014a 2/2 body with solid power-to-mana ratio that remains a baseline for fair costing in the game.",
+          "usage": {
+            "input_tokens": 487,
+            "output_tokens": 65
+          },
+          "cost_usd": 0.000812
+        },
+        "sonnet": {
+          "power": "balanced",
+          "score": 1.0,
+          "confidence": null,
+          "detail": "A vanilla 2/2 for two mana is the baseline for a fair rate, with no abilities to make it stand out but no drawback either, so it is filler that is playable but unexciting.",
+          "usage": {
+            "input_tokens": 617,
+            "output_tokens": 72
+          },
+          "cost_usd": 0.001954
+        },
+        "jev-choice": {
+          "power": "balanced",
+          "score": 0.98,
+          "confidence": 0.93,
+          "detail": "balanced 0.96, powerful 0.01, weak 0.03",
+          "usage": {
+            "input_tokens": 471,
+            "output_tokens": 42
+          },
+          "cost_usd": 1.9782e-05
+        },
+        "jev-score": {
+          "power": "balanced",
+          "score": 1.0,
+          "confidence": 0.91,
+          "detail": "weak 0.03, balanced 0.94, powerful 0.03",
+          "usage": {
+            "input_tokens": 447,
+            "output_tokens": 19
+          },
+          "cost_usd": 1.8774e-05
+        }
+      }
+    },
+    {
+      "name": "Serra Angel",
+      "image_url": "https://cards.scryfall.io/normal/front/b/8/b8c5e74c-96e7-4a1f-93b7-14d776fe4b2d.jpg?1787563091",
+      "mana_cost": "{3}{W}{W}",
+      "yours": "balanced",
+      "yours_score": 1.1,
+      "edhrec_rank": 9451,
+      "answers": {
+        "always-balanced": {
+          "power": "balanced",
+          "score": 1.0,
+          "confidence": null,
+          "detail": "no reading of the card",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0
+          },
+          "cost_usd": 0.0
+        },
+        "haiku": {
+          "power": "balanced",
+          "score": 1.0,
+          "confidence": null,
+          "detail": "Serra Angel is a fairly costed flyer with vigilance that provides solid evasion and board presence for its cost, representing the baseline efficiency expected from a 5-mana creature in limited and constructed formats.",
+          "usage": {
+            "input_tokens": 506,
+            "output_tokens": 57
+          },
+          "cost_usd": 0.000791
+        },
+        "sonnet": {
+          "power": "balanced",
+          "score": 1.3,
+          "confidence": null,
+          "detail": "A 4/4 flying vigilance body for five mana is a very solid, evasive threat that attacks and defends well, but it has no additional abilities and is a standard, fairly costed rate rather than a game-breaking one.",
+          "usage": {
+            "input_tokens": 652,
+            "output_tokens": 85
+          },
+          "cost_usd": 0.002154
+        },
+        "jev-choice": {
+          "power": "balanced",
+          "score": 1.3,
+          "confidence": 0.47,
+          "detail": "powerful 0.33, balanced 0.64, weak 0.03",
+          "usage": {
+            "input_tokens": 491,
+            "output_tokens": 42
+          },
+          "cost_usd": 2.0622e-05
+        },
+        "jev-score": {
+          "power": "balanced",
+          "score": 1.31,
+          "confidence": 0.43,
+          "detail": "weak 0.03, balanced 0.62, powerful 0.35",
+          "usage": {
+            "input_tokens": 467,
+            "output_tokens": 19
+          },
+          "cost_usd": 1.9614000000000002e-05
+        }
+      }
+    },
+    {
+      "name": "Divination",
+      "image_url": "https://cards.scryfall.io/normal/front/c/b/cb3b35b8-f321-46d8-a441-6b9a6efa9021.jpg?1783934590",
+      "mana_cost": "{2}{U}",
+      "yours": "weak",
+      "yours_score": 0.4,
+      "edhrec_rank": 6264,
+      "answers": {
+        "always-balanced": {
+          "power": "balanced",
+          "score": 1.0,
+          "confidence": null,
+          "detail": "no reading of the card",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0
+          },
+          "cost_usd": 0.0
+        },
+        "haiku": {
+          "power": "balanced",
+          "score": 1.0,
+          "confidence": null,
+          "detail": "Drawing two cards for three mana is a fair baseline rate in Magic, matching typical efficiency standards for card draw spells at common rarity.",
+          "usage": {
+            "input_tokens": 463,
+            "output_tokens": 42
+          },
+          "cost_usd": 0.000673
+        },
+        "sonnet": {
+          "power": "balanced",
+          "score": 0.9,
+          "confidence": null,
+          "detail": "Divination is a vanilla 3-mana sorcery that draws two cards, which is a fair but unexciting rate: it nets card advantage but doesn't affect the board, and is generally considered slightly below the standard for blue card draw, so it's playable filler rather than a staple.",
+          "usage": {
+            "input_tokens": 590,
+            "output_tokens": 104
+          },
+          "cost_usd": 0.00222
+        },
+        "jev-choice": {
+          "power": "balanced",
+          "score": 0.94,
+          "confidence": 0.47,
+          "detail": "balanced 0.64, powerful 0.15, weak 0.21",
+          "usage": {
+            "input_tokens": 453,
+            "output_tokens": 42
+          },
+          "cost_usd": 1.9026e-05
+        },
+        "jev-score": {
+          "power": "balanced",
+          "score": 0.99,
+          "confidence": 0.36,
+          "detail": "weak 0.22, balanced 0.57, powerful 0.21",
+          "usage": {
+            "input_tokens": 429,
+            "output_tokens": 19
+          },
+          "cost_usd": 1.8018e-05
+        }
+      }
+    },
+    {
+      "name": "Wrath of God",
+      "image_url": "https://cards.scryfall.io/normal/front/5/3/537d2b05-3f52-45d6-8fe3-26282085d0c6.jpg?1783915706",
+      "mana_cost": "{2}{W}{W}",
+      "yours": "powerful",
+      "yours_score": 1.7,
+      "edhrec_rank": 677,
+      "answers": {
+        "always-balanced": {
+          "power": "balanced",
+          "score": 1.0,
+          "confidence": null,
+          "detail": "no reading of the card",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0
+          },
+          "cost_usd": 0.0
+        },
+        "haiku": {
+          "power": "powerful",
+          "score": 1.5,
+          "confidence": null,
+          "detail": "Wrath of God is a classic efficient board wipe that costs four mana to destroy all creatures at instant speed would be broken, but as a sorcery it's reasonably priced for answering a wide board presence and has defined fair Magic design for decades.",
+          "usage": {
+            "input_tokens": 475,
+            "output_tokens": 69
+          },
+          "cost_usd": 0.00082
+        },
+        "sonnet": {
+          "power": "balanced",
+          "score": 1.4,
+          "confidence": null,
+          "detail": "A four-mana sorcery-speed board wipe that destroys all creatures is a classic, fairly costed sweeper that often yields card advantage and is a staple in control decks, but it is symmetrical and situational, so it sits at the strong end of balanced rather than broken.",
+          "usage": {
+            "input_tokens": 607,
+            "output_tokens": 102
+          },
+          "cost_usd": 0.002234
+        },
+        "jev-choice": {
+          "power": "powerful",
+          "score": 1.5699999999999998,
+          "confidence": 0.37,
+          "detail": "powerful 0.58, balanced 0.41, weak 0.01",
+          "usage": {
+            "input_tokens": 462,
+            "output_tokens": 44
+          },
+          "cost_usd": 1.9404e-05
+        },
+        "jev-score": {
+          "power": "balanced",
+          "score": 1.49,
+          "confidence": 0.24,
+          "detail": "weak 0.02, balanced 0.47, powerful 0.51",
+          "usage": {
+            "input_tokens": 438,
+            "output_tokens": 19
+          },
+          "cost_usd": 1.8396e-05
+        }
+      }
+    },
+    {
+      "name": "Craw Wurm",
+      "image_url": "https://cards.scryfall.io/normal/front/3/8/3875f73d-6108-488b-bd34-4cf2c23ce6b3.jpg?1783942364",
+      "mana_cost": "{4}{G}{G}",
+      "yours": "weak",
+      "yours_score": 0.3,
+      "edhrec_rank": 22390,
+      "answers": {
+        "always-balanced": {
+          "power": "balanced",
+          "score": 1.0,
+          "confidence": null,
+          "detail": "no reading of the card",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0
+          },
+          "cost_usd": 0.0
+        },
+        "haiku": {
+          "power": "balanced",
+          "score": 0.5,
+          "confidence": null,
+          "detail": "Craw Wurm is a straightforward creature that costs 6 mana for 6/4 stats (10 total power/toughness), which is reasonable value but offers no special abilities or evasion, making it a vanilla creature that's easily removed and typically outclassed in most constructed formats.",
+          "usage": {
+            "input_tokens": 492,
+            "output_tokens": 83
+          },
+          "cost_usd": 0.000907
+        },
+        "sonnet": {
+          "power": "weak",
+          "score": 0.4,
+          "confidence": null,
+          "detail": "A vanilla 6/4 for six mana has decent stats but no abilities, so it is slow and easily outclassed by cheaper creatures with evasion, removal, or value effects, making it filler at best.",
+          "usage": {
+            "input_tokens": 620,
+            "output_tokens": 80
+          },
+          "cost_usd": 0.00204
+        },
+        "jev-choice": {
+          "power": "balanced",
+          "score": 0.88,
+          "confidence": 0.68,
+          "detail": "powerful 0.05, balanced 0.78, weak 0.17",
+          "usage": {
+            "input_tokens": 474,
+            "output_tokens": 42
+          },
+          "cost_usd": 1.9908e-05
+        },
+        "jev-score": {
+          "power": "balanced",
+          "score": 0.9,
+          "confidence": 0.66,
+          "detail": "weak 0.16, balanced 0.78, powerful 0.06",
+          "usage": {
+            "input_tokens": 450,
+            "output_tokens": 19
+          },
+          "cost_usd": 1.8900000000000002e-05
+        }
+      }
+    },
+    {
+      "name": "Mind Control",
+      "image_url": "https://cards.scryfall.io/normal/front/e/c/ec7f77af-17d7-4746-bc83-f455b9b6f9ea.jpg?1783941089",
+      "mana_cost": "{3}{U}{U}",
+      "yours": "balanced",
+      "yours_score": 1.1,
+      "edhrec_rank": 12911,
+      "answers": {
+        "always-balanced": {
+          "power": "balanced",
+          "score": 1.0,
+          "confidence": null,
+          "detail": "no reading of the card",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0
+          },
+          "cost_usd": 0.0
+        },
+        "haiku": {
+          "power": "balanced",
+          "score": 1.0,
+          "confidence": null,
+          "detail": "Mind Control is fairly costed for a 5-mana effect that permanently steals a creature, as control magic effects at this mana value typically match the power of taking another player's best permanent.",
+          "usage": {
+            "input_tokens": 475,
+            "output_tokens": 55
+          },
+          "cost_usd": 0.00075
+        },
+        "sonnet": {
+          "power": "powerful",
+          "score": 1.6,
+          "confidence": null,
+          "detail": "For five mana, Mind Control permanently steals the opponent's best creature, a two-for-one swing in board presence that is strong, though it is vulnerable to enchantment removal and bounce and costs a full turn.",
+          "usage": {
+            "input_tokens": 608,
+            "output_tokens": 83
+          },
+          "cost_usd": 0.002046
+        },
+        "jev-choice": {
+          "power": "balanced",
+          "score": 1.1199999999999999,
+          "confidence": 0.13,
+          "detail": "balanced 0.42, weak 0.23, powerful 0.35",
+          "usage": {
+            "input_tokens": 462,
+            "output_tokens": 42
+          },
+          "cost_usd": 1.9404e-05
+        },
+        "jev-score": {
+          "power": "balanced",
+          "score": 0.99,
+          "confidence": 0.15,
+          "detail": "weak 0.29, balanced 0.43, powerful 0.28",
+          "usage": {
+            "input_tokens": 438,
+            "output_tokens": 19
+          },
+          "cost_usd": 1.8396e-05
+        }
+      }
+    },
+    {
+      "name": "Cancel",
+      "image_url": "https://cards.scryfall.io/normal/front/4/7/475bff39-220a-4490-9c2e-d311e306a6db.jpg?1783908966",
+      "mana_cost": "{1}{U}{U}",
+      "yours": "balanced",
+      "yours_score": 1.0,
+      "edhrec_rank": 2073,
+      "answers": {
+        "always-balanced": {
+          "power": "balanced",
+          "score": 1.0,
+          "confidence": null,
+          "detail": "no reading of the card",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0
+          },
+          "cost_usd": 0.0
+        },
+        "haiku": {
+          "power": "balanced",
+          "score": 0.5,
+          "confidence": null,
+          "detail": "Cancel is a straightforward counterspell that costs three mana to counter any spell, which is more expensive than efficient removal spells and requires setup compared to cheaper disruption available at the same or lower mana cost.",
+          "usage": {
+            "input_tokens": 461,
+            "output_tokens": 60
+          },
+          "cost_usd": 0.000761
+        },
+        "sonnet": {
+          "power": "balanced",
+          "score": 0.6,
+          "confidence": null,
+          "detail": "Cancel is an unconditional hard counter, but at three mana it is a reactive, card-for-card trade that is a full mana more than Counterspell-style efficiency, so it is playable filler rather than a strong or staple card.",
+          "usage": {
+            "input_tokens": 592,
+            "output_tokens": 87
+          },
+          "cost_usd": 0.002054
+        },
+        "jev-choice": {
+          "power": "balanced",
+          "score": 1.1400000000000001,
+          "confidence": 0.67,
+          "detail": "weak 0.04, balanced 0.78, powerful 0.18",
+          "usage": {
+            "input_tokens": 452,
+            "output_tokens": 42
+          },
+          "cost_usd": 1.8984000000000003e-05
+        },
+        "jev-score": {
+          "power": "balanced",
+          "score": 1.16,
+          "confidence": 0.61,
+          "detail": "weak 0.05, balanced 0.74, powerful 0.21",
+          "usage": {
+            "input_tokens": 428,
+            "output_tokens": 19
+          },
+          "cost_usd": 1.7976000000000002e-05
+        }
+      }
+    }
+  ],
+  "scorecards": {
+    "always-balanced": {
+      "exact": 4,
+      "answered": 10,
+      "failed": 0,
+      "mean_ordinal_error": 0.6,
+      "mean_score_error": 0.5100000000000001,
+      "cost_usd": 0.0,
+      "confusion": {
+        "powerful->balanced": 4,
+        "balanced->balanced": 4,
+        "weak->balanced": 2
+      }
+    },
+    "haiku": {
+      "exact": 8,
+      "answered": 10,
+      "failed": 0,
+      "mean_ordinal_error": 0.2,
+      "mean_score_error": 0.24,
+      "cost_usd": 0.007907,
+      "confusion": {
+        "powerful->powerful": 4,
+        "balanced->balanced": 4,
+        "weak->balanced": 2
+      }
+    },
+    "sonnet": {
+      "exact": 7,
+      "answered": 10,
+      "failed": 0,
+      "mean_ordinal_error": 0.3,
+      "mean_score_error": 0.25,
+      "cost_usd": 0.020582,
+      "confusion": {
+        "powerful->powerful": 3,
+        "balanced->balanced": 3,
+        "weak->balanced": 1,
+        "powerful->balanced": 1,
+        "weak->weak": 1,
+        "balanced->powerful": 1
+      }
+    },
+    "jev-choice": {
+      "exact": 8,
+      "answered": 10,
+      "failed": 0,
+      "mean_ordinal_error": 0.2,
+      "mean_score_error": 0.23699999999999996,
+      "cost_usd": 0.000195594,
+      "confusion": {
+        "powerful->powerful": 4,
+        "balanced->balanced": 4,
+        "weak->balanced": 2
+      }
+    },
+    "jev-score": {
+      "exact": 7,
+      "answered": 10,
+      "failed": 0,
+      "mean_ordinal_error": 0.3,
+      "mean_score_error": 0.25600000000000006,
+      "cost_usd": 0.000185514,
+      "confusion": {
+        "powerful->powerful": 3,
+        "balanced->balanced": 4,
+        "weak->balanced": 2,
+        "powerful->balanced": 1
+      }
+    }
+  }
+}
