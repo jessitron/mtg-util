@@ -56,9 +56,10 @@ class ScorecardTest(unittest.TestCase):
     def test_counts_exact_and_steps_and_failures(self):
         weak = LabeledCard(card("A"), Power.WEAK)
         strong = LabeledCard(card("B"), Power.POWERFUL)
-        score = Scorecard.of("x", [(weak, Verdict(Power.POWERFUL)), (strong, Verdict(Power.POWERFUL)), (weak, None)])
+        score = Scorecard.of("x", [(weak, Verdict(Power.POWERFUL, 1.8)), (strong, Verdict(Power.POWERFUL, 2.0)), (weak, None)])
         self.assertEqual((score.answered, score.failed, score.exact), (2, 1, 1))
         self.assertEqual(score.mean_ordinal_error, 1.0)
+        self.assertAlmostEqual(score.mean_score_error, 0.9)  # (|1.8 - 0| + |2.0 - 2|) / 2
         self.assertEqual(score.confusion, {("weak", "powerful"): 1, ("powerful", "powerful"): 1})
 
 
@@ -119,12 +120,16 @@ class ClaudeClassifierTest(unittest.TestCase):
         return SimpleNamespace(messages=SimpleNamespace(parse=parse))
 
     def test_sends_the_facts_and_reads_the_verdict(self):
-        classifier = ClaudeClassifier("haiku", client=self.fake_client(ClaudeAnswer(reason="Fair.", verdict="balanced")))
+        classifier = ClaudeClassifier("haiku", client=self.fake_client(ClaudeAnswer(reason="Fair.", score=1.2)))
         verdict = classifier.classify(card())
-        self.assertEqual((verdict.power, verdict.detail), (Power.BALANCED, "Fair."))
+        self.assertEqual((verdict.power, verdict.score, verdict.detail), (Power.BALANCED, 1.2, "Fair."))
         self.assertEqual(self.seen["model"], "claude-haiku-4-5")
         self.assertIn("Name: Serra Angel", self.seen["messages"][0]["content"])
         self.assertIs(self.seen["output_format"], ClaudeAnswer)
+
+    def test_clamps_a_score_outside_the_scale(self):
+        verdict = ClaudeClassifier("haiku", client=self.fake_client(ClaudeAnswer(reason="Wow.", score=3.5))).classify(card())
+        self.assertEqual((verdict.power, verdict.score), (Power.POWERFUL, 2.0))
 
     def test_a_missing_answer_is_an_error(self):
         classifier = ClaudeClassifier("sonnet", client=self.fake_client(None, stop_reason="refusal"))
@@ -146,13 +151,14 @@ class JevClassifierTest(unittest.TestCase):
     def test_choice_asks_with_labelled_options(self):
         verdict, sent = self.run_jev("choice", {"type": "choice", "choice": "powerful", "confidence": 0.9, "probabilities": {"weak": 0.0, "balanced": 0.1, "powerful": 0.9}})
         self.assertEqual((verdict.power, verdict.confidence), (Power.POWERFUL, 0.9))
+        self.assertAlmostEqual(verdict.score, 1.9)  # expected level: 0.1 * 1 + 0.9 * 2 = 1.9
         self.assertEqual(list(sent["body"]["questions"][QUESTION_ID]["criteria"]), ["weak", "balanced", "powerful"])
         self.assertEqual((sent["key"], sent["body"]["model"]), ("k", "jev-latest"))
         self.assertIn("Name: Serra Angel", sent["body"]["state"])
 
     def test_score_asks_with_ordered_levels_and_rounds_the_answer(self):
         verdict, sent = self.run_jev("score", {"type": "score", "score": 1.43, "confidence": 0.35, "probabilities": {"0": 0.0, "1": 0.57, "2": 0.43}})
-        self.assertEqual(verdict.power, Power.BALANCED)
+        self.assertEqual((verdict.power, verdict.score), (Power.BALANCED, 1.43))
         self.assertIn("balanced 0.57", verdict.detail)
         self.assertEqual(len(sent["body"]["questions"][QUESTION_ID]["criteria"]), 3)
 
@@ -179,14 +185,16 @@ class EvaluationTest(unittest.TestCase):
 
     def test_report_shows_marks_errors_and_popularity(self):
         text = text_report(evaluate(self.cards, [self.Broken(), AlwaysBalanced()]))
-        self.assertIn("balanced ✗", text)
-        self.assertIn("balanced ✓", text)
+        self.assertIn("1.0 balanced ✗", text)
+        self.assertIn("1.0 balanced ✓", text)
         self.assertIn("broken on A: RuntimeError: boom", text)
-        self.assertRegex(text, r"A\s+weak\s+ERROR\s+balanced ✗\s+5")
+        self.assertRegex(text, r"A\s+weak\s+ERROR\s+1.0 balanced ✗\s+5")
 
     def test_results_json_keeps_the_reasons(self):
         results = results_json(evaluate(self.cards, [AlwaysBalanced()]), {})
         self.assertEqual(results["cards"][0]["answers"]["always-balanced"]["power"], "balanced")
+        self.assertEqual(results["cards"][0]["answers"]["always-balanced"]["score"], 1.0)
+        self.assertEqual(results["scorecards"]["always-balanced"]["mean_score_error"], 0.5)
         self.assertEqual(results["scorecards"]["always-balanced"]["confusion"], {"weak->balanced": 1, "balanced->balanced": 1})
 
 

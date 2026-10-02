@@ -2,14 +2,14 @@
 
 Which classifier agrees best with you about whether a Magic spell is **weak**, **balanced**, or **powerful** for its mana cost?
 
-You label a few cards by hand. The script asks each classifier about the same cards, then compares their answers to yours.
+You label a few cards by hand. The script asks each classifier about the same cards, then compares their answers to yours. Every classifier gives a **score from 0 to 2** (0 weak, 1 balanced, 2 powerful, decimals allowed) and the label is that score rounded.
 
 | Arm | What it is |
 | --- | ---------- |
 | `always-balanced` | The floor: says "balanced" for everything. |
-| `haiku`, `sonnet`, `opus` | Claude (`claude-haiku-4-5`, `claude-sonnet-5-5`, `claude-opus-5-5`), through the Anthropic SDK with structured output (a one-sentence reason, then the verdict). |
-| `jev-choice` | TypeSafe's Jev, asked to choose weak / balanced / powerful. |
-| `jev-score` | Jev, asked to rate on an ordered three-level rubric. A score of 1.43 rounds to balanced. |
+| `haiku`, `sonnet`, `opus` | Claude (`claude-haiku-4-5`, `claude-sonnet-5-5`, `claude-opus-5-5`), through the Anthropic SDK with structured output (a one-sentence reason, then a 0-2 score). |
+| `jev-choice` | TypeSafe's Jev, asked to choose weak / balanced / powerful. Its label is the choice. Its score is the expected level from its probabilities (0.03 weak, 0.65 balanced, 0.32 powerful gives 1.29). |
+| `jev-score` | Jev, asked to rate on an ordered three-level rubric. Its score is the one Jev returns. |
 
 Background on Jev and why we compare it: `references/jev.md` in the infra repo. API facts: [reference/jev.md](../reference/jev.md).
 
@@ -26,7 +26,7 @@ Background on Jev and why we compare it: `references/jev.md` in the infra repo. 
    ./run haiku opus       # just these arms
    ```
 
-The report prints a card-by-card table (✓ means it matched your label), then one summary line per arm: exact matches, and the **mean steps off**. Calling a weak card balanced is 1 step off. Calling it powerful is 2. Each run also writes `results/<timestamp>.json` with every classifier's reason (Claude) or probabilities (Jev), plus a confusion count per arm.
+The report prints a card-by-card table (each cell is the score, its label, and ✓ if the label matched yours), then one summary line per arm: exact matches, **mean steps off** (a weak card called balanced is 1 step off, called powerful is 2), and **mean score error** (the average distance from your 0, 1, or 2). The score error is finer: it separates 1.9 from 1.1 where the label would not. Each run also writes `results/<timestamp>.json` with every classifier's reason (Claude) or probabilities (Jev), plus a confusion count per arm.
 
 The `edhrec rank` column comes from Scryfall (lower means more popular in Commander). It is context for your labels, not ground truth, and no classifier sees it.
 

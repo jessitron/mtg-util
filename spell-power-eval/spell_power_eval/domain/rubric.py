@@ -13,9 +13,14 @@ DESCRIPTIONS = {
     Power.POWERFUL: "Does more than its cost should buy. Players play it in every deck that can, or build around it.",
 }
 
+SCORE_SCALE = (
+    "Also give a score from 0 to 2: 0 is weak, 1 is balanced, 2 is powerful. Use decimals for in-between cards "
+    "(1.5 is strong for its cost but not a staple; 0.5 is below par but playable)."
+)
+
 CLAUDE_SYSTEM_PROMPT = (
     "You rate Magic: The Gathering cards for a game-balance study.\n\n"
     f"{QUESTION}\n\n"
     + "\n".join(f"- {power.label}: {text}" for power, text in DESCRIPTIONS.items())
-    + "\n\nGive a one-sentence reason first, then the verdict."
+    + f"\n\n{SCORE_SCALE}\n\nGive a one-sentence reason first, then the score."
 )

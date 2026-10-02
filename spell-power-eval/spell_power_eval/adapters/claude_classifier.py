@@ -1,6 +1,4 @@
 """Gateway to Claude: a card goes in, a Verdict comes out. Uses the Anthropic SDK's structured outputs."""
-from typing import Literal
-
 from pydantic import BaseModel
 
 from ..domain.card import Card
@@ -17,8 +15,8 @@ CLAUDE_MODELS = {
 
 
 class ClaudeAnswer(BaseModel):
-    reason: str  # first, so the model thinks before it commits to a label
-    verdict: Literal["weak", "balanced", "powerful"]
+    reason: str  # first, so the model thinks before it commits to a number
+    score: float  # 0 weak, 1 balanced, 2 powerful
 
 
 class ClaudeClassifier:
@@ -42,4 +40,5 @@ class ClaudeClassifier:
         answer = response.parsed_output
         if answer is None:
             raise RuntimeError(f"no parsed answer (stop_reason={response.stop_reason})")
-        return Verdict(Power.from_label(answer.verdict), detail=answer.reason)
+        score = min(max(answer.score, 0.0), 2.0)  # the schema can't enforce the range
+        return Verdict(Power.nearest(score), score, detail=answer.reason)

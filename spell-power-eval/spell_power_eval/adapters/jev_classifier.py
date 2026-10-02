@@ -58,10 +58,10 @@ class JevClassifier:
         if self._kind == "choice":
             power = Power.from_label(answer["choice"])
             shown = {Power.from_label(k).label: v for k, v in probabilities.items()}
+            score = sum(Power.from_label(label).value * p for label, p in shown.items())  # expected level
         else:
-            power = Power.nearest(answer["score"])
+            score = answer["score"]
+            power = Power.nearest(score)
             shown = {Power(int(k)).label: v for k, v in probabilities.items()}
         detail = ", ".join(f"{label} {p:.2f}" for label, p in shown.items())
-        if self._kind == "score":
-            detail = f"score {answer['score']:.2f}; " + detail
-        return Verdict(power, confidence=answer.get("confidence"), detail=detail)
+        return Verdict(power, score, confidence=answer.get("confidence"), detail=detail)

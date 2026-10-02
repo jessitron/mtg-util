@@ -9,4 +9,4 @@ class AlwaysBalanced:
     name = "always-balanced"
 
     def classify(self, card: Card) -> Verdict:
-        return Verdict(Power.BALANCED, detail="no reading of the card")
+        return Verdict(Power.BALANCED, 1.0, detail="no reading of the card")

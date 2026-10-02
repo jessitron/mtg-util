@@ -10,6 +10,7 @@ class Verdict:
     """One classifier's answer for one card."""
 
     power: Power
+    score: float  # 0 (weak) to 2 (powerful); decimals allowed. Every classifier gives one.
     confidence: Optional[float] = None  # the classifier's own claim, if it makes one
     detail: str = ""  # a reason, or the probabilities behind the label
 

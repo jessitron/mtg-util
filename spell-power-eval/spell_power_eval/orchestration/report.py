@@ -6,7 +6,7 @@ def _cell(evaluation: Evaluation, name: str, classifier: str, expected) -> str:
     if attempt.verdict is None:
         return "ERROR"
     mark = "✓" if attempt.verdict.power == expected else "✗"
-    return f"{attempt.verdict.power.label} {mark}"
+    return f"{attempt.verdict.score:.1f} {attempt.verdict.power.label} {mark}"
 
 
 def _table(rows: list[list[str]]) -> str:
@@ -22,10 +22,10 @@ def text_report(evaluation: Evaluation) -> str:
         rank = labeled.card.edhrec_rank
         rows.append([name, labeled.expected.label, *(_cell(evaluation, name, c, labeled.expected) for c in evaluation.classifiers), str(rank) if rank else "-"])
 
-    summary = [["classifier", "exact", "mean steps off", "failed"]]
+    summary = [["classifier", "exact", "mean steps off", "mean score error", "failed"]]
     for classifier in evaluation.classifiers:
         card = evaluation.scorecard(classifier)
-        summary.append([classifier, f"{card.exact}/{card.answered}", f"{card.mean_ordinal_error:.2f}", str(card.failed)])
+        summary.append([classifier, f"{card.exact}/{card.answered}", f"{card.mean_ordinal_error:.2f}", f"{card.mean_score_error:.2f}", str(card.failed)])
 
     errors = [
         f"  {classifier} on {name}: {attempt.error}"
@@ -49,7 +49,7 @@ def results_json(evaluation: Evaluation, models: dict) -> dict:
             answers[classifier] = (
                 {"error": attempt.error}
                 if attempt.error
-                else {"power": attempt.verdict.power.label, "confidence": attempt.verdict.confidence, "detail": attempt.verdict.detail}
+                else {"power": attempt.verdict.power.label, "score": attempt.verdict.score, "confidence": attempt.verdict.confidence, "detail": attempt.verdict.detail}
             )
         cards.append({"name": labeled.card.name, "yours": labeled.expected.label, "edhrec_rank": labeled.card.edhrec_rank, "answers": answers})
     scorecards = {
@@ -58,6 +58,7 @@ def results_json(evaluation: Evaluation, models: dict) -> dict:
             "answered": s.answered,
             "failed": s.failed,
             "mean_ordinal_error": s.mean_ordinal_error,
+            "mean_score_error": s.mean_score_error,
             "confusion": {f"{expected}->{got}": n for (expected, got), n in s.confusion.items()},
         }
         for c in evaluation.classifiers
