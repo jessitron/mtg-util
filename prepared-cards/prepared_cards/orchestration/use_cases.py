@@ -22,3 +22,6 @@ class CardPicker:
         selection = Selection.of(names)
         self._store.save(selection)
         return selection
+
+    def save_and_render(self, names: Iterable[str]) -> str:
+        return self._store.render(self.save_selection(names))

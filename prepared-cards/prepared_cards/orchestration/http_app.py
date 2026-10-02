@@ -55,7 +55,7 @@ def make_server(picker: CardPicker, title: str, port: int, output_description: s
             if self.path != "/api/selection":
                 return self._not_found()
             names = json.loads(self.rfile.read(int(self.headers["Content-Length"])))
-            saved = picker.save_selection(names)
-            self._send({"saved": len(saved), "file": output_description})
+            text = picker.save_and_render(names)
+            self._send({"saved": len(text.splitlines()), "file": output_description, "text": text})
 
     return HTTPServer(("127.0.0.1", port), Handler)

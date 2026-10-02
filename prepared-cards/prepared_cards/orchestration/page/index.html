@@ -72,16 +72,16 @@ async function init() {
 }
 
 $("copy").onclick = async () => {
-  const names = [...picked];
-  const text = names.map(name => `1 ${name}`).join("\n") + "\n";  // Archidekt import format
   if (!window.isSecureContext) return alert("Clipboard needs https or localhost.");
+  // The server saves the picks and formats them. Handing the clipboard a promise keeps the click's permission while we wait.
+  const saved = fetch("/api/selection", {method: "POST", body: JSON.stringify([...picked])}).then(r => r.json());
+  const text = saved.then(r => new Blob([r.text], {type: "text/plain"}));
   try {
-    await navigator.clipboard.writeText(text);
-    $("status").textContent = `Copied ${names.length} cards. Paste into Archidekt's import box.`;
+    await navigator.clipboard.write([new ClipboardItem({"text/plain": text})]);
+    $("status").textContent = `Copied ${(await saved).saved} cards. Paste into Archidekt's import box.`;
   } catch (e) {
     $("status").textContent = `Copy failed: ${e.message}`;
   }
-  fetch("/api/selection", {method: "POST", body: JSON.stringify(names)});  // remember picks across reloads
 };
 init();
 </script>

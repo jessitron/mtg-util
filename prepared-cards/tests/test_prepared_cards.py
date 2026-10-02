@@ -104,6 +104,9 @@ class CardPickerTest(unittest.TestCase):
             def save(self, selection):
                 saved[:] = selection.names
 
+            def render(self, selection):
+                return "".join(f"1 {n}\n" for n in selection.names)
+
         class Catalog:
             def pool(self):
                 return CardPool.of([card("A", 1.0)])
@@ -113,6 +116,7 @@ class CardPickerTest(unittest.TestCase):
         picker = CardPicker(Catalog(), Store())
         picker.save_selection(["A", "A"])
         self.assertEqual(picker.current_selection().names, ("A",))
+        self.assertEqual(picker.save_and_render(["A", "B"]), "1 A\n1 B\n")
 
 
 class PageJsonTest(unittest.TestCase):
