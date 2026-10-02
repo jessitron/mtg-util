@@ -51,6 +51,8 @@ th { color: var(--ink-2); font-weight: 600; font-size: 12px; }
 td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
 .muted { color: var(--ink-muted); }
 .arm-name { font-weight: 600; }
+button.arm-sort { display: block; width: 100%; font: inherit; font-weight: 600; color: var(--ink); background: none; border: 0; border-radius: 6px; cursor: pointer; padding: 6px 2px; text-align: center; }
+button.arm-sort:hover, button.arm-sort[aria-pressed="true"] { background: var(--grid); }
 .model { color: var(--ink-2); font-size: 12px; }
 .bar { display: inline-block; height: 8px; border-radius: 0 4px 4px 0; background: var(--arm); vertical-align: middle; margin-left: 8px; }
 .bar.baseline { background: var(--baseline); }
@@ -186,7 +188,19 @@ function sortedCards(run) {
   const worst = (c) => Math.max(0, ...Object.values(c.answers).filter((a) => !a.error).map((a) => Math.abs(a.score - c.yours_score)));
   if (state.sort === "yours") cards.sort((a, b) => a.yours_score - b.yours_score);
   if (state.sort === "miss") cards.sort((a, b) => worst(b) - worst(a));
+  if (state.sort.startsWith("arm:")) {
+    const arm = state.sort.slice(4);
+    // Cards the classifier did not score (error or no answer) go last.
+    const key = (c) => { const a = answerOf(c, arm); return a && !a.error ? a.score : Infinity; };
+    cards.sort((a, b) => (key(a) === key(b) ? a.yours_score - b.yours_score : key(a) - key(b)));
+  }
   return cards;
+}
+function syncSortMenu(arms) {
+  const menu = $("sort");
+  menu.querySelectorAll("option[data-arm]").forEach((o) => o.remove());
+  for (const arm of arms) menu.append(el("option", { value: "arm:" + arm, "data-arm": "", text: `${arm}'s score, weak to powerful` }));
+  menu.value = state.sort;
 }
 const answerOf = (card, arm) => card.answers[arm] || null;
 
@@ -275,7 +289,11 @@ function cardCell(card) {
 }
 function columns(arms) { return `minmax(170px, 1.3fr) repeat(${arms.length}, minmax(96px, 1fr))`; }
 function armHeader(arm) {
-  return el("div", { class: "arm-name", style: "padding:6px 2px;text-align:center", text: arm === BASELINE ? `${arm} (baseline)` : arm });
+  const sorted = state.sort === "arm:" + arm;
+  const label = (arm === BASELINE ? `${arm} (baseline)` : arm) + (sorted ? " ▲" : "");
+  const button = el("button", { class: "arm-name arm-sort", type: "button", "aria-pressed": String(sorted), title: `Order cards by ${arm}'s score`, text: label });
+  button.addEventListener("click", () => { state.sort = sorted ? "yours" : "arm:" + arm; render(); });
+  return button;
 }
 
 /* ---------- 2. dumbbell grid: your tick, the arm's dot, one 0-2 axis per cell ---------- */
@@ -426,6 +444,7 @@ function render() {
   const arms = armsOf(run);
   const cards = sortedCards(run);
   $("detail").replaceChildren();
+  syncSortMenu(arms);
   renderRanking(run, arms);
   renderWhere(run, arms, cards);
   renderSame(run, arms, cards);
