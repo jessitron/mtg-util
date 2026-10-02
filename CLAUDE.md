@@ -30,6 +30,16 @@ A collection of MTG-related utility scripts, plus accumulated knowledge about Sc
 - **Main may move while you work in a worktree.** Rebase the worktree branch onto main (enter it with `EnterWorktree` and `path`) before the fast-forward, or the merge fails.
 - **macOS has BSD `sed`.** Skip `sed -i 's/a/b/'` for edits; use the Edit tool.
 
+## Card database (mtgjson)
+
+A local, read-only SQLite copy of every MTG card (MTGJSON's AllPrintings) lives in the main checkout. **Use it instead of calling Scryfall** when you need card text, mana value, types, legalities, or printings. Query it by absolute path, which works from a worktree:
+
+- `/Users/jessitron/code/jessitron/mtg-util/mtgjson/bin/mtgjson-card "Lightning Bolt"` — look up one card.
+- `/Users/jessitron/code/jessitron/mtg-util/mtgjson/bin/mtgjson-query "SQL"` — run any read-only SQL (`-json`, `-csv` for other formats).
+- `/Users/jessitron/code/jessitron/mtg-util/mtgjson/bin/mtgjson-schema [table]` — list tables or columns.
+
+Full usage and gotchas: [mtgjson/README.md](mtgjson/README.md). What the data holds and when it was downloaded: [reference/mtgjson.md](reference/mtgjson.md). Refresh with `mtgjson/run`, then update the download date in the reference. Never write to the database.
+
 ## Keeping docs current
 
 - Script behavior changes → update that script's README.

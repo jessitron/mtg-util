@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+# Show the MTGJSON database schema: all table names, or the columns of one table.
+# Uses absolute paths so it works from any directory, including a worktree.
+#
+# Usage: /Users/jessitron/code/jessitron/mtg-util/mtgjson/bin/mtgjson-schema [table]
+set -euo pipefail
+
+DB="/Users/jessitron/code/jessitron/mtg-util/mtgjson/data/AllPrintings.sqlite"
+
+if [[ ! -f "$DB" ]]; then
+  echo "No database at $DB" >&2
+  echo "Fetch it: /Users/jessitron/code/jessitron/mtg-util/mtgjson/run" >&2
+  exit 1
+fi
+
+if [[ $# -eq 0 ]]; then
+  exec sqlite3 -readonly "$DB" "select name from sqlite_master where type = 'table' order by name"
+fi
+
+# Table names are identifiers; refuse anything else rather than splice it into SQL.
+if [[ ! "$1" =~ ^[A-Za-z_][A-Za-z0-9_]*$ ]]; then
+  echo "not a table name: $1" >&2
+  exit 2
+fi
+exec sqlite3 -readonly -header -column "$DB" "select name, type from pragma_table_info('$1')"

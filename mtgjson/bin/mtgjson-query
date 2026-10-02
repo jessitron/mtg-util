@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+# Run a SQL query against the local MTGJSON card database (read-only).
+# Uses absolute paths so it works from any directory, including a worktree.
+#
+# Usage: /Users/jessitron/code/jessitron/mtg-util/mtgjson/bin/mtgjson-query [-column|-json|-csv|-line|-list] "SQL"
+# Default output is -column with headers.
+set -euo pipefail
+
+DB="/Users/jessitron/code/jessitron/mtg-util/mtgjson/data/AllPrintings.sqlite"
+
+if [[ ! -f "$DB" ]]; then
+  echo "No database at $DB" >&2
+  echo "Fetch it: /Users/jessitron/code/jessitron/mtg-util/mtgjson/run" >&2
+  exit 1
+fi
+
+mode="-column"
+if [[ "${1:-}" == -* ]]; then
+  mode="$1"
+  shift
+fi
+
+if [[ $# -lt 1 ]]; then
+  echo "usage: mtgjson-query [-column|-json|-csv|-line|-list] \"SQL\"" >&2
+  exit 2
+fi
+
+exec sqlite3 -readonly -header "$mode" "$DB" "$@"

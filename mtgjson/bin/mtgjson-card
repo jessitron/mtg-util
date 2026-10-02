@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+# Look up a card by exact name; prints one record per face (not per printing).
+# Uses absolute paths so it works from any directory, including a worktree.
+#
+# Usage: /Users/jessitron/code/jessitron/mtg-util/mtgjson/bin/mtgjson-card "Lightning Bolt"
+#        /Users/jessitron/code/jessitron/mtg-util/mtgjson/bin/mtgjson-card -json "Delver of Secrets"
+# A double-faced card matches on either its full name ("A // B") or one face name.
+set -euo pipefail
+
+BIN="/Users/jessitron/code/jessitron/mtg-util/mtgjson/bin"
+
+mode="-line"
+if [[ "${1:-}" == -* ]]; then
+  mode="$1"
+  shift
+fi
+
+if [[ $# -ne 1 ]]; then
+  echo "usage: mtgjson-card [-line|-json|-column] \"Card Name\"" >&2
+  exit 2
+fi
+
+name="${1//\'/\'\'}"  # double single quotes for SQL
+
+exec "$BIN/mtgjson-query" "$mode" "
+select name, faceName, side, manaCost, manaValue, type, text, power, toughness, loyalty,
+       colors, keywords, layout, edhrecRank, count(*) as printings, min(setCode) as someSet
+from cards
+where name = '$name' or faceName = '$name'
+group by name, coalesce(side, '')
+order by name, side"
