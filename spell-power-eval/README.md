@@ -102,8 +102,8 @@ Three tiers; dependencies point downward only.
 | Tier | Package | What lives there |
 | ---- | ------- | ---------------- |
 | I. Orchestration | `spell_power_eval/orchestration` | `evaluate` runs every classifier on every labeled card, and keeps going when one call fails. `report` builds the table and the results JSON. `http_app` serves the results page. |
-| II. Domain | `spell_power_eval/domain` | `Card` (with `facts()`, the text every classifier sees), `Power`, `Usage` and `estimate_cost` (`pricing.py`), the shared `rubric`, `LabeledCard` (a card plus your score) and `Scorecard`, the `AlwaysBalanced` baseline, and the ports `Classifier`, `CardCatalog`, and `RunStore`. No I/O. |
-| III. Interface | `spell_power_eval/adapters` | `ScryfallCatalog` (batched lookup, disk cache; the anti-corruption layer), `ClaudeClassifier`, `JevClassifier`, `LabelsFile`, `write_results`, `cards_page` (the HTML for `--page`). |
+| II. Domain | `spell_power_eval/domain` | `Card` (with `facts()`, the text every classifier sees, and `computed()`, the numbers we work out; a `note` and Scryfall's own `cmc` ride along), `Power`, `Usage` and `estimate_cost` (`pricing.py`), the shared `rubric`, `LabeledCard` (a card plus your score) and `Scorecard`, the `AlwaysBalanced` baseline, and the ports `Classifier`, `CardCatalog`, and `RunStore`. No I/O. |
+| III. Interface | `spell_power_eval/adapters` | `ScryfallCatalog` (batched lookup, a search for back-face names, disk cache; the anti-corruption layer; it turns a prepared spell's name into a spell-only `Card`), `ClaudeClassifier` and `JevClassifier` (each with a `claude_request` / `jev_request` builder that the cards page also calls, so the page shows what is really sent), `LabelsFile`, `write_results`, `cards_page` (the HTML for `--page`). |
 
 Every arm gets identical card facts and identical rubric wording (`domain/rubric.py`). Arithmetic such as power plus toughness per mana is computed in `Card.facts()`, because Jev's docs say to keep arithmetic in code.
 

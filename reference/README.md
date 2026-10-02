@@ -4,7 +4,7 @@ Accumulated knowledge about the APIs and resources our scripts use. One file per
 
 | Resource | Notes |
 | -------- | ----- |
-| Scryfall (https://scryfall.com/docs/api) | _to write_ |
+| Scryfall (https://scryfall.com/docs/api) | [scryfall.md](scryfall.md) (includes how to find a prepared card's spell; a sample card is in [examples/](examples/fra-425-diviner-of-victory-unwind-history.json)) |
 | Gatherer (https://gatherer.wizards.com) | [gatherer.md](gatherer.md) |
 | MTGJSON (https://mtgjson.com) | [mtgjson.md](mtgjson.md) |
 | Archidekt (https://archidekt.com) | _to write_ |

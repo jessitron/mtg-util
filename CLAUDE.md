@@ -25,6 +25,10 @@ A collection of MTG-related utility scripts, plus accumulated knowledge about Sc
 - **Chrome (the claude-in-chrome tools) refuses `file://` URLs.** To check a generated page in a browser, serve a copy over http on a throwaway port (`python3 -m http.server <port> --bind 127.0.0.1` from a temp directory). Check that the port is free first (`lsof -i :<port>`); Jess often has her own servers running. Afterward: clear `localStorage` on that origin, close the tab, stop the server, delete the copy.
 - **Ports in use.** prepared-cards defaults to 8765, spell-power-eval `--serve` to 8780, and Jess runs another server on 8799. Pick a different throwaway port for browser checks, stop the server afterward, and close the tab. Chrome blocks `file://`, so serve over http.
 - **Page tests with fixtures.** For a results page, copy `spell-power-eval/tests/fixtures/sample_run.json` into `results/` under a throwaway *timestamp-style* name such as `29991231T000000Z.json` (the server lists only those; `zz-x.json` is silently missing from the menu), then delete it. The fixture has costs; the real run in `results/` predates cost tracking and shows dashes. Never run a paid arm just to get data.
+- **Show people what the model sees.** For an eval, build each request in one function that both the classifier and any page call, so the page can't drift from what is sent.
+- **Worktree sessions refuse compound shell commands.** A Bash call that mixes the word "git", `$VARS`, or a `cd` with other commands can be rejected, even inside a heredoc. Use literal paths, one plain command per call, and the Edit tool for text with such words. `CLAUDE_JOB_DIR` is `/Users/jessitron/.claude-personal/jobs/<id>`.
+- **Main may move while you work in a worktree.** Rebase the worktree branch onto main (enter it with `EnterWorktree` and `path`) before the fast-forward, or the merge fails.
+- **macOS has BSD `sed`.** Skip `sed -i 's/a/b/'` for edits; use the Edit tool.
 
 ## Keeping docs current
 
