@@ -57,7 +57,7 @@ The page reads `spell_power_eval/orchestration/results_page.html` on each reques
 
 ## Cost
 
-Ten cards is a few cents at most. Each card is about 150-300 input tokens and a short answer. Prices ($ per million input/output tokens, cached 2026-09-25): Haiku 4.5 $1/$5, Sonnet 5.5 $2/$10, Opus 5.5 $4/$20, Jev $0.042 input and free output. Sonnet and Opus think by default, so they use more output tokens than Haiku.
+Ten cards is a few cents at most. Each card is about 150-300 input tokens and a short answer. Prices ($ per million input/output tokens, cached 2026-09-25): Haiku 4.5 $1/$5, Sonnet 5.5 $2/$10, Opus 5.5 $4/$20, Jev $0.042 input and free output. Sonnet and Opus think by default, so they use more output tokens than Haiku. Every run now reports its own estimate (see above); the prices live in `spell_power_eval/domain/pricing.py`, and `reference/anthropic-api.md` and `reference/jev.md` give their source.
 
 ## Status
 
