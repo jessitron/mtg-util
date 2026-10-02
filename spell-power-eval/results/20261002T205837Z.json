@@ -1,0 +1,457 @@
+{
+  "models": {
+    "always-balanced": "",
+    "haiku": "claude-haiku-4-5",
+    "sonnet": "claude-sonnet-5-5",
+    "jev-choice": "",
+    "jev-score": ""
+  },
+  "cards": [
+    {
+      "name": "Lightning Bolt",
+      "yours": "powerful",
+      "yours_score": 1.6,
+      "edhrec_rank": 157,
+      "answers": {
+        "always-balanced": {
+          "power": "balanced",
+          "score": 1.0,
+          "confidence": null,
+          "detail": "no reading of the card"
+        },
+        "haiku": {
+          "power": "powerful",
+          "score": 2.0,
+          "confidence": null,
+          "detail": "Lightning Bolt is the gold standard for efficient creature removal and direct damage at one mana, doing far more than typical one-mana spells and serving as a format staple across virtually all constructed Magic formats where it is legal."
+        },
+        "sonnet": {
+          "power": "powerful",
+          "score": 2.0,
+          "confidence": null,
+          "detail": "Three damage to any target at instant speed for a single mana is far more efficient than the usual rate for burn, so it is played in nearly every red deck that can use it."
+        },
+        "jev-choice": {
+          "power": "powerful",
+          "score": 1.54,
+          "confidence": 0.3,
+          "detail": "balanced 0.46, powerful 0.54, weak 0.00"
+        },
+        "jev-score": {
+          "power": "powerful",
+          "score": 1.65,
+          "confidence": 0.47,
+          "detail": "weak 0.00, balanced 0.35, powerful 0.65"
+        }
+      }
+    },
+    {
+      "name": "Sol Ring",
+      "yours": "powerful",
+      "yours_score": 2.0,
+      "edhrec_rank": 1,
+      "answers": {
+        "always-balanced": {
+          "power": "balanced",
+          "score": 1.0,
+          "confidence": null,
+          "detail": "no reading of the card"
+        },
+        "haiku": {
+          "power": "powerful",
+          "score": 2.0,
+          "confidence": null,
+          "detail": "Sol Ring produces two mana for a one-mana investment with no drawback, dramatically accelerating mana production and outpacing what one mana should reasonably purchase in a typical game."
+        },
+        "sonnet": {
+          "power": "powerful",
+          "score": 2.0,
+          "confidence": null,
+          "detail": "For just one mana, Sol Ring returns its cost immediately and then gives a net +1 mana every turn, which is a huge acceleration far beyond what a 1-mana card normally buys, so it fits in every deck that can play it."
+        },
+        "jev-choice": {
+          "power": "powerful",
+          "score": 1.95,
+          "confidence": 0.94,
+          "detail": "balanced 0.03, weak 0.01, powerful 0.96"
+        },
+        "jev-score": {
+          "power": "powerful",
+          "score": 1.91,
+          "confidence": 0.86,
+          "detail": "weak 0.03, balanced 0.04, powerful 0.93"
+        }
+      }
+    },
+    {
+      "name": "Llanowar Elves",
+      "yours": "powerful",
+      "yours_score": 1.5,
+      "edhrec_rank": 58,
+      "answers": {
+        "always-balanced": {
+          "power": "balanced",
+          "score": 1.0,
+          "confidence": null,
+          "detail": "no reading of the card"
+        },
+        "haiku": {
+          "power": "powerful",
+          "score": 2.0,
+          "confidence": null,
+          "detail": "Llanowar Elves is a one-mana creature that provides mana acceleration, a classic rate for green that enables turn-two threats and is a staple in almost every format where it's legal."
+        },
+        "sonnet": {
+          "power": "powerful",
+          "score": 1.8,
+          "confidence": null,
+          "detail": "A one-mana 1/1 that taps for G accelerates your mana development by a full turn, which is a staple effect worth far more than its cost, even though the body is fragile."
+        },
+        "jev-choice": {
+          "power": "powerful",
+          "score": 1.6,
+          "confidence": 0.45,
+          "detail": "weak 0.03, balanced 0.34, powerful 0.63"
+        },
+        "jev-score": {
+          "power": "powerful",
+          "score": 1.65,
+          "confidence": 0.47,
+          "detail": "weak 0.03, balanced 0.29, powerful 0.68"
+        }
+      }
+    },
+    {
+      "name": "Grizzly Bears",
+      "yours": "weak",
+      "yours_score": 0.0,
+      "edhrec_rank": 8119,
+      "answers": {
+        "always-balanced": {
+          "power": "balanced",
+          "score": 1.0,
+          "confidence": null,
+          "detail": "no reading of the card"
+        },
+        "haiku": {
+          "power": "balanced",
+          "score": 1.0,
+          "confidence": null,
+          "detail": "Grizzly Bears is a straightforward and efficient 2/2 body for two mana that has defined the baseline for creature efficiency in Magic for decades, making it the textbook example of fair, balanced rate."
+        },
+        "sonnet": {
+          "power": "balanced",
+          "score": 1.0,
+          "confidence": null,
+          "detail": "A vanilla vanilla 2/2 for two mana is the baseline rate for creatures, with no abilities to add value, so it is fairly costed but unexceptional."
+        },
+        "jev-choice": {
+          "power": "balanced",
+          "score": 0.98,
+          "confidence": 0.94,
+          "detail": "balanced 0.96, weak 0.03, powerful 0.01"
+        },
+        "jev-score": {
+          "power": "balanced",
+          "score": 0.99,
+          "confidence": 0.92,
+          "detail": "weak 0.03, balanced 0.95, powerful 0.02"
+        }
+      }
+    },
+    {
+      "name": "Serra Angel",
+      "yours": "balanced",
+      "yours_score": 1.0,
+      "edhrec_rank": 9451,
+      "answers": {
+        "always-balanced": {
+          "power": "balanced",
+          "score": 1.0,
+          "confidence": null,
+          "detail": "no reading of the card"
+        },
+        "haiku": {
+          "power": "powerful",
+          "score": 1.5,
+          "confidence": null,
+          "detail": "Serra Angel is a efficient flyer with vigilance that offers solid stats and evasion for five mana, making it a fair rate that has historically been a format staple and remains a reasonable Limited pick."
+        },
+        "sonnet": {
+          "power": "balanced",
+          "score": 1.3,
+          "confidence": null,
+          "detail": "A 5-mana 4/4 with flying and vigilance is a solid, efficient evasive threat that attacks and defends well, but it is fairly costed and not exceptional relative to what 5 mana typically buys."
+        },
+        "jev-choice": {
+          "power": "balanced",
+          "score": 1.29,
+          "confidence": 0.48,
+          "detail": "balanced 0.65, weak 0.03, powerful 0.32"
+        },
+        "jev-score": {
+          "power": "balanced",
+          "score": 1.3,
+          "confidence": 0.44,
+          "detail": "weak 0.04, balanced 0.62, powerful 0.34"
+        }
+      }
+    },
+    {
+      "name": "Divination",
+      "yours": "weak",
+      "yours_score": 0.4,
+      "edhrec_rank": 6264,
+      "answers": {
+        "always-balanced": {
+          "power": "balanced",
+          "score": 1.0,
+          "confidence": null,
+          "detail": "no reading of the card"
+        },
+        "haiku": {
+          "power": "balanced",
+          "score": 1.0,
+          "confidence": null,
+          "detail": "Divination is a fairly costed draw spell that has been reprinted numerous times as a standard reference point for three mana of card advantage, matching the expected value of card draw in typical games."
+        },
+        "sonnet": {
+          "power": "balanced",
+          "score": 0.8,
+          "confidence": null,
+          "detail": "Three mana at sorcery speed to draw two cards is the baseline rate for card draw in blue; it is fair and playable filler but slow and not impactful enough to be a staple, so it is balanced to slightly below par."
+        },
+        "jev-choice": {
+          "power": "balanced",
+          "score": 0.94,
+          "confidence": 0.46,
+          "detail": "balanced 0.64, weak 0.21, powerful 0.15"
+        },
+        "jev-score": {
+          "power": "balanced",
+          "score": 0.95,
+          "confidence": 0.32,
+          "detail": "weak 0.25, balanced 0.55, powerful 0.20"
+        }
+      }
+    },
+    {
+      "name": "Wrath of God",
+      "yours": "powerful",
+      "yours_score": 1.8,
+      "edhrec_rank": 677,
+      "answers": {
+        "always-balanced": {
+          "power": "balanced",
+          "score": 1.0,
+          "confidence": null,
+          "detail": "no reading of the card"
+        },
+        "haiku": {
+          "power": "powerful",
+          "score": 2.0,
+          "confidence": null,
+          "detail": "A board wipe that destroys all creatures for 4 mana is a powerful effect that can swing games dramatically, making it one of the most impactful spells at its mana cost and a format staple across multiple Magic formats."
+        },
+        "sonnet": {
+          "power": "balanced",
+          "score": 1.4,
+          "confidence": null,
+          "detail": "Four mana for an unconditional, symmetrical board wipe is the standard rate for a classic sweeper, and it is strong in control decks but situational and card-neutral at best, so it is fairly costed to slightly above par."
+        },
+        "jev-choice": {
+          "power": "powerful",
+          "score": 1.5699999999999998,
+          "confidence": 0.38,
+          "detail": "powerful 0.58, weak 0.01, balanced 0.41"
+        },
+        "jev-score": {
+          "power": "balanced",
+          "score": 1.47,
+          "confidence": 0.21,
+          "detail": "weak 0.02, balanced 0.48, powerful 0.50"
+        }
+      }
+    },
+    {
+      "name": "Craw Wurm",
+      "yours": "weak",
+      "yours_score": 0.1,
+      "edhrec_rank": 22390,
+      "answers": {
+        "always-balanced": {
+          "power": "balanced",
+          "score": 1.0,
+          "confidence": null,
+          "detail": "no reading of the card"
+        },
+        "haiku": {
+          "power": "balanced",
+          "score": 0.9,
+          "confidence": null,
+          "detail": "Craw Wurm is a straightforward 6/4 creature for six mana that offers reasonable stats-per-mana but no special abilities, making it a serviceable but unremarkable limited filler that sees little constructed play outside of budget decks."
+        },
+        "sonnet": {
+          "power": "balanced",
+          "score": 0.6,
+          "confidence": null,
+          "detail": "A vanilla 6/4 for six mana has decent stats but no abilities, so it is slow and easily outclassed by cheaper creatures or removal, making it below par for its cost, though playable filler in limited."
+        },
+        "jev-choice": {
+          "power": "balanced",
+          "score": 0.8300000000000001,
+          "confidence": 0.65,
+          "detail": "balanced 0.77, weak 0.20, powerful 0.03"
+        },
+        "jev-score": {
+          "power": "balanced",
+          "score": 0.91,
+          "confidence": 0.69,
+          "detail": "weak 0.15, balanced 0.79, powerful 0.06"
+        }
+      }
+    },
+    {
+      "name": "Mind Control",
+      "yours": "balanced",
+      "yours_score": 1.1,
+      "edhrec_rank": 12911,
+      "answers": {
+        "always-balanced": {
+          "power": "balanced",
+          "score": 1.0,
+          "confidence": null,
+          "detail": "no reading of the card"
+        },
+        "haiku": {
+          "power": "balanced",
+          "score": 1.0,
+          "confidence": null,
+          "detail": "Mind Control is a solid mid-game tempo play that permanently steals a creature for 5 mana, which is fair value for taking control of an existing board threat, though it requires a creature to already exist and can be answered by removing either the creature or the enchantment."
+        },
+        "sonnet": {
+          "power": "powerful",
+          "score": 1.6,
+          "confidence": null,
+          "detail": "For five mana, Mind Control permanently steals the opponent's best creature, a huge two-for-one tempo and card swing that is only held back by being an Aura vulnerable to enchantment removal or sacrifice, so it is strong but not absurd for its cost."
+        },
+        "jev-choice": {
+          "power": "balanced",
+          "score": 1.07,
+          "confidence": 0.12,
+          "detail": "weak 0.26, powerful 0.33, balanced 0.41"
+        },
+        "jev-score": {
+          "power": "balanced",
+          "score": 0.96,
+          "confidence": 0.16,
+          "detail": "weak 0.30, balanced 0.44, powerful 0.26"
+        }
+      }
+    },
+    {
+      "name": "Cancel",
+      "yours": "balanced",
+      "yours_score": 1.0,
+      "edhrec_rank": 2073,
+      "answers": {
+        "always-balanced": {
+          "power": "balanced",
+          "score": 1.0,
+          "confidence": null,
+          "detail": "no reading of the card"
+        },
+        "haiku": {
+          "power": "balanced",
+          "score": 1.0,
+          "confidence": null,
+          "detail": "Cancel is a straightforward counterspell at three mana that does exactly what you'd expect for its cost, providing efficient interaction in blue without extra value or restrictions beyond a moderate mana investment."
+        },
+        "sonnet": {
+          "power": "balanced",
+          "score": 0.8,
+          "confidence": null,
+          "detail": "Cancel is an unconditional hard counterspell, but at three mana it is the vanilla baseline for that effect and offers no bonus such as card advantage or flexibility, so it is fairly costed yet unexciting and generally outclassed by cheaper or more versatile counters."
+        },
+        "jev-choice": {
+          "power": "balanced",
+          "score": 1.17,
+          "confidence": 0.66,
+          "detail": "weak 0.03, powerful 0.20, balanced 0.77"
+        },
+        "jev-score": {
+          "power": "balanced",
+          "score": 1.13,
+          "confidence": 0.6,
+          "detail": "weak 0.07, balanced 0.73, powerful 0.20"
+        }
+      }
+    }
+  ],
+  "scorecards": {
+    "always-balanced": {
+      "exact": 3,
+      "answered": 10,
+      "failed": 0,
+      "mean_ordinal_error": 0.7,
+      "mean_score_error": 0.55,
+      "confusion": {
+        "powerful->balanced": 4,
+        "weak->balanced": 3,
+        "balanced->balanced": 3
+      }
+    },
+    "haiku": {
+      "exact": 6,
+      "answered": 10,
+      "failed": 0,
+      "mean_ordinal_error": 0.4,
+      "mean_score_error": 0.41,
+      "confusion": {
+        "powerful->powerful": 4,
+        "weak->balanced": 3,
+        "balanced->powerful": 1,
+        "balanced->balanced": 2
+      }
+    },
+    "sonnet": {
+      "exact": 5,
+      "answered": 10,
+      "failed": 0,
+      "mean_ordinal_error": 0.5,
+      "mean_score_error": 0.4,
+      "confusion": {
+        "powerful->powerful": 3,
+        "weak->balanced": 3,
+        "balanced->balanced": 2,
+        "powerful->balanced": 1,
+        "balanced->powerful": 1
+      }
+    },
+    "jev-choice": {
+      "exact": 7,
+      "answered": 10,
+      "failed": 0,
+      "mean_ordinal_error": 0.3,
+      "mean_score_error": 0.31799999999999995,
+      "confusion": {
+        "powerful->powerful": 4,
+        "weak->balanced": 3,
+        "balanced->balanced": 3
+      }
+    },
+    "jev-score": {
+      "exact": 6,
+      "answered": 10,
+      "failed": 0,
+      "mean_ordinal_error": 0.4,
+      "mean_score_error": 0.354,
+      "confusion": {
+        "powerful->powerful": 3,
+        "weak->balanced": 3,
+        "balanced->balanced": 3,
+        "powerful->balanced": 1
+      }
+    }
+  }
+}

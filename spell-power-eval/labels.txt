@@ -7,13 +7,13 @@
 # Label first, before you look at any model's answer, so the models can't anchor you.
 # A `?` means "not judged yet". Those cards are skipped (and cost nothing).
 # Swap in any cards you like; names must match Scryfall exactly (a front face alone is fine).
-? | Lightning Bolt
-? | Sol Ring
-? | Llanowar Elves
-? | Grizzly Bears
-? | Serra Angel
-? | Divination
-? | Wrath of God
-? | Craw Wurm
-? | Cancel
-? | Mind Control
+1.8 | Lightning Bolt
+2.0 | Sol Ring
+1.8 | Llanowar Elves
+0.7 | Grizzly Bears
+1.1 | Serra Angel
+0.4 | Divination
+1.7 | Wrath of God
+0.3 | Craw Wurm
+1.1 | Mind Control
+1.0 | Cancel
