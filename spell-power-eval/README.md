@@ -42,8 +42,9 @@ Ten cards is a few cents at most. Each card is about 150-300 input tokens and a 
 
 ## Status
 
-- Unit tests pass. On 2026-10-02 every arm (haiku, sonnet, opus, jev-choice, jev-score) ran against the real APIs on one card (Serra Angel) and returned a verdict. Haiku 4.5 accepts the SDK's structured-output call (`messages.parse`).
-- That run only proved the plumbing. No one has yet compared a model's accuracy against real labels.
+- Unit tests pass. Every arm (haiku, sonnet, opus, jev-choice, jev-score) has run against the real APIs. Haiku 4.5 accepts the SDK's structured-output call (`messages.parse`).
+- **First comparison, 2026-10-02: Jess's ten cards, ten scores.** Mean score error (lower is better): jev-choice 0.32, jev-score 0.35, sonnet 0.40, haiku 0.41, always-balanced 0.55. Exact label matches: jev-choice 7/10, haiku 6, jev-score 6, sonnet 5, always-balanced 3.
+- **Read that run as a hint, not a result.** Ten cards means one card moves a score by 0.05 or more, and the gaps between the four real arms are smaller than that noise. What it does show: all four beat the rubber stamp, and Jev is at least competitive on Magic cards despite being a small classifier. The next step is more cards.
 - Keys live in an untracked `../.be` file (globally git-ignored). Run `source ../.be` before `./run`.
 
 ## Tests
@@ -61,13 +62,14 @@ Three tiers; dependencies point downward only.
 | Tier | Package | What lives there |
 | ---- | ------- | ---------------- |
 | I. Orchestration | `spell_power_eval/orchestration` | `evaluate` runs every classifier on every labeled card, and keeps going when one call fails. `report` builds the table and the results JSON. |
-| II. Domain | `spell_power_eval/domain` | `Card` (with `facts()`, the text every classifier sees), `Power`, the shared `rubric`, `Scorecard`, the `AlwaysBalanced` baseline, and the ports `Classifier` and `CardCatalog`. No I/O. |
-| III. Interface | `spell_power_eval/adapters` | `ScryfallCatalog` (batched lookup, disk cache; the anti-corruption layer), `ClaudeClassifier`, `JevClassifier`, `LabelsFile`, `write_results`. |
+| II. Domain | `spell_power_eval/domain` | `Card` (with `facts()`, the text every classifier sees), `Power`, the shared `rubric`, `LabeledCard` (a card plus your score) and `Scorecard`, the `AlwaysBalanced` baseline, and the ports `Classifier` and `CardCatalog`. No I/O. |
+| III. Interface | `spell_power_eval/adapters` | `ScryfallCatalog` (batched lookup, disk cache; the anti-corruption layer), `ClaudeClassifier`, `JevClassifier`, `LabelsFile`, `write_results`, `cards_page` (the HTML for `--page`). |
 
 Every arm gets identical card facts and identical rubric wording (`domain/rubric.py`). Arithmetic such as power plus toughness per mana is computed in `Card.facts()`, because Jev's docs say to keep arithmetic in code.
 
 ## Ideas for later
 
-- More cards, and a second label source (17Lands win rates for one set).
+- A results viewer: `./run --serve` serving an HTML page that draws a run's JSON (your score against each arm's, the error by card and arm, and each arm's reasons).
+- More cards (the first run's gaps are inside the noise), and a second label source (17Lands win rates for one set).
 - Self-consistency: ask Claude several times and compare to Jev's confidence.
 - Few-shot examples in the card state, to see whether Jev's lack of fine-tuning matters.
