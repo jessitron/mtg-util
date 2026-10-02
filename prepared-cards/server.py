@@ -76,7 +76,13 @@ if __name__ == "__main__":
     try:
         server = HTTPServer(("127.0.0.1", PORT), Handler)
     except OSError as e:
-        sys.exit(f"Can't listen on port {PORT}: {e}. Something else is using it; try PORT=8766 ./run")
+        sys.exit(
+            f"Port {PORT} is already in use, so the server can't start.\n"
+            f"Most likely a previous copy of this server is still running.\n"
+            f"  See what has the port:  lsof -i :{PORT}\n"
+            f"  Stop it:                kill $(lsof -ti :{PORT})\n"
+            f"  Or use another port:    PORT={PORT + 1} ./run"
+        )
     n = len(load_cards()["cards"])
     print(f"{n} cards for query {QUERY!r}. http://localhost:{PORT}  (writes {OUTPUT})", file=sys.stderr)
     server.serve_forever()
