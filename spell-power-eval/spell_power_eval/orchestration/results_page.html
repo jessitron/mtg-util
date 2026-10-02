@@ -1,0 +1,481 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>spell-power-eval results</title>
+<style>
+/* Tokens from the dataviz palette. Light is the default; dark follows the OS, and the theme button overrides both ways. */
+:root {
+  color-scheme: light;
+  --page: #f9f9f7; --surface: #fcfcfb;
+  --ink: #0b0b0b; --ink-2: #52514e; --ink-muted: #898781;
+  --grid: #e1e0d9; --axis: #c3c2b7; --border: rgba(11,11,11,0.10);
+  --arm: #2a78d6;          /* categorical slot 1: every Claude and Jev arm. The column names the arm. */
+  --baseline: #898781;     /* muted gray: the always-balanced baseline is context */
+  --pole-neg: #2a78d6;     /* diverging: arm rates weaker than you */
+  --pole-pos: #e34948;     /* diverging: arm rates more powerful than you */
+  --mid: #f0efec;
+}
+@media (prefers-color-scheme: dark) {
+  :root:where(:not([data-theme="light"])) {
+    color-scheme: dark;
+    --page: #0d0d0d; --surface: #1a1a19;
+    --ink: #ffffff; --ink-2: #c3c2b7; --ink-muted: #898781;
+    --grid: #2c2c2a; --axis: #383835; --border: rgba(255,255,255,0.10);
+    --arm: #3987e5; --baseline: #898781; --pole-neg: #3987e5; --pole-pos: #e66767; --mid: #383835;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --page: #0d0d0d; --surface: #1a1a19;
+  --ink: #ffffff; --ink-2: #c3c2b7; --ink-muted: #898781;
+  --grid: #2c2c2a; --axis: #383835; --border: rgba(255,255,255,0.10);
+  --arm: #3987e5; --baseline: #898781; --pole-neg: #3987e5; --pole-pos: #e66767; --mid: #383835;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--page); color: var(--ink); font: 14px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif; }
+main { max-width: 1100px; margin: 0 auto; padding: 20px 16px 80px; }
+h1 { font-size: 20px; margin: 0 0 12px; }
+h2 { font-size: 16px; margin: 0 0 4px; }
+.sub { color: var(--ink-2); margin: 0 0 12px; max-width: 70ch; }
+.filters { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; margin-bottom: 16px; }
+select, button.tool { font: inherit; color: var(--ink); background: var(--surface); border: 1px solid var(--axis); border-radius: 6px; padding: 5px 10px; }
+button.tool[aria-pressed="true"] { border-color: var(--ink); }
+label.field { color: var(--ink-2); display: flex; gap: 6px; align-items: center; }
+:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px; margin-bottom: 16px; overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; }
+th, td { text-align: left; padding: 6px 10px; border-bottom: 1px solid var(--grid); vertical-align: middle; }
+th { color: var(--ink-2); font-weight: 600; font-size: 12px; }
+td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+.muted { color: var(--ink-muted); }
+.arm-name { font-weight: 600; }
+.model { color: var(--ink-2); font-size: 12px; }
+.bar { display: inline-block; height: 8px; border-radius: 0 4px 4px 0; background: var(--arm); vertical-align: middle; margin-left: 8px; }
+.bar.baseline { background: var(--baseline); }
+.headline { font-weight: 700; font-size: 15px; }
+.bad { font-weight: 600; }
+.legend { display: flex; gap: 18px; flex-wrap: wrap; color: var(--ink-2); font-size: 12px; margin: 8px 0 12px; align-items: center; }
+.legend span { display: inline-flex; gap: 6px; align-items: center; }
+.legend svg { display: block; }
+.ramp { display: inline-block; width: 120px; height: 10px; border-radius: 3px; background: linear-gradient(to right, color-mix(in srgb, var(--pole-neg) 80%, var(--mid)), var(--mid), color-mix(in srgb, var(--pole-pos) 80%, var(--mid))); }
+.grid-row { display: grid; align-items: center; border-bottom: 1px solid var(--grid); }
+.grid-head { position: sticky; top: 0; background: var(--surface); z-index: 1; color: var(--ink-2); font-size: 12px; font-weight: 600; }
+.cardcell { display: flex; gap: 10px; align-items: center; padding: 6px 8px 6px 0; min-width: 0; }
+.cardcell img, .cardcell .noimg { width: 40px; height: 56px; border-radius: 3px; flex: none; background: var(--grid); object-fit: cover; }
+.cardcell .noimg { display: grid; place-items: center; font-size: 10px; color: var(--ink-muted); }
+.cardcell .name { font-weight: 600; overflow-wrap: anywhere; }
+.cardcell .cost { color: var(--ink-muted); font-size: 12px; }
+.cell { all: unset; box-sizing: border-box; display: block; width: 100%; padding: 4px 2px; cursor: pointer; border-radius: 4px; text-align: center; color: var(--ink); }
+.cell:hover, .cell:focus-visible, .cell[aria-pressed="true"] { background: var(--grid); }
+.cell:focus-visible { outline: 2px solid var(--ink); }
+.cell svg { display: block; width: 100%; height: 30px; }
+.cell .errtext { font-size: 12px; font-weight: 600; }
+.heat { font-variant-numeric: tabular-nums; font-weight: 600; padding: 8px 2px; margin: 1px; border-radius: 4px; }
+.heat.err { background: var(--grid); font-weight: 600; font-size: 12px; }
+#tip { position: fixed; z-index: 10; max-width: 340px; background: var(--surface); color: var(--ink); border: 1px solid var(--axis); border-radius: 8px; padding: 8px 10px; box-shadow: 0 4px 16px rgba(0,0,0,0.18); pointer-events: none; font-size: 13px; }
+#tip[hidden] { display: none; }
+.tip-value { font-weight: 700; font-size: 15px; }
+.tip-label { color: var(--ink-2); }
+.tip-detail { margin-top: 4px; color: var(--ink-2); white-space: pre-wrap; overflow-wrap: anywhere; }
+#detail { border-top: 1px solid var(--grid); margin-top: 12px; padding-top: 10px; min-height: 3em; }
+#detail:empty::before { content: "Click a cell to keep its reason here."; color: var(--ink-muted); }
+.detail-text { white-space: pre-wrap; overflow-wrap: anywhere; color: var(--ink-2); }
+details summary { cursor: pointer; color: var(--ink-2); }
+.err-text { font-weight: 600; }
+.empty { padding: 24px; color: var(--ink-2); }
+.hidden { display: none; }
+</style>
+</head>
+<body>
+<main>
+  <h1>spell-power-eval results</h1>
+  <div class="filters">
+    <label class="field">Run <select id="run-picker" aria-label="Run"></select></label>
+    <label class="field">Order cards by
+      <select id="sort">
+        <option value="yours">your score, weak to powerful</option>
+        <option value="miss">biggest miss first</option>
+        <option value="file">order in the run</option>
+      </select>
+    </label>
+    <button class="tool" id="table-toggle" aria-pressed="false" type="button">Table view</button>
+    <button class="tool" id="theme-toggle" type="button">Theme: auto</button>
+  </div>
+  <p id="status" class="sub" role="status"></p>
+  <div id="content" class="hidden">
+    <section class="card" aria-labelledby="h-rank">
+      <h2 id="h-rank">Which classifier agrees best with you?</h2>
+      <p class="sub">Ranked by mean score error: the average distance between its 0 to 2 score and yours. Lower is better.</p>
+      <table id="rank"></table>
+    </section>
+
+    <div id="chart-view">
+      <section class="card" aria-labelledby="h-where">
+        <h2 id="h-where">Where do they disagree with you?</h2>
+        <p class="sub">One column per classifier, one 0 to 2 axis in every cell. The ink tick is your score; the dot is the classifier's. The line between them is the miss.</p>
+        <div class="legend" id="legend-where"></div>
+        <div id="where"></div>
+        <div id="detail" aria-live="polite"></div>
+      </section>
+      <section class="card" aria-labelledby="h-same">
+        <h2 id="h-same">Where do they miss in the same direction?</h2>
+        <p class="sub">Signed error: the classifier's score minus yours. Blue rates the card weaker than you do, red rates it more powerful. The last row averages each column, so a lean in one direction shows up as bias.</p>
+        <div class="legend" id="legend-same"></div>
+        <div id="same"></div>
+      </section>
+    </div>
+
+    <div id="table-view" class="hidden">
+      <section class="card" aria-labelledby="h-table">
+        <h2 id="h-table">Every answer</h2>
+        <p class="sub">The same data as the charts, with each reason in full. The error is your score subtracted from the classifier's.</p>
+        <table id="answers"></table>
+      </section>
+      <section class="card" aria-labelledby="h-conf">
+        <h2 id="h-conf">Confusion counts</h2>
+        <p class="sub">How often each classifier answered a label (right of the arrow) when you said another (left of it). Labels are the scores rounded.</p>
+        <table id="confusion"></table>
+      </section>
+    </div>
+  </div>
+</main>
+<div id="tip" role="tooltip" hidden></div>
+
+<script>
+"use strict";
+// Everything from the run JSON reaches the DOM through textContent (see el()), never innerHTML.
+const ARM_ORDER = ["always-balanced", "haiku", "sonnet", "opus", "jev-choice", "jev-score"];
+const BASELINE = "always-balanced";
+const LABELS = ["weak", "balanced", "powerful"];
+const SVG_NS = "http://www.w3.org/2000/svg";
+
+const state = { run: null, sort: "yours", pinned: null };
+
+function el(tag, props = {}, ...children) {
+  const node = document.createElement(tag);
+  for (const [key, value] of Object.entries(props)) {
+    if (key === "class") node.className = value;
+    else if (key === "text") node.textContent = value;
+    else node.setAttribute(key, value);
+  }
+  for (const child of children) node.append(child);
+  return node;
+}
+function svg(tag, attrs = {}, ...children) {
+  const node = document.createElementNS(SVG_NS, tag);
+  for (const [key, value] of Object.entries(attrs)) node.setAttribute(key, value);
+  for (const child of children) node.append(child);
+  return node;
+}
+const $ = (id) => document.getElementById(id);
+const fmt = (n, digits = 2) => Number(n).toFixed(digits);
+const signed = (n) => { const r = Number(n.toFixed(1)); return (r > 0 ? "+" : r < 0 ? "−" : "") + Math.abs(r).toFixed(1); };
+const labelOf = (score) => LABELS[Math.min(2, Math.max(0, Math.round(score)))];
+
+function armsOf(run) {
+  const seen = new Set(Object.keys(run.scorecards || {}));
+  for (const card of run.cards) for (const arm of Object.keys(card.answers)) seen.add(arm);
+  const known = ARM_ORDER.filter((a) => seen.has(a));
+  return [...known, ...[...seen].filter((a) => !ARM_ORDER.includes(a)).sort()];
+}
+function sortedCards(run) {
+  const cards = run.cards.slice();
+  const worst = (c) => Math.max(0, ...Object.values(c.answers).filter((a) => !a.error).map((a) => Math.abs(a.score - c.yours_score)));
+  if (state.sort === "yours") cards.sort((a, b) => a.yours_score - b.yours_score);
+  if (state.sort === "miss") cards.sort((a, b) => worst(b) - worst(a));
+  return cards;
+}
+const answerOf = (card, arm) => card.answers[arm] || null;
+
+/* ---------- the read-out shared by hover, focus, and click ---------- */
+function readout(card, arm) {
+  const answer = answerOf(card, arm);
+  const box = el("div");
+  box.append(el("div", { class: "tip-label", text: `${arm} on ${card.name}` }));
+  if (!answer) { box.append(el("div", { text: "No answer in this run." })); return box; }
+  if (answer.error) {
+    box.append(el("div", { class: "tip-value", text: "Error" }), el("div", { class: "detail-text tip-detail", text: answer.error }));
+    return box;
+  }
+  const miss = answer.score - card.yours_score;
+  box.append(
+    el("div", { class: "tip-value", text: `${fmt(answer.score)} ${answer.power}` }),
+    el("div", { class: "tip-label", text: `You: ${fmt(card.yours_score, 1)} ${card.yours}. Off by ${signed(miss)}.` }),
+  );
+  if (answer.confidence != null) box.append(el("div", { class: "tip-label", text: `Confidence ${fmt(answer.confidence)}` }));
+  if (answer.detail) box.append(el("div", { class: "tip-detail", text: answer.detail }));
+  return box;
+}
+const tip = $("tip");
+function showTip(target, card, arm) {
+  tip.replaceChildren(readout(card, arm));
+  tip.hidden = false;
+  const r = target.getBoundingClientRect();
+  const left = Math.min(window.innerWidth - tip.offsetWidth - 8, Math.max(8, r.left + r.width / 2 - tip.offsetWidth / 2));
+  const below = r.bottom + 6 + tip.offsetHeight < window.innerHeight;
+  tip.style.left = left + "px";
+  tip.style.top = (below ? r.bottom + 6 : r.top - 6 - tip.offsetHeight) + "px";
+}
+const hideTip = () => { tip.hidden = true; };
+function wireCell(button, card, arm) {
+  button.addEventListener("pointerenter", () => showTip(button, card, arm));
+  button.addEventListener("pointerleave", hideTip);
+  button.addEventListener("focus", () => showTip(button, card, arm));
+  button.addEventListener("blur", hideTip);
+  button.addEventListener("click", () => {
+    $("detail").replaceChildren(readout(card, arm));
+    document.querySelectorAll(".cell[aria-pressed=true]").forEach((b) => b.setAttribute("aria-pressed", "false"));
+    button.setAttribute("aria-pressed", "true");
+  });
+}
+document.addEventListener("keydown", (e) => { if (e.key === "Escape") hideTip(); });
+
+/* ---------- 1. the ranking ---------- */
+function renderRanking(run, arms) {
+  const rows = arms.map((arm) => ({ arm, s: (run.scorecards || {})[arm] })).filter((r) => r.s);
+  rows.sort((a, b) => (a.s.answered === 0) - (b.s.answered === 0) || a.s.mean_score_error - b.s.mean_score_error);
+  const table = $("rank");
+  table.replaceChildren(
+    el("thead", {}, el("tr", {},
+      el("th", { text: "#" }), el("th", { text: "Classifier" }),
+      el("th", { class: "num", text: "Mean score error" }), el("th", { class: "num", text: "Exact matches" }),
+      el("th", { class: "num", text: "Mean steps off" }), el("th", { class: "num", text: "Failed" }))),
+  );
+  const body = el("tbody");
+  rows.forEach(({ arm, s }, i) => {
+    const model = (run.models || {})[arm];
+    const name = el("td", {}, el("span", { class: "arm-name", text: arm }));
+    if (model) name.append(el("div", { class: "model", text: model }));
+    const answered = s.answered > 0;
+    const error = el("td", { class: "num" }, el("span", { class: "headline", text: answered ? fmt(s.mean_score_error) : "none" }));
+    if (answered) error.append(el("span", { class: "bar" + (arm === BASELINE ? " baseline" : ""), style: `width:${Math.min(1, s.mean_score_error) * 80}px`, "aria-hidden": "true" }));
+    body.append(el("tr", {},
+      el("td", { class: "muted", text: String(i + 1) }), name, error,
+      el("td", { class: "num", text: `${s.exact}/${s.answered}` }),
+      el("td", { class: "num", text: answered ? fmt(s.mean_ordinal_error) : "-" }),
+      el("td", { class: "num" + (s.failed ? " bad" : ""), text: s.failed ? `⚠ ${s.failed}` : "0" })));
+  });
+  table.append(body);
+}
+
+/* ---------- shared pieces ---------- */
+function cardCell(card) {
+  const thumb = card.image_url
+    ? el("img", { src: card.image_url, alt: "", loading: "lazy", width: "40", height: "56" })
+    : el("div", { class: "noimg", text: "no image" });
+  const text = el("div", {}, el("div", { class: "name", text: card.name }));
+  if (card.mana_cost) text.append(el("div", { class: "cost", text: card.mana_cost }));
+  return el("div", { class: "cardcell" }, thumb, text);
+}
+function columns(arms) { return `minmax(170px, 1.3fr) repeat(${arms.length}, minmax(96px, 1fr))`; }
+function armHeader(arm) {
+  return el("div", { class: "arm-name", style: "padding:6px 2px;text-align:center", text: arm === BASELINE ? `${arm} (baseline)` : arm });
+}
+
+/* ---------- 2. dumbbell grid: your tick, the arm's dot, one 0-2 axis per cell ---------- */
+const X0 = 10, X1 = 90;
+const x = (score) => X0 + (Math.min(2, Math.max(0, score)) / 2) * (X1 - X0);
+function dumbbell(card, answer, arm) {
+  const s = svg("svg", { viewBox: "0 0 100 30", "aria-hidden": "true" });
+  for (const v of [0, 1, 2]) s.append(svg("line", { x1: x(v), x2: x(v), y1: 6, y2: 24, stroke: "var(--grid)", "stroke-width": 1 }));
+  s.append(svg("line", { x1: X0, x2: X1, y1: 15, y2: 15, stroke: "var(--axis)", "stroke-width": 1 }));
+  if (answer && !answer.error) {
+    s.append(svg("line", { x1: x(card.yours_score), x2: x(answer.score), y1: 15, y2: 15, stroke: "var(--ink-muted)", "stroke-width": 2, "stroke-linecap": "round" }));
+    s.append(svg("circle", { cx: x(answer.score), cy: 15, r: 5, fill: arm === BASELINE ? "var(--baseline)" : "var(--arm)", stroke: "var(--surface)", "stroke-width": 2 }));
+  }
+  s.append(svg("line", { x1: x(card.yours_score), x2: x(card.yours_score), y1: 5, y2: 25, stroke: "var(--ink)", "stroke-width": 2.5, "stroke-linecap": "round" }));
+  return s;
+}
+function axisHeader() {
+  const s = svg("svg", { viewBox: "0 0 100 14", style: "display:block;width:100%;height:14px", "aria-hidden": "true" });
+  for (const v of [0, 1, 2]) {
+    const t = svg("text", { x: x(v), y: 11, "text-anchor": "middle", "font-size": 9, fill: "var(--ink-muted)" });
+    t.textContent = String(v);
+    s.append(t);
+  }
+  return s;
+}
+function renderWhere(run, arms, cards) {
+  const root = $("where");
+  const head = el("div", { class: "grid-row grid-head", style: `grid-template-columns:${columns(arms)}` }, el("div", { text: "Card (your score at left of its row)" }));
+  for (const arm of arms) head.append(el("div", {}, armHeader(arm), axisHeader()));
+  const rows = [head];
+  for (const card of cards) {
+    const row = el("div", { class: "grid-row", style: `grid-template-columns:${columns(arms)}` });
+    const first = cardCell(card);
+    first.lastChild.append(el("div", { class: "cost", text: `You: ${fmt(card.yours_score, 1)} ${card.yours}` }));
+    row.append(first);
+    for (const arm of arms) {
+      const answer = answerOf(card, arm);
+      const button = el("button", { class: "cell", type: "button", "aria-pressed": "false" });
+      if (!answer) { button.append(el("span", { class: "muted", text: "-" })); button.setAttribute("aria-label", `${arm} on ${card.name}: no answer`); }
+      else if (answer.error) {
+        button.append(el("div", { class: "errtext", text: "⚠ error" }));
+        button.setAttribute("aria-label", `${arm} on ${card.name}: error. ${answer.error}`);
+      } else {
+        button.append(dumbbell(card, answer, arm));
+        button.setAttribute("aria-label", `${arm} on ${card.name}: ${fmt(answer.score)} ${answer.power}; yours ${fmt(card.yours_score, 1)}`);
+      }
+      wireCell(button, card, arm);
+      row.append(button);
+    }
+    rows.push(row);
+  }
+  root.replaceChildren(...rows);
+}
+
+/* ---------- 3. signed error, diverging blue/red around a gray midpoint ---------- */
+function heatStyle(error) {
+  const pct = Math.round(Math.min(1, Math.abs(error) / 2) * 80);
+  const pole = error > 0 ? "var(--pole-pos)" : "var(--pole-neg)";
+  return `background:color-mix(in srgb, ${pole} ${pct}%, var(--mid))`;
+}
+function renderSame(run, arms, cards) {
+  const root = $("same");
+  const head = el("div", { class: "grid-row grid-head", style: `grid-template-columns:${columns(arms)}` }, el("div", { text: "Card" }));
+  for (const arm of arms) head.append(armHeader(arm));
+  const rows = [head];
+  for (const card of cards) {
+    const row = el("div", { class: "grid-row", style: `grid-template-columns:${columns(arms)}` }, cardCell(card));
+    for (const arm of arms) {
+      const answer = answerOf(card, arm);
+      const button = el("button", { class: "cell", type: "button", "aria-pressed": "false" });
+      if (!answer || answer.error) {
+        button.append(el("div", { class: "heat err", text: answer ? "⚠ error" : "-" }));
+        button.setAttribute("aria-label", `${arm} on ${card.name}: ${answer ? "error" : "no answer"}`);
+      } else {
+        const miss = answer.score - card.yours_score;
+        button.append(el("div", { class: "heat", style: heatStyle(miss), text: signed(miss) }));
+        button.setAttribute("aria-label", `${arm} on ${card.name}: ${signed(miss)} against your ${fmt(card.yours_score, 1)}`);
+      }
+      wireCell(button, card, arm);
+      row.append(button);
+    }
+    rows.push(row);
+  }
+  const mean = el("div", { class: "grid-row mean-row", style: `grid-template-columns:${columns(arms)}` }, el("div", { class: "cardcell" }, el("div", { class: "name", text: "Average signed error" })));
+  for (const arm of arms) {
+    const diffs = cards.filter((c) => answerOf(c, arm) && !answerOf(c, arm).error).map((c) => answerOf(c, arm).score - c.yours_score);
+    const avg = diffs.length ? diffs.reduce((a, b) => a + b, 0) / diffs.length : null;
+    mean.append(el("div", { class: "cell", style: "cursor:default;font-weight:700" }, avg === null ? el("div", { class: "heat err", text: "-" }) : el("div", { class: "heat", style: heatStyle(avg), text: signed(avg) })));
+  }
+  rows.push(mean);
+  root.replaceChildren(...rows);
+}
+
+/* ---------- legends ---------- */
+function legendItem(mark, text) { return el("span", {}, mark, el("span", { text })); }
+function swatchSvg(draw) { const s = svg("svg", { width: 22, height: 14, viewBox: "0 0 22 14", "aria-hidden": "true" }); draw(s); return s; }
+function renderLegends() {
+  $("legend-where").replaceChildren(
+    legendItem(swatchSvg((s) => s.append(svg("line", { x1: 11, x2: 11, y1: 1, y2: 13, stroke: "var(--ink)", "stroke-width": 2.5, "stroke-linecap": "round" }))), "Your score"),
+    legendItem(swatchSvg((s) => s.append(svg("circle", { cx: 11, cy: 7, r: 5, fill: "var(--arm)" }))), "Claude or Jev score"),
+    legendItem(swatchSvg((s) => s.append(svg("circle", { cx: 11, cy: 7, r: 5, fill: "var(--baseline)" }))), "Baseline (always-balanced)"),
+    legendItem(swatchSvg((s) => s.append(svg("line", { x1: 2, x2: 20, y1: 7, y2: 7, stroke: "var(--ink-muted)", "stroke-width": 2, "stroke-linecap": "round" }))), "The miss"),
+    el("span", { text: "⚠ error: the call failed (click for the text)" }),
+  );
+  $("legend-same").replaceChildren(
+    el("span", { text: "−2 weaker than you" }), el("span", { class: "ramp", "aria-hidden": "true" }), el("span", { text: "+2 more powerful than you" }),
+    el("span", { text: "Gray is no miss." }),
+  );
+}
+
+/* ---------- table view ---------- */
+function renderTable(run, arms, cards) {
+  const table = $("answers");
+  table.replaceChildren(el("thead", {}, el("tr", {}, el("th", { text: "Card" }), el("th", { class: "num", text: "You" }), ...arms.map((a) => el("th", { text: a })))));
+  const body = el("tbody");
+  for (const card of cards) {
+    const row = el("tr", {}, el("td", { text: card.name + (card.mana_cost ? ` ${card.mana_cost}` : "") }), el("td", { class: "num", text: `${fmt(card.yours_score, 1)} ${card.yours}` }));
+    for (const arm of arms) {
+      const answer = answerOf(card, arm);
+      const cell = el("td");
+      if (!answer) cell.append(el("span", { class: "muted", text: "-" }));
+      else if (answer.error) cell.append(el("div", { class: "err-text", text: "⚠ error" }), el("div", { class: "detail-text", text: answer.error }));
+      else {
+        cell.append(el("div", { text: `${fmt(answer.score)} ${answer.power} (${signed(answer.score - card.yours_score)})` }));
+        if (answer.confidence != null) cell.append(el("div", { class: "muted", text: `confidence ${fmt(answer.confidence)}` }));
+        if (answer.detail) cell.append(el("details", {}, el("summary", { text: "reason" }), el("div", { class: "detail-text", text: answer.detail })));
+      }
+      row.append(cell);
+    }
+    body.append(row);
+  }
+  table.append(body);
+
+  const conf = $("confusion");
+  const keys = [...new Set(arms.flatMap((a) => Object.keys(((run.scorecards || {})[a] || {}).confusion || {})))].sort();
+  conf.replaceChildren(el("thead", {}, el("tr", {}, el("th", { text: "You → classifier" }), ...arms.map((a) => el("th", { class: "num", text: a })))));
+  const cbody = el("tbody");
+  for (const key of keys) {
+    cbody.append(el("tr", {}, el("td", { text: key.replace("->", " → ") }), ...arms.map((a) => el("td", { class: "num", text: String((((run.scorecards || {})[a] || {}).confusion || {})[key] || "") }))));
+  }
+  conf.append(cbody);
+}
+
+/* ---------- loading ---------- */
+function render() {
+  const run = state.run;
+  const arms = armsOf(run);
+  const cards = sortedCards(run);
+  $("detail").replaceChildren();
+  renderRanking(run, arms);
+  renderWhere(run, arms, cards);
+  renderSame(run, arms, cards);
+  renderTable(run, arms, cards);
+  renderLegends();
+}
+function say(message) { $("status").textContent = message; }
+function runLabel(summary) {
+  const m = /^(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})Z/.exec(summary.file);
+  const when = m ? new Date(Date.UTC(+m[1], +m[2] - 1, +m[3], +m[4], +m[5], +m[6])).toLocaleString() : summary.file;
+  return summary.cards == null ? `${when} (unreadable)` : `${when}: ${summary.cards} cards, ${summary.arms.length} classifiers`;
+}
+async function loadRun(file) {
+  say("Loading…");
+  $("content").classList.add("hidden");
+  try {
+    const response = await fetch("/api/runs/" + encodeURIComponent(file));
+    if (!response.ok) throw new Error(`${response.status} for ${file}`);
+    state.run = await response.json();
+    if (!Array.isArray(state.run.cards)) throw new Error(`${file} is not a results file`);
+    render();
+    say("");
+    $("content").classList.remove("hidden");
+  } catch (error) {
+    say(`Could not show that run: ${error.message}`);
+  }
+}
+async function start() {
+  try {
+    const response = await fetch("/api/runs");
+    const runs = await response.json();
+    if (!runs.length) { say("No runs in results/ yet. Run ./run to make one."); return; }
+    const picker = $("run-picker");
+    picker.replaceChildren(...runs.map((r) => el("option", { value: r.file, text: runLabel(r) })));
+    picker.addEventListener("change", () => loadRun(picker.value));
+    loadRun(runs[0].file);
+  } catch (error) {
+    say(`Could not list the runs: ${error.message}`);
+  }
+}
+$("sort").addEventListener("change", (e) => { state.sort = e.target.value; if (state.run) render(); });
+$("table-toggle").addEventListener("click", (e) => {
+  const on = e.currentTarget.getAttribute("aria-pressed") !== "true";
+  e.currentTarget.setAttribute("aria-pressed", String(on));
+  $("table-view").classList.toggle("hidden", !on);
+  $("chart-view").classList.toggle("hidden", on);
+  hideTip();
+});
+const THEMES = ["auto", "light", "dark"];
+$("theme-toggle").addEventListener("click", (e) => {
+  const next = THEMES[(THEMES.indexOf(document.documentElement.dataset.theme || "auto") + 1) % 3];
+  if (next === "auto") delete document.documentElement.dataset.theme; else document.documentElement.dataset.theme = next;
+  e.currentTarget.textContent = `Theme: ${next}`;
+});
+start();
+</script>
+</body>
+</html>

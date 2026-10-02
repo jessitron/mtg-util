@@ -1,0 +1,507 @@
+{
+  "models": {
+    "always-balanced": "",
+    "haiku": "claude-haiku-4-5",
+    "sonnet": "claude-sonnet-5-5",
+    "opus": "claude-opus-5-5",
+    "jev-choice": "",
+    "jev-score": ""
+  },
+  "cards": [
+    {
+      "name": "Lightning Bolt",
+      "image_url": "https://cards.scryfall.io/small/front/7/6/7673784e-db4b-43a1-8d55-1bb9fc1e284f.jpg?1783903008",
+      "mana_cost": "{R}",
+      "yours": "powerful",
+      "yours_score": 1.6,
+      "edhrec_rank": 157,
+      "answers": {
+        "always-balanced": {
+          "power": "balanced",
+          "score": 1.0,
+          "confidence": null,
+          "detail": "no reading of the card"
+        },
+        "haiku": {
+          "power": "powerful",
+          "score": 1.9,
+          "confidence": null,
+          "detail": "Lightning Bolt is powerful for its cost."
+        },
+        "sonnet": {
+          "power": "powerful",
+          "score": 1.8,
+          "confidence": null,
+          "detail": "Lightning Bolt is powerful for its cost."
+        },
+        "opus": {
+          "power": "powerful",
+          "score": 1.7,
+          "confidence": null,
+          "detail": "Lightning Bolt is powerful for its cost."
+        },
+        "jev-choice": {
+          "power": "balanced",
+          "score": 1.29,
+          "confidence": 0.5,
+          "detail": "weak 0.10, balanced 0.40, powerful 0.50"
+        },
+        "jev-score": {
+          "power": "powerful",
+          "score": 1.5,
+          "confidence": 0.5,
+          "detail": "weak 0.10, balanced 0.40, powerful 0.50"
+        }
+      }
+    },
+    {
+      "name": "Sol Ring",
+      "image_url": "https://cards.scryfall.io/small/front/8/e/8ee443cc-e17a-493b-9c93-1f9e141a30e4.jpg?1789644446",
+      "mana_cost": "{1}",
+      "yours": "powerful",
+      "yours_score": 2.0,
+      "edhrec_rank": 1,
+      "answers": {
+        "always-balanced": {
+          "power": "balanced",
+          "score": 1.0,
+          "confidence": null,
+          "detail": "no reading of the card"
+        },
+        "haiku": {
+          "power": "powerful",
+          "score": 2.0,
+          "confidence": null,
+          "detail": "Sol Ring is powerful for its cost."
+        },
+        "sonnet": {
+          "power": "powerful",
+          "score": 2.0,
+          "confidence": null,
+          "detail": "Sol Ring is powerful for its cost."
+        },
+        "opus": {
+          "power": "powerful",
+          "score": 2.0,
+          "confidence": null,
+          "detail": "Sol Ring is powerful for its cost."
+        },
+        "jev-choice": {
+          "power": "powerful",
+          "score": 1.9,
+          "confidence": 0.5,
+          "detail": "weak 0.10, balanced 0.40, powerful 0.50"
+        },
+        "jev-score": {
+          "power": "powerful",
+          "score": 1.8,
+          "confidence": 0.5,
+          "detail": "weak 0.10, balanced 0.40, powerful 0.50"
+        }
+      }
+    },
+    {
+      "name": "Llanowar Elves",
+      "image_url": "https://cards.scryfall.io/small/front/6/a/6a0b230b-d391-4998-a3f7-7b158a0ec2cd.jpg?1783909057",
+      "mana_cost": "{G}",
+      "yours": "powerful",
+      "yours_score": 1.5,
+      "edhrec_rank": 40,
+      "answers": {
+        "always-balanced": {
+          "power": "balanced",
+          "score": 1.0,
+          "confidence": null,
+          "detail": "no reading of the card"
+        },
+        "haiku": {
+          "power": "balanced",
+          "score": 1.4,
+          "confidence": null,
+          "detail": "Llanowar Elves is balanced for its cost."
+        },
+        "sonnet": {
+          "power": "powerful",
+          "score": 1.6,
+          "confidence": null,
+          "detail": "Llanowar Elves is powerful for its cost."
+        },
+        "opus": {
+          "power": "powerful",
+          "score": 1.5,
+          "confidence": null,
+          "detail": "<img src=x onerror=\"document.title='pwned'\"> Fast mana, but a 1/1."
+        },
+        "jev-choice": {
+          "power": "balanced",
+          "score": 1.1,
+          "confidence": 0.5,
+          "detail": "weak 0.10, balanced 0.40, powerful 0.50"
+        },
+        "jev-score": {
+          "power": "balanced",
+          "score": 1.2,
+          "confidence": 0.5,
+          "detail": "weak 0.10, balanced 0.40, powerful 0.50"
+        }
+      }
+    },
+    {
+      "name": "Grizzly Bears",
+      "image_url": "https://cards.scryfall.io/small/front/4/0/409f9b88-f03e-40b6-9883-68c14c37c0de.jpg?1783943001",
+      "mana_cost": "{1}{G}",
+      "yours": "weak",
+      "yours_score": 0.0,
+      "edhrec_rank": null,
+      "answers": {
+        "always-balanced": {
+          "power": "balanced",
+          "score": 1.0,
+          "confidence": null,
+          "detail": "no reading of the card"
+        },
+        "haiku": {
+          "power": "powerful",
+          "score": 2.0,
+          "confidence": null,
+          "detail": "Grizzly Bears is powerful for its cost."
+        },
+        "sonnet": {
+          "power": "weak",
+          "score": 0.3,
+          "confidence": null,
+          "detail": "Grizzly Bears is weak for its cost."
+        },
+        "opus": {
+          "power": "weak",
+          "score": 0.2,
+          "confidence": null,
+          "detail": "Grizzly Bears is weak for its cost."
+        },
+        "jev-choice": {
+          "power": "weak",
+          "score": 0.4,
+          "confidence": 0.5,
+          "detail": "weak 0.10, balanced 0.40, powerful 0.50"
+        },
+        "jev-score": {
+          "power": "balanced",
+          "score": 0.5,
+          "confidence": 0.5,
+          "detail": "weak 0.10, balanced 0.40, powerful 0.50"
+        }
+      }
+    },
+    {
+      "name": "Serra Angel",
+      "image_url": "https://cards.scryfall.io/small/front/b/8/b8c5e74c-96e7-4a1f-93b7-14d776fe4b2d.jpg?1787563091",
+      "mana_cost": "{3}{W}{W}",
+      "yours": "balanced",
+      "yours_score": 1.0,
+      "edhrec_rank": 900,
+      "answers": {
+        "always-balanced": {
+          "power": "balanced",
+          "score": 1.0,
+          "confidence": null,
+          "detail": "no reading of the card"
+        },
+        "haiku": {
+          "power": "balanced",
+          "score": 1.4,
+          "confidence": null,
+          "detail": "Serra Angel is balanced for its cost."
+        },
+        "sonnet": {
+          "power": "balanced",
+          "score": 1.2,
+          "confidence": null,
+          "detail": "Serra Angel is balanced for its cost."
+        },
+        "opus": {
+          "power": "balanced",
+          "score": 1.0,
+          "confidence": null,
+          "detail": "Serra Angel is balanced for its cost."
+        },
+        "jev-choice": {
+          "power": "balanced",
+          "score": 1.35,
+          "confidence": 0.5,
+          "detail": "weak 0.10, balanced 0.40, powerful 0.50"
+        },
+        "jev-score": {
+          "power": "balanced",
+          "score": 1.1,
+          "confidence": 0.5,
+          "detail": "weak 0.10, balanced 0.40, powerful 0.50"
+        }
+      }
+    },
+    {
+      "name": "Divination",
+      "image_url": "https://cards.scryfall.io/small/front/c/b/cb3b35b8-f321-46d8-a441-6b9a6efa9021.jpg?1783934590",
+      "mana_cost": "{2}{U}",
+      "yours": "weak",
+      "yours_score": 0.4,
+      "edhrec_rank": 3000,
+      "answers": {
+        "always-balanced": {
+          "power": "balanced",
+          "score": 1.0,
+          "confidence": null,
+          "detail": "no reading of the card"
+        },
+        "haiku": {
+          "power": "balanced",
+          "score": 0.6,
+          "confidence": null,
+          "detail": "Divination is balanced for its cost."
+        },
+        "sonnet": {
+          "power": "balanced",
+          "score": 0.5,
+          "confidence": null,
+          "detail": "Divination is balanced for its cost."
+        },
+        "opus": {
+          "power": "balanced",
+          "score": 0.5,
+          "confidence": null,
+          "detail": "Divination is balanced for its cost."
+        },
+        "jev-choice": {
+          "power": "balanced",
+          "score": 0.9,
+          "confidence": 0.5,
+          "detail": "weak 0.10, balanced 0.40, powerful 0.50"
+        },
+        "jev-score": {
+          "error": "HTTP 503 from the Jev API"
+        }
+      }
+    },
+    {
+      "name": "Wrath of God",
+      "image_url": "https://cards.scryfall.io/small/front/5/3/537d2b05-3f52-45d6-8fe3-26282085d0c6.jpg?1783915706",
+      "mana_cost": "{2}{W}{W}",
+      "yours": "powerful",
+      "yours_score": 1.8,
+      "edhrec_rank": 120,
+      "answers": {
+        "always-balanced": {
+          "power": "balanced",
+          "score": 1.0,
+          "confidence": null,
+          "detail": "no reading of the card"
+        },
+        "haiku": {
+          "power": "powerful",
+          "score": 1.9,
+          "confidence": null,
+          "detail": "Wrath of God is powerful for its cost."
+        },
+        "sonnet": {
+          "power": "powerful",
+          "score": 1.8,
+          "confidence": null,
+          "detail": "Wrath of God is powerful for its cost."
+        },
+        "opus": {
+          "power": "powerful",
+          "score": 1.9,
+          "confidence": null,
+          "detail": "Wrath of God is powerful for its cost."
+        },
+        "jev-choice": {
+          "power": "powerful",
+          "score": 1.6,
+          "confidence": 0.5,
+          "detail": "weak 0.10, balanced 0.40, powerful 0.50"
+        },
+        "jev-score": {
+          "power": "powerful",
+          "score": 1.7,
+          "confidence": 0.5,
+          "detail": "weak 0.10, balanced 0.40, powerful 0.50"
+        }
+      }
+    },
+    {
+      "name": "Craw Wurm",
+      "image_url": "https://cards.scryfall.io/small/front/3/8/3875f73d-6108-488b-bd34-4cf2c23ce6b3.jpg?1783942364",
+      "mana_cost": "{4}{G}{G}",
+      "yours": "weak",
+      "yours_score": 0.1,
+      "edhrec_rank": null,
+      "answers": {
+        "always-balanced": {
+          "power": "balanced",
+          "score": 1.0,
+          "confidence": null,
+          "detail": "no reading of the card"
+        },
+        "haiku": {
+          "power": "weak",
+          "score": 0.3,
+          "confidence": null,
+          "detail": "Craw Wurm is weak for its cost."
+        },
+        "sonnet": {
+          "power": "weak",
+          "score": 0.2,
+          "confidence": null,
+          "detail": "Craw Wurm is weak for its cost."
+        },
+        "opus": {
+          "power": "weak",
+          "score": 0.1,
+          "confidence": null,
+          "detail": "Craw Wurm is weak for its cost."
+        },
+        "jev-choice": {
+          "power": "balanced",
+          "score": 0.6,
+          "confidence": 0.5,
+          "detail": "weak 0.10, balanced 0.40, powerful 0.50"
+        },
+        "jev-score": {
+          "power": "weak",
+          "score": 0.4,
+          "confidence": 0.5,
+          "detail": "weak 0.10, balanced 0.40, powerful 0.50"
+        }
+      }
+    },
+    {
+      "name": "Mind Control",
+      "image_url": "https://cards.scryfall.io/small/front/e/c/ec7f77af-17d7-4746-bc83-f455b9b6f9ea.jpg?1783941089",
+      "mana_cost": "{3}{U}{U}",
+      "yours": "balanced",
+      "yours_score": 1.1,
+      "edhrec_rank": 2500,
+      "answers": {
+        "always-balanced": {
+          "power": "balanced",
+          "score": 1.0,
+          "confidence": null,
+          "detail": "no reading of the card"
+        },
+        "haiku": {
+          "power": "powerful",
+          "score": 1.7,
+          "confidence": null,
+          "detail": "Mind Control is powerful for its cost."
+        },
+        "sonnet": {
+          "power": "balanced",
+          "score": 1.2,
+          "confidence": null,
+          "detail": "Mind Control is balanced for its cost."
+        },
+        "opus": {
+          "power": "balanced",
+          "score": 1.0,
+          "confidence": null,
+          "detail": "Mind Control is balanced for its cost."
+        },
+        "jev-choice": {
+          "power": "balanced",
+          "score": 0.8,
+          "confidence": 0.5,
+          "detail": "weak 0.10, balanced 0.40, powerful 0.50"
+        },
+        "jev-score": {
+          "power": "balanced",
+          "score": 1.0,
+          "confidence": 0.5,
+          "detail": "weak 0.10, balanced 0.40, powerful 0.50"
+        }
+      }
+    }
+  ],
+  "scorecards": {
+    "always-balanced": {
+      "exact": 2,
+      "answered": 9,
+      "failed": 0,
+      "mean_ordinal_error": 0.7777777777777778,
+      "mean_score_error": 0.6111111111111112,
+      "confusion": {
+        "powerful->balanced": 4,
+        "weak->balanced": 3,
+        "balanced->balanced": 2
+      }
+    },
+    "haiku": {
+      "exact": 5,
+      "answered": 9,
+      "failed": 0,
+      "mean_ordinal_error": 0.5555555555555556,
+      "mean_score_error": 0.4333333333333333,
+      "confusion": {
+        "powerful->powerful": 3,
+        "powerful->balanced": 1,
+        "weak->powerful": 1,
+        "balanced->balanced": 1,
+        "weak->balanced": 1,
+        "weak->weak": 1,
+        "balanced->powerful": 1
+      }
+    },
+    "sonnet": {
+      "exact": 8,
+      "answered": 9,
+      "failed": 0,
+      "mean_ordinal_error": 0.1111111111111111,
+      "mean_score_error": 0.1222222222222222,
+      "confusion": {
+        "powerful->powerful": 4,
+        "weak->weak": 2,
+        "balanced->balanced": 2,
+        "weak->balanced": 1
+      }
+    },
+    "opus": {
+      "exact": 8,
+      "answered": 9,
+      "failed": 0,
+      "mean_ordinal_error": 0.1111111111111111,
+      "mean_score_error": 0.06666666666666665,
+      "confusion": {
+        "powerful->powerful": 4,
+        "weak->weak": 2,
+        "balanced->balanced": 2,
+        "weak->balanced": 1
+      }
+    },
+    "jev-choice": {
+      "exact": 5,
+      "answered": 9,
+      "failed": 0,
+      "mean_ordinal_error": 0.4444444444444444,
+      "mean_score_error": 0.34,
+      "confusion": {
+        "powerful->balanced": 2,
+        "powerful->powerful": 2,
+        "weak->weak": 1,
+        "balanced->balanced": 2,
+        "weak->balanced": 2
+      }
+    },
+    "jev-score": {
+      "exact": 6,
+      "answered": 8,
+      "failed": 1,
+      "mean_ordinal_error": 0.25,
+      "mean_score_error": 0.21250000000000005,
+      "confusion": {
+        "powerful->powerful": 3,
+        "powerful->balanced": 1,
+        "weak->balanced": 1,
+        "balanced->balanced": 2,
+        "weak->weak": 1
+      }
+    }
+  }
+}

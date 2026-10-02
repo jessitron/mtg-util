@@ -27,3 +27,15 @@ class CardCatalog(Protocol):
     """Port: where card facts come from. Raises LookupError naming any card it can't find."""
 
     def find(self, names: Sequence[str]) -> list[Card]: ...
+
+
+class RunStore(Protocol):
+    """Port: where finished runs are kept. A run is the results JSON that `report.results_json` builds."""
+
+    def names(self) -> list[str]:
+        """Every stored run's name, newest first."""
+        ...
+
+    def read(self, name: str) -> Optional[dict]:
+        """One run, or None when no run has that name."""
+        ...

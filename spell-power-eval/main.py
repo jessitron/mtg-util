@@ -9,15 +9,17 @@ from spell_power_eval.adapters.claude_classifier import CLAUDE_MODELS, ClaudeCla
 from spell_power_eval.adapters.jev_classifier import KEY_VARIABLE, JevClassifier
 from spell_power_eval.adapters.cards_page import cards_page
 from spell_power_eval.adapters.labels_file import LabelsFile
-from spell_power_eval.adapters.results_file import write_results
+from spell_power_eval.adapters.results_file import ResultsDirectory, write_results
 from spell_power_eval.adapters.scryfall_catalog import ScryfallCatalog
 from spell_power_eval.domain.baseline import AlwaysBalanced
 from spell_power_eval.domain.rubric import CLAUDE_SYSTEM_PROMPT
 from spell_power_eval.domain.scoring import LabeledCard
 from spell_power_eval.orchestration.evaluation import evaluate
+from spell_power_eval.orchestration.http_app import make_server
 from spell_power_eval.orchestration.report import results_json, text_report
 
 HERE = os.path.dirname(os.path.abspath(__file__))
+DEFAULT_PORT = 8780
 
 CLASSIFIERS = {
     "always-balanced": AlwaysBalanced,
@@ -30,17 +32,41 @@ CLASSIFIERS = {
 DEFAULT_ARMS = ["always-balanced", "haiku", "sonnet", "jev-choice", "jev-score"]
 
 
+def serve(results_dir):
+    port = int(os.environ.get("PORT", DEFAULT_PORT))
+    try:
+        server = make_server(ResultsDirectory(results_dir), port)
+    except OSError:
+        sys.exit(
+            f"Port {port} is already in use, so the server can't start.\n"
+            f"Most likely a previous copy of this server is still running.\n"
+            f"  See what has the port:  lsof -i :{port}\n"
+            f"  Stop it:                kill $(lsof -ti :{port})\n"
+            f"  Or use another port:    PORT={port + 1} ./run --serve"
+        )
+    print(f"Showing the runs in {results_dir}. http://localhost:{port}  (Ctrl-C stops it)", file=sys.stderr)
+    try:
+        server.serve_forever()
+    except KeyboardInterrupt:
+        pass
+
+
 def main():
     parser = argparse.ArgumentParser(description="Compare classifiers against your hand labels of MTG spells.")
     parser.add_argument("classifiers", nargs="*", metavar="CLASSIFIER",
                         help=f"any of: {', '.join(CLASSIFIERS)}. Default: {' '.join(DEFAULT_ARMS)}")
     parser.add_argument("--labels", default=os.path.join(HERE, "labels.txt"))
     parser.add_argument("--page", action="store_true", help="write cards.html, a page for judging the cards by eye, and stop")
+    parser.add_argument("--serve", action="store_true", help="serve a page that shows the runs in results/ (PORT sets the port, default 8780), and stop with Ctrl-C")
     parser.add_argument("--dry-run", action="store_true", help="look up the cards and print what the classifiers would be asked; call no model")
     args = parser.parse_args()
     unknown = [c for c in args.classifiers if c not in CLASSIFIERS]
     if unknown:
         parser.error(f"unknown classifier {unknown[0]!r}; choose from {', '.join(CLASSIFIERS)}")
+
+    if args.serve:
+        serve(os.path.join(HERE, "results"))
+        return
 
     labels_file = LabelsFile(args.labels)
     labels, unlabeled = labels_file.read()
