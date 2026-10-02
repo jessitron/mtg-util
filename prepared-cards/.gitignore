@@ -1,2 +1,3 @@
-cards.json
+scryfall-cache.json
 selected.txt
+__pycache__/
