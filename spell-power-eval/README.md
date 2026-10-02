@@ -68,6 +68,7 @@ Ten cards is a few cents at most. Each card is about 150-300 input tokens and a 
 - Unit tests pass. Every arm (haiku, sonnet, opus, jev-choice, jev-score) has run against the real APIs. Haiku 4.5 accepts the SDK's structured-output call (`messages.parse`).
 - **First comparison, 2026-10-02: Jess's ten cards, ten scores.** Mean score error (lower is better): jev-choice 0.32, jev-score 0.35, sonnet 0.40, haiku 0.41, always-balanced 0.55. Exact label matches: jev-choice 7/10, haiku 6, jev-score 6, sonnet 5, always-balanced 3.
 - **Read that run as a hint, not a result.** Ten cards means one card moves a score by 0.05 or more, and the gaps between the four real arms are smaller than that noise. What it does show: all four beat the rubber stamp, and Jev is at least competitive on Magic cards despite being a small classifier. The next step is more cards.
+- The question said "card" until 2026-10-02 and now says "spell" (a prepared spell isn't a card on its own). The first comparison above used the old word; a rerun on the same ten cards would show whether the change matters.
 - Keys live in an untracked `../.be` file (globally git-ignored). Run `source ../.be` before `./run`.
 
 ## Tests

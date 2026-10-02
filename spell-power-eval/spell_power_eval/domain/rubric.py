@@ -2,7 +2,7 @@
 from .power import Power
 
 QUESTION = (
-    "Compared to its mana cost, is this Magic: The Gathering card weak, balanced, or powerful? "
+    "Compared to its mana cost, is this Magic: The Gathering spell weak, balanced, or powerful? "
     "Judge what the mana cost pays for in a typical game. Ignore combos, banned lists, and any one format."
 )
 
@@ -19,7 +19,7 @@ SCORE_SCALE = (
 )
 
 CLAUDE_SYSTEM_PROMPT = (
-    "You rate Magic: The Gathering cards for a game-balance study.\n\n"
+    "You rate Magic: The Gathering spells for a game-balance study.\n\n"
     f"{QUESTION}\n\n"
     + "\n".join(f"- {power.label}: {text}" for power, text in DESCRIPTIONS.items())
     + f"\n\n{SCORE_SCALE}\n\nGive a one-sentence reason first, then the score."
