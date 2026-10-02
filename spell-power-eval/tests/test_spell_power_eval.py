@@ -228,6 +228,12 @@ class EvaluationTest(unittest.TestCase):
         self.assertEqual(results["scorecards"]["always-balanced"]["mean_score_error"], 0.5)
         self.assertEqual(results["scorecards"]["always-balanced"]["confusion"], {"weak->balanced": 1, "balanced->balanced": 1})
 
+    def test_results_json_carries_the_image_and_mana_cost_for_the_page(self):
+        cards = [LabeledCard(card("A", image_url="https://img/a.jpg"), 1.0)]
+        entry = results_json(evaluate(cards, [AlwaysBalanced()]), {})["cards"][0]
+        self.assertEqual(entry["image_url"], "https://img/a.jpg")
+        self.assertEqual(entry["mana_cost"], "{3}{W}{W}")
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -51,7 +51,7 @@ def results_json(evaluation: Evaluation, models: dict) -> dict:
                 if attempt.error
                 else {"power": attempt.verdict.power.label, "score": attempt.verdict.score, "confidence": attempt.verdict.confidence, "detail": attempt.verdict.detail}
             )
-        cards.append({"name": labeled.card.name, "yours": labeled.expected.label, "yours_score": labeled.score, "edhrec_rank": labeled.card.edhrec_rank, "answers": answers})
+        cards.append({"name": labeled.card.name, "image_url": labeled.card.image_url, "mana_cost": labeled.card.mana_cost, "yours": labeled.expected.label, "yours_score": labeled.score, "edhrec_rank": labeled.card.edhrec_rank, "answers": answers})
     scorecards = {
         c: {
             "exact": s.exact,
