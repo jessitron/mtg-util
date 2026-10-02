@@ -10,7 +10,7 @@ Each script lives in its own directory with its own README.
 
 | Script | What it does |
 | ------ | ------------ |
-| _none yet_ | |
+| [prepared-cards](prepared-cards/README.md) | Browse Scryfall's `o:prepared` cards by mana value, check the ones you want, export an Archidekt import list. |
 
 ## Reference
 

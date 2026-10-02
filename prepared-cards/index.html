@@ -1,0 +1,66 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Prepared cards</title>
+<style>
+  body { font-family: system-ui, sans-serif; margin: 0; background: #1b1b1f; color: #eee; }
+  header { position: sticky; top: 0; background: #111; padding: .6rem 1rem; display: flex; gap: 1rem; align-items: center; z-index: 1; }
+  button { font-size: 1rem; padding: .4rem .8rem; }
+  h2 { margin: 1.2rem 1rem .4rem; }
+  .row { display: flex; flex-wrap: wrap; gap: .6rem; padding: 0 1rem; }
+  label.card { width: 244px; cursor: pointer; border: 3px solid transparent; border-radius: 12px; padding: 2px; position: relative; }
+  label.card img { width: 100%; border-radius: 10px; display: block; }
+  label.card.picked { border-color: #4ade80; }
+  label.card input { position: absolute; top: 10px; left: 10px; width: 24px; height: 24px; }
+  .noimg { height: 340px; display: flex; align-items: center; justify-content: center; background: #333; border-radius: 10px; }
+</style>
+<header>
+  <strong id="count"></strong>
+  <button id="save">Save selection</button>
+  <span id="status"></span>
+</header>
+<main id="main"></main>
+<script>
+const picked = new Set();
+const $ = id => document.getElementById(id);
+const update = () => $("count").textContent = `${picked.size} selected`;
+
+async function init() {
+  const [{cards, query}, saved] = await Promise.all([fetch("/cards").then(r => r.json()), fetch("/selected").then(r => r.json())]);
+  saved.forEach(n => picked.add(n));
+  document.title = `${cards.length} cards: ${query}`;
+  let row;
+  let lastCmc = null;
+  for (const c of cards) {
+    if (c.cmc !== lastCmc) {
+      lastCmc = c.cmc;
+      const h = document.createElement("h2");
+      h.textContent = `Mana value ${c.cmc}`;
+      row = document.createElement("div");
+      row.className = "row";
+      $("main").append(h, row);
+    }
+    const label = document.createElement("label");
+    label.className = "card";
+    label.title = c.name;
+    label.innerHTML = c.image ? `<img loading="lazy" src="${c.image}" alt="${c.name}">` : `<div class="noimg">${c.name}</div>`;
+    const box = document.createElement("input");
+    box.type = "checkbox";
+    box.checked = picked.has(c.name);
+    label.classList.toggle("picked", box.checked);
+    box.onchange = () => {
+      box.checked ? picked.add(c.name) : picked.delete(c.name);
+      label.classList.toggle("picked", box.checked);
+      update();
+    };
+    label.append(box);
+    row.append(label);
+  }
+  update();
+}
+
+$("save").onclick = async () => {
+  const r = await fetch("/save", {method: "POST", body: JSON.stringify([...picked])}).then(r => r.json());
+  $("status").textContent = `Wrote ${r.saved} cards to ${r.file}`;
+};
+init();
+</script>
