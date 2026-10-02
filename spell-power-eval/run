@@ -1,0 +1,4 @@
+#!/bin/sh
+# Usage: ./run [--dry-run] [classifier ...]   (see README.md)
+cd "$(dirname "$0")" || exit 1
+exec uv run --quiet python main.py "$@"

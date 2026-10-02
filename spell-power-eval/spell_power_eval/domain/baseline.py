@@ -1,0 +1,12 @@
+from .card import Card
+from .power import Power
+from .ports import Verdict
+
+
+class AlwaysBalanced:
+    """The floor. Any classifier worth paying for beats a rubber stamp."""
+
+    name = "always-balanced"
+
+    def classify(self, card: Card) -> Verdict:
+        return Verdict(Power.BALANCED, detail="no reading of the card")

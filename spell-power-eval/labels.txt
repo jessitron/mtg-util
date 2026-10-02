@@ -1,0 +1,16 @@
+# One card per line:  <weak|balanced|powerful|?> | <card name>
+#
+# Judge each card against its own mana cost: does what it does match what that much mana should buy?
+# Label first, before you look at any model's answer, so the models can't anchor you.
+# A `?` means "not judged yet". Those cards are skipped (and cost nothing).
+# Swap in any cards you like; names must match Scryfall exactly (a front face alone is fine).
+? | Lightning Bolt
+? | Sol Ring
+? | Llanowar Elves
+? | Grizzly Bears
+? | Serra Angel
+? | Divination
+? | Wrath of God
+? | Craw Wurm
+? | Cancel
+? | Mind Control
