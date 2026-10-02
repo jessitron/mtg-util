@@ -26,3 +26,14 @@ Span names follow `{operation} {identifier}`, such as `chat claude-haiku-4-5`. E
 - `gen_ai.provider.name` names the vendor (`anthropic`).
 
 See [spell-power-eval](../spell-power-eval/README.md) for which of our own fields (`spell_eval.*`) sit beside them.
+
+## What arrived in Honeycomb (checked 2026-10-02, via the Honeycomb MCP)
+
+- **Honeycomb recognizes the trace as GenAI.** `get_aiconversation` classifies the root as `agentInvocation` and each `chat` span as `llmOperation`, and counts the LLM calls and tokens. Honeycomb also adds `io.honeycomb.gen_ai.cost.*` columns to spans whose model it can price (Claude yes, Jev no).
+- **Events arrive as real span events** (`meta.annotation_type = span_event`), not columns on the span. They share the span's `trace.parent_id`, so query them with a filter on `meta.annotation_type exists`.
+- **Event attributes are namespaced columns**: `gen_ai.evaluation.score.value` (float), `gen_ai.evaluation.score.label`, `gen_ai.evaluation.explanation`. A bare `score.value` is not a column.
+- **Arrays are flattened to a JSON string.** We send `gen_ai.response.finish_reasons` as a list; the column is a string holding `["end_turn"]`. Match it with `contains`, not as an array.
+- **`gen_ai.provider.name` for Jev is `typesafe`**; its `gen_ai.response.model` is the pinned version (`jev-1.13.0`), while Claude's is the dated name (`claude-haiku-4-5-20251001`).
+- **`get_aiconversation` can miss the last span.** Its window is truncated to whole seconds, so a span that starts just after the last second is left out ("LLM Calls: 1" for a trace with two). Pass `event_timestamp` a second or so after the run to see them all.
+- **Column names are checked per dataset.** A column that no event has written does not exist, and a query on it fails with "unknown column". `get_dataset_columns` lists what is there.
+- **Boards need saved query runs.** Run each query first (`run_query` returns a `query_run_pk`), then pass the run PKs to `create_board`. The spell-power-eval board is linked from its README.

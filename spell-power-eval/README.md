@@ -64,7 +64,18 @@ Each `chat` span has the GenAI fields (`gen_ai.operation.name`, `gen_ai.agent.na
 - **An evaluation event** (`gen_ai.evaluation.result`) with the distance from your score and a sentence such as "haiku scored 1.60 (powerful); Jess scored 1.40 (balanced); off by 0.20."
 - **Our own fields, for queries**: `spell_eval.classifier`, `.card`, `.human_score`, `.human_label`, `.score`, `.label`, `.score_error` (distance from you), `.score_diff` (signed; positive means more powerful than you said), `.steps_off`, `.label_match`, `.confidence`, `.reason`, `.cost_usd`.
 
-A failed call becomes an error span (`error.type`, `error.message`) with no evaluation. Try `AVG(spell_eval.score_error) GROUP BY spell_eval.classifier`.
+A failed call becomes an error span (`error.type`, `error.message`) with no evaluation. Try `AVG(spell_eval.score_error) GROUP BY spell_eval.classifier`. `spell_eval.classifier` (`haiku`, `jev-choice`, ...) is our short name for the arm; there is no separate `app.llm.model` field.
+
+### Finding a conversation: the Honeycomb board
+
+[spell-power-eval: find conversations](https://ui.honeycomb.io/modernity/environments/local/board/2NjE1Euo7Zh) (team `modernity`, environment `local`) is the way in. A conversation is one run, so its id is the run's timestamp and newer runs sort first. The board has four tables, each over the last 7 days:
+
+- **Runs**: one row per conversation, with the run's total time.
+- **Arms**: calls, average score error, and label matches per `spell_eval.classifier`.
+- **Disagreements with Jess**: the calls where `spell_eval.label_match` is false, by conversation, card, and arm.
+- **Cards in each run**: every card with the number of arms that rated it and the slowest call.
+
+Dropdowns at the top filter by conversation, card, arm, and label match. Click a row, then View trace. Honeycomb boards hold saved queries, so a new field means a new query on the board; the board is not in this repo.
 
 The messages hold only card text and model answers, no personal data.
 
@@ -109,7 +120,6 @@ Every arm gets identical card facts and identical rubric wording (`domain/rubric
 
 ## Ideas for later
 
-- A results viewer: `./run --serve` serving an HTML page that draws a run's JSON (your score against each arm's, the error by card and arm, and each arm's reasons).
 - More cards (the first run's gaps are inside the noise), and a second label source (17Lands win rates for one set).
 - Self-consistency: ask Claude several times and compare to Jev's confidence.
 - Few-shot examples in the card state, to see whether Jev's lack of fine-tuning matters.

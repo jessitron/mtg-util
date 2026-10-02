@@ -29,6 +29,7 @@ A collection of MTG-related utility scripts, plus accumulated knowledge about Sc
 - **Worktree sessions refuse compound shell commands.** A Bash call that mixes the word "git", `$VARS`, or a `cd` with other commands can be rejected, even inside a heredoc. Use literal paths, one plain command per call, and the Edit tool for text with such words. `CLAUDE_JOB_DIR` is `/Users/jessitron/.claude-personal/jobs/<id>`.
 - **Main may move while you work in a worktree.** Rebase the worktree branch onto main (enter it with `EnterWorktree` and `path`) before the fast-forward, or the merge fails.
 - **macOS has BSD `sed`.** Skip `sed -i 's/a/b/'` for edits; use the Edit tool.
+- **Checking Honeycomb through the MCP.** Team `modernity`, environment `local`, dataset `spell-power-eval`. Call `get_dataset_columns` before `run_query`, because column names are namespaced and a missing one fails the query. Read-only checks send no data. What arrives, and the quirks, are in [reference/honeycomb.md](reference/honeycomb.md).
 
 ## Card database (mtgjson)
 
