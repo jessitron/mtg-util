@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+# Download MTGJSON's AllPrintings.sqlite into ./data/ and make it read-only.
+# Usage: ./run            fetch if missing or different in size from upstream
+#        ./run --force    re-download regardless
+set -euo pipefail
+cd "$(dirname "$0")"
+
+URL="https://mtgjson.com/api/v5/AllPrintings.sqlite"
+DB="data/AllPrintings.sqlite"
+mkdir -p data
+
+if [[ "${1:-}" != "--force" && -f "$DB" ]]; then
+  remote_len=$(curl -sIL "$URL" | tr -d '\r' | awk 'tolower($1)=="content-length:"{l=$2} END{print l}')
+  local_len=$(stat -f %z "$DB")
+  if [[ "$remote_len" == "$local_len" ]]; then
+    echo "$DB is up to date ($local_len bytes). Use --force to re-download."
+    exit 0
+  fi
+fi
+
+echo "Downloading $URL"
+curl -fL --progress-bar -o "$DB.part" "$URL"
+# Check it's really sqlite before replacing the old copy.
+sqlite3 "file:$DB.part?mode=ro" "select count(*) from cards" >/dev/null
+chmod u+w "$DB" 2>/dev/null || true
+mv "$DB.part" "$DB"
+chmod 444 "$DB"
+echo "Wrote $DB"
+sqlite3 "file:$DB?mode=ro" "select version, date from meta"

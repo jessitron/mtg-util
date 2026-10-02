@@ -6,6 +6,7 @@ Accumulated knowledge about the APIs and resources our scripts use. One file per
 | -------- | ----- |
 | Scryfall (https://scryfall.com/docs/api) | _to write_ |
 | Gatherer (https://gatherer.wizards.com) | [gatherer.md](gatherer.md) |
+| MTGJSON (https://mtgjson.com) | [mtgjson.md](mtgjson.md) |
 | Archidekt (https://archidekt.com) | _to write_ |
 | Anthropic API (https://platform.claude.com/docs) | [anthropic-api.md](anthropic-api.md) |
 | Jev (https://docs.typesafe.ai) | [jev.md](jev.md) |
