@@ -10,7 +10,7 @@ Docs: https://docs.typesafe.ai/ (index for agents: https://docs.typesafe.ai/llms
 - Headers: `Authorization: Bearer <API_KEY>`, `Content-Type: application/json`
 - Body: `model` (`"jev-latest"`), `state` (string, object, or array), `questions` (a map of your own ids to question objects).
 - Several questions in one request are allowed. Errors: 401 bad key, 422 invalid body, 429 rate limited, 529 overloaded.
-- The key's environment variable name, `TYPESAFE_API_KEY`, comes from a LangChain write-up and is unconfirmed. The docs index lists a Python SDK (`TypeSafeClient`) and a JavaScript SDK.
+- Get a key at https://console.typesafe.ai/keys. The SDK reads it from `TYPESAFE_API_KEY` (per the quickstart). The quickstart says nothing about free tiers, credits, or a waitlist. The docs index lists a Python SDK (`TypeSafeClient`) and a JavaScript SDK.
 
 ## Question types
 

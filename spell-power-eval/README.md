@@ -32,8 +32,8 @@ The `edhrec rank` column comes from Scryfall (lower means more popular in Comman
 
 ## Credentials (environment variables)
 
-- Claude: the Anthropic SDK finds credentials itself: `ANTHROPIC_API_KEY`, or an `ant auth login` profile.
-- Jev: `TYPESAFE_API_KEY`. Without it the `jev-*` arms are skipped with a message.
+- Claude: the Anthropic SDK finds credentials itself: `ANTHROPIC_API_KEY` (create one in the Anthropic Console), or an `ant auth login` profile.
+- Jev: `TYPESAFE_API_KEY`, from https://console.typesafe.ai/keys. Without it the `jev-*` arms are skipped with a message.
 
 ## Cost
 
