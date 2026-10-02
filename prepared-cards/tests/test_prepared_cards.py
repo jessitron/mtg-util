@@ -1,14 +1,17 @@
 import os
+import random
 import tempfile
 import unittest
 
 from prepared_cards.adapters.archidekt_file import ArchidektImportFile
 from prepared_cards.adapters.cached_catalog import CachedCatalog
+from prepared_cards.adapters.cached_power_score import CachedPowerScore
+from prepared_cards.adapters.random_power_score import RandomPowerScore
 from prepared_cards.adapters.scryfall_catalog import ScryfallCatalog, card_from_scryfall
 from prepared_cards.domain.card import Card
 from prepared_cards.domain.card_pool import CardPool
 from prepared_cards.domain.selection import Selection
-from prepared_cards.orchestration.http_app import pool_to_json
+from prepared_cards.orchestration.http_app import ranked_to_json
 from prepared_cards.orchestration.use_cases import CardPicker
 
 
@@ -20,12 +23,43 @@ def raw(name, cmc, **extra):
     return {"name": name, "cmc": cmc, "scryfall_uri": f"http://s/{name}", **extra}
 
 
+class FixedScores:
+    """A PowerScore that reads from a dict and counts its calls."""
+
+    def __init__(self, scores):
+        self.scores = scores
+        self.calls = []
+
+    def score(self, c):
+        self.calls.append(c.name)
+        return self.scores[c.name]
+
+
 class CardPoolTest(unittest.TestCase):
-    def test_groups_by_mana_value_ascending_then_name(self):
-        pool = CardPool.of([card("B", 2.0), card("A", 2.0), card("Z", 0.0)])
-        groups = pool.by_mana_value()
-        self.assertEqual([g.mana_value for g in groups], [0.0, 2.0])
-        self.assertEqual([c.name for c in groups[1].cards], ["A", "B"])
+    def test_ranks_most_powerful_first_with_ties_in_name_order(self):
+        pool = CardPool.of([card("B", 2.0), card("A", 2.0), card("Z", 0.0), card("M", 5.0)])
+        ranked = pool.ranked(FixedScores({"A": 1.0, "B": 1.0, "Z": 1.9, "M": 0.2}))
+        self.assertEqual([(s.card.name, s.score) for s in ranked], [("Z", 1.9), ("A", 1.0), ("B", 1.0), ("M", 0.2)])
+
+
+class RandomPowerScoreTest(unittest.TestCase):
+    def test_scores_fall_between_0_and_2(self):
+        power = RandomPowerScore(random.Random(1))
+        self.assertTrue(all(0 <= power.score(card("A", 1.0)) <= 2 for _ in range(100)))
+
+
+class CachedPowerScoreTest(unittest.TestCase):
+    def test_scores_each_card_once_and_remembers_across_restarts(self):
+        with tempfile.TemporaryDirectory() as d:
+            path = os.path.join(d, "scores.json")
+            source = FixedScores({"A": 1.5})
+            cached = CachedPowerScore(source, path)
+            self.assertEqual(cached.score(card("A", 1.0)), 1.5)
+            self.assertEqual(cached.score(card("A", 1.0)), 1.5)
+            self.assertEqual(source.calls, ["A"])
+            later = FixedScores({})
+            self.assertEqual(CachedPowerScore(later, path).score(card("A", 1.0)), 1.5)
+            self.assertEqual(later.calls, [])
 
 
 class SelectionTest(unittest.TestCase):
@@ -113,7 +147,7 @@ class CardPickerTest(unittest.TestCase):
 
             refresh = pool
 
-        picker = CardPicker(Catalog(), Store())
+        picker = CardPicker(Catalog(), FixedScores({"A": 1.0}), Store())
         picker.save_selection(["A", "A"])
         self.assertEqual(picker.current_selection().names, ("A",))
         self.assertEqual(picker.save_and_render(["A", "B"]), "1 A\n1 B\n")
@@ -128,9 +162,20 @@ class GathererLinkTest(unittest.TestCase):
 
 
 class PageJsonTest(unittest.TestCase):
-    def test_labels_whole_mana_values_without_decimal(self):
-        data = pool_to_json(CardPool.of([card("A", 3.0), card("B", 0.5)]))
-        self.assertEqual([g["label"] for g in data["groups"]], ["Mana value 0.5", "Mana value 3"])
+    def test_lists_cards_with_scores_in_ranked_order(self):
+        ranked = CardPool.of([card("A", 3.0), card("B", 0.5)]).ranked(FixedScores({"A": 0.4, "B": 1.7}))
+        data = ranked_to_json(ranked)
+        self.assertEqual([(c["name"], c["score"]) for c in data["cards"]], [("B", 1.7), ("A", 0.4)])
+
+    def test_picker_ranks_the_catalog_through_the_power_score(self):
+        class Catalog:
+            def pool(self):
+                return CardPool.of([card("A", 1.0), card("B", 1.0)])
+
+            refresh = pool
+
+        picker = CardPicker(Catalog(), FixedScores({"A": 0.1, "B": 0.9}), store=None)
+        self.assertEqual([s.card.name for s in picker.ranked_candidates()], ["B", "A"])
 
 
 if __name__ == "__main__":

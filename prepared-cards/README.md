@@ -11,7 +11,7 @@ Pick cards from a Scryfall search (default `o:prepared`) on a web page, and copy
 Opens a tiny local server (Python 3, standard library only) at http://localhost:8765. If an earlier copy is still listening on the port, `./run` stops it first.
 
 1. First run fetches the search from Scryfall and caches it in `scryfall-cache.json`. Delete that file, or visit `/api/refresh`, to refetch.
-2. The page shows every card, grouped and sorted by mana value. Tick a card's checkbox to pick it. Clicking the card itself opens its Gatherer search in a new window.
+2. The page shows every card in one list, most powerful first, each with its power score (0 weak to 2 powerful) and a bar. Scores come from a `PowerScore` when the page loads, and `power-scores-random.json` remembers them (delete it to rescore). **Right now the scorer is a stand-in that makes up a random score**, so the order means nothing yet; the real LLM scorer replaces `RandomPowerScore` in `main.py`. Tick a card's checkbox to pick it. Clicking the card itself opens its Gatherer search in a new window.
 3. "Copy selection to clipboard" puts one `1 Card Name` per line in the clipboard (it works on `http://localhost`, which browsers treat as a secure context). It also writes `selected.txt`, so picks reload when you reopen the page.
 4. In Archidekt, use the deck's import feature and paste.
 
@@ -35,8 +35,8 @@ Three tiers; dependencies point downward only.
 | Tier | Package | What lives there |
 | ---- | ------- | ---------------- |
 | I. Orchestration | `prepared_cards/orchestration` | `CardPicker` use cases; the HTTP server and page that drive them. |
-| II. Domain | `prepared_cards/domain` | `Card`, `CardPool` (grouped by mana value), `Selection`, and the ports `CardCatalog` and `SelectionStore`. No I/O. |
-| III. Interface | `prepared_cards/adapters` | `ScryfallCatalog` (anti-corruption layer for Scryfall JSON), `CachedCatalog` (JSON file decorator), `ArchidektImportFile` (the import-format file). |
+| II. Domain | `prepared_cards/domain` | `Card`, `CardPool` (`ranked` orders it by a `PowerScore`, the only ordering), `ScoredCard`, `Selection`, and the ports `PowerScore`, `CardCatalog`, and `SelectionStore`. No I/O. |
+| III. Interface | `prepared_cards/adapters` | `ScryfallCatalog` (anti-corruption layer for Scryfall JSON), `CachedCatalog` (JSON file decorator), `RandomPowerScore` (the fake scorer), `CachedPowerScore` (JSON file decorator: card name to score, written after each new score), `ArchidektImportFile` (the import-format file). |
 
 `main.py` is the composition root: it picks the adapters and wires them to `CardPicker`.
 

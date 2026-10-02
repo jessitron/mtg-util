@@ -5,13 +5,15 @@
   body { font-family: system-ui, sans-serif; margin: 0; background: #1b1b1f; color: #eee; }
   header { position: sticky; top: 0; background: #111; padding: .6rem 1rem; display: flex; gap: 1rem; align-items: center; z-index: 1; }
   button { font-size: 1rem; padding: .4rem .8rem; }
-  h2 { margin: 1.2rem 1rem .4rem; }
-  .row { display: flex; flex-wrap: wrap; gap: .6rem; padding: 0 1rem; }
+  .row { display: flex; flex-wrap: wrap; gap: .6rem; padding: 1rem; }
   label.card { width: 244px; border: 3px solid transparent; border-radius: 12px; padding: 2px; }
   label.card a { display: block; }
   label.card img { width: 100%; border-radius: 10px; display: block; }
   label.card.picked { border-color: #4ade80; }
-  label.card input { display: block; width: 24px; height: 24px; margin: 0 0 4px 4px; }
+  label.card .top { display: flex; align-items: center; justify-content: space-between; margin: 0 4px 4px; }
+  label.card input { display: block; width: 24px; height: 24px; margin: 0; }
+  label.card .score { font-variant-numeric: tabular-nums; color: #bbb; }
+  label.card .bar { height: 4px; margin: 0 4px 4px; border-radius: 2px; background: linear-gradient(to right, #8ab4ff var(--fill), #333 var(--fill)); }
   .noimg { height: 340px; display: flex; align-items: center; justify-content: center; background: #333; border-radius: 10px; }
 </style>
 <header>
@@ -55,7 +57,16 @@ function cardView(card) {
     label.classList.toggle("picked", box.checked);
     show();
   };
-  label.prepend(box);
+  const score = document.createElement("span");
+  score.className = "score";
+  score.textContent = card.score.toFixed(2);
+  const bar = document.createElement("div");  // a 0-2 bar, so the order reads at a glance
+  bar.className = "bar";
+  bar.style.setProperty("--fill", `${card.score / 2 * 100}%`);
+  const top = document.createElement("div");
+  top.className = "top";
+  top.append(box, score);
+  label.prepend(top, bar);
   return label;
 }
 
@@ -66,14 +77,10 @@ async function init() {
   ]);
   saved.forEach(name => picked.add(name));
   document.title = pool.title;
-  for (const group of pool.groups) {
-    const heading = document.createElement("h2");
-    heading.textContent = group.label;
-    const row = document.createElement("div");
-    row.className = "row";
-    row.append(...group.cards.map(cardView));
-    $("main").append(heading, row);
-  }
+  const row = document.createElement("div");  // the server sends them most powerful first
+  row.className = "row";
+  row.append(...pool.cards.map(cardView));
+  $("main").append(row);
   show();
 }
 

@@ -5,6 +5,8 @@ import sys
 
 from prepared_cards.adapters.archidekt_file import ArchidektImportFile
 from prepared_cards.adapters.cached_catalog import CachedCatalog
+from prepared_cards.adapters.cached_power_score import CachedPowerScore
+from prepared_cards.adapters.random_power_score import RandomPowerScore
 from prepared_cards.adapters.scryfall_catalog import ScryfallCatalog
 from prepared_cards.orchestration.http_app import make_server
 from prepared_cards.orchestration.use_cases import CardPicker
@@ -16,8 +18,9 @@ PORT = int(os.environ.get("PORT", "8765"))
 
 def main():
     catalog = CachedCatalog(ScryfallCatalog(QUERY), os.path.join(HERE, "scryfall-cache.json"))
+    power = CachedPowerScore(RandomPowerScore(), os.path.join(HERE, "power-scores-random.json"))
     selection_file = ArchidektImportFile(os.path.join(HERE, "selected.txt"))
-    picker = CardPicker(catalog, selection_file)
+    picker = CardPicker(catalog, power, selection_file)
     try:
         server = make_server(picker, QUERY, PORT, selection_file.path)
     except OSError:
