@@ -8,7 +8,7 @@ Pick cards from a Scryfall search (default `o:prepared`) on a web page, and copy
 ./run
 ```
 
-Opens a tiny local server (Python 3, standard library only) at http://localhost:8765.
+Opens a tiny local server (Python 3, standard library only) at http://localhost:8765. If an earlier copy is still listening on the port, `./run` stops it first.
 
 1. First run fetches the search from Scryfall and caches it in `scryfall-cache.json`. Delete that file, or visit `/api/refresh`, to refetch.
 2. The page shows every card, grouped and sorted by mana value. Click a card to check it.

@@ -1,2 +1,6 @@
 #!/bin/sh
-cd "$(dirname "$0")" && exec python3 main.py
+cd "$(dirname "$0")" || exit 1
+# Stop a previous copy of this server, so a restart always runs the current code.
+old=$(lsof -ti ":${PORT:-8765}" -sTCP:LISTEN)
+[ -n "$old" ] && kill $old && sleep 0.5
+exec python3 main.py
