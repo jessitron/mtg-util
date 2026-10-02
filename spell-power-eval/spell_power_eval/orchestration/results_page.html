@@ -97,7 +97,7 @@ details summary { cursor: pointer; color: var(--ink-2); }
     <label class="field">Run <select id="run-picker" aria-label="Run"></select></label>
     <label class="field">Order cards by
       <select id="sort">
-        <option value="yours">your score, weak to powerful</option>
+        <option value="yours">your score, powerful to weak</option>
         <option value="miss">biggest miss first</option>
         <option value="file">order in the run</option>
       </select>
@@ -186,20 +186,20 @@ function armsOf(run) {
 function sortedCards(run) {
   const cards = run.cards.slice();
   const worst = (c) => Math.max(0, ...Object.values(c.answers).filter((a) => !a.error).map((a) => Math.abs(a.score - c.yours_score)));
-  if (state.sort === "yours") cards.sort((a, b) => a.yours_score - b.yours_score);
+  if (state.sort === "yours") cards.sort((a, b) => b.yours_score - a.yours_score);
   if (state.sort === "miss") cards.sort((a, b) => worst(b) - worst(a));
   if (state.sort.startsWith("arm:")) {
     const arm = state.sort.slice(4);
     // Cards the classifier did not score (error or no answer) go last.
-    const key = (c) => { const a = answerOf(c, arm); return a && !a.error ? a.score : Infinity; };
-    cards.sort((a, b) => (key(a) === key(b) ? a.yours_score - b.yours_score : key(a) - key(b)));
+    const key = (c) => { const a = answerOf(c, arm); return a && !a.error ? a.score : -Infinity; };
+    cards.sort((a, b) => (key(a) === key(b) ? b.yours_score - a.yours_score : key(b) - key(a)));
   }
   return cards;
 }
 function syncSortMenu(arms) {
   const menu = $("sort");
   menu.querySelectorAll("option[data-arm]").forEach((o) => o.remove());
-  for (const arm of arms) menu.append(el("option", { value: "arm:" + arm, "data-arm": "", text: `${arm}'s score, weak to powerful` }));
+  for (const arm of arms) menu.append(el("option", { value: "arm:" + arm, "data-arm": "", text: `${arm}'s score, powerful to weak` }));
   menu.value = state.sort;
 }
 const answerOf = (card, arm) => card.answers[arm] || null;
