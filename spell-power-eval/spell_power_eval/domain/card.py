@@ -20,6 +20,7 @@ class Card:
     loyalty: Optional[str] = None
     image_url: str = ""
     edhrec_rank: Optional[int] = None  # popularity among Commander decks; lower is more popular. Never shown to classifiers.
+    note: str = ""  # context every classifier gets, such as "judge this spell alone"
 
     def facts(self) -> str:
         """What every classifier is told about the card. Arithmetic is done here, not left to the model."""
@@ -37,4 +38,6 @@ class Card:
                 lines.append(f"Power plus toughness: {total} ({total / self.mana_value:.1f} per mana)")
         if self.loyalty is not None:
             lines.append(f"Starting loyalty: {self.loyalty}")
+        if self.note:
+            lines.append(f"Note: {self.note}")
         return "\n".join(lines)

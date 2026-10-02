@@ -33,6 +33,10 @@ Each cell in the report ends with that answer's estimated cost, and the summary 
 
 The `edhrec rank` column comes from Scryfall (lower means more popular in Commander). It is context for your labels, not ground truth, and no classifier sees it.
 
+## Judging a prepared spell on its own
+
+A prepared card is a creature with a spell on its back face. To judge the spell apart from the creature (say, for a deck with other ways to prepare creatures), name the spell in `labels.txt`: `1.4 | Unwind History`. The script finds the card (a search, since Scryfall's name lookup skips back faces; see [reference/scryfall.md](../reference/scryfall.md)) and hands every classifier only the spell: its own name, cost, mana value, type, and rules text, plus a note to judge the spell alone and ignore the creature. Name the creature (`Diviner of Victory`) and you get the whole card, as before. The spell's own mana cost is what you and the classifiers weigh it against; the creature's cost never enters.
+
 ## Looking at the results
 
 ```

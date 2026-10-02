@@ -50,6 +50,10 @@ class CardFactsTest(unittest.TestCase):
         self.assertNotIn("per mana", card(power="*", toughness="4").facts())
         self.assertNotIn("per mana", card(mv=0.0, power="1", toughness="1").facts())
 
+    def test_passes_along_a_note(self):
+        self.assertIn("Note: judge it alone", card(note="judge it alone").facts())
+        self.assertNotIn("Note:", card().facts())
+
     def test_never_mentions_popularity(self):
         self.assertNotIn("1234", card(edhrec_rank=1234).facts())
 
@@ -134,6 +138,46 @@ class ScryfallTest(unittest.TestCase):
         self.assertEqual(second[0].name, "Sol Ring")
         self.assertEqual(len(calls), 1)
         self.assertEqual(calls[0]["identifiers"], [{"name": "Sol Ring"}, {"name": "Front"}])
+
+    PREPARED = raw(
+        "Diviner of Victory // Unwind History",
+        layout="prepare",
+        cmc=1.0,
+        image_uris={"normal": "front.jpg"},
+        card_faces=[
+            {"name": "Diviner of Victory", "mana_cost": "{U}", "type_line": "Creature — Dwarf Wizard", "oracle_text": "Enters prepared.", "power": "1", "toughness": "1"},
+            {"name": "Unwind History", "mana_cost": "{1}{U}", "type_line": "Sorcery", "oracle_text": "Return target creature to its owner's hand."},
+        ],
+    )
+
+    def test_naming_the_spell_of_a_prepared_card_gets_the_spell_alone(self):
+        c = card_from_scryfall(self.PREPARED, asked="unwind history")
+        self.assertEqual((c.name, c.mana_cost, c.mana_value, c.type_line, c.power), ("Unwind History", "{1}{U}", 2.0, "Sorcery", None))
+        self.assertEqual(c.image_url, "front.jpg")
+        self.assertIn("Judge the spell alone", c.facts())
+
+    def test_naming_the_creature_of_a_prepared_card_still_gets_the_whole_card(self):
+        self.assertEqual(card_from_scryfall(self.PREPARED, asked="Diviner of Victory").name, "Diviner of Victory // Unwind History")
+        self.assertEqual(card_from_scryfall(self.PREPARED).power, "1")
+
+    def test_mana_value_of_a_cost(self):
+        from spell_power_eval.adapters.scryfall_catalog import _mana_value
+
+        self.assertEqual([_mana_value(c) for c in ("", "{X}{R}", "{2}{G/W}{G/W}", "{10}", "{B/P}")], [0, 1, 4, 10, 1])
+
+    def test_searches_for_a_spell_name_the_collection_endpoint_misses(self):
+        searches = []
+
+        def get(url):
+            searches.append(url)
+            return {"data": [self.PREPARED]}
+
+        post = lambda url, body: {"data": [raw("Sol Ring")], "not_found": [{"name": "Unwind History"}]}
+        catalog = ScryfallCatalog(None, post_json=post, sleep=lambda s: None, get_json=get)
+        found = catalog.find(["Sol Ring", "Unwind History"])
+        self.assertEqual([c.name for c in found], ["Sol Ring", "Unwind History"])
+        self.assertEqual(len(searches), 1)
+        self.assertIn("%21%22Unwind+History%22", searches[0])
 
     def test_names_what_is_missing(self):
         catalog = ScryfallCatalog(None, post_json=lambda url, body: {"data": []}, sleep=lambda s: None)
