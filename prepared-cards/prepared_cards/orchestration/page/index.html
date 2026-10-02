@@ -71,22 +71,12 @@ async function init() {
   show();
 }
 
-async function copyText(text) {
-  if (navigator.clipboard && window.isSecureContext) return navigator.clipboard.writeText(text);
-  const area = document.createElement("textarea");  // fallback for non-secure origins
-  area.value = text;
-  document.body.append(area);
-  area.select();
-  const ok = document.execCommand("copy");
-  area.remove();
-  if (!ok) throw new Error("copy was blocked");
-}
-
 $("copy").onclick = async () => {
   const names = [...picked];
   const text = names.map(name => `1 ${name}`).join("\n") + "\n";  // Archidekt import format
+  if (!window.isSecureContext) return alert("Clipboard needs https or localhost.");
   try {
-    await copyText(text);
+    await navigator.clipboard.writeText(text);
     $("status").textContent = `Copied ${names.length} cards. Paste into Archidekt's import box.`;
   } catch (e) {
     $("status").textContent = `Copy failed: ${e.message}`;
