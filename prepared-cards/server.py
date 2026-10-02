@@ -73,6 +73,10 @@ class Handler(BaseHTTPRequestHandler):
 
 
 if __name__ == "__main__":
+    try:
+        server = HTTPServer(("127.0.0.1", PORT), Handler)
+    except OSError as e:
+        sys.exit(f"Can't listen on port {PORT}: {e}. Something else is using it; try PORT=8766 ./run")
     n = len(load_cards()["cards"])
     print(f"{n} cards for query {QUERY!r}. http://localhost:{PORT}  (writes {OUTPUT})", file=sys.stderr)
-    HTTPServer(("127.0.0.1", PORT), Handler).serve_forever()
+    server.serve_forever()
