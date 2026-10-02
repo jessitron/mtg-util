@@ -19,7 +19,7 @@ def pool_to_json(pool: CardPool) -> dict:
         "groups": [
             {
                 "label": _label(g),
-                "cards": [{"name": c.name, "imageUrl": c.image_url, "pageUrl": c.page_url} for c in g.cards],
+                "cards": [{"name": c.name, "imageUrl": c.image_url, "gathererUrl": c.gatherer_url} for c in g.cards],
             }
             for g in pool.by_mana_value()
         ]

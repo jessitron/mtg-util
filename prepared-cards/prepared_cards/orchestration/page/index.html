@@ -7,7 +7,8 @@
   button { font-size: 1rem; padding: .4rem .8rem; }
   h2 { margin: 1.2rem 1rem .4rem; }
   .row { display: flex; flex-wrap: wrap; gap: .6rem; padding: 0 1rem; }
-  label.card { width: 244px; cursor: pointer; border: 3px solid transparent; border-radius: 12px; padding: 2px; }
+  label.card { width: 244px; border: 3px solid transparent; border-radius: 12px; padding: 2px; }
+  label.card a { display: block; }
   label.card img { width: 100%; border-radius: 10px; display: block; }
   label.card.picked { border-color: #4ade80; }
   label.card input { display: block; width: 24px; height: 24px; margin: 0 0 4px 4px; }
@@ -28,18 +29,23 @@ function cardView(card) {
   const label = document.createElement("label");
   label.className = "card";
   label.title = card.name;
+  const link = document.createElement("a");  // clicking the card opens Gatherer; the checkbox does the picking
+  link.href = card.gathererUrl;
+  link.target = "_blank";
+  link.rel = "noopener";
   if (card.imageUrl) {
     const img = document.createElement("img");
     img.loading = "lazy";
     img.src = card.imageUrl;
     img.alt = card.name;
-    label.append(img);
+    link.append(img);
   } else {
     const placeholder = document.createElement("div");
     placeholder.className = "noimg";
     placeholder.textContent = card.name;
-    label.append(placeholder);
+    link.append(placeholder);
   }
+  label.append(link);
   const box = document.createElement("input");
   box.type = "checkbox";
   box.checked = picked.has(card.name);

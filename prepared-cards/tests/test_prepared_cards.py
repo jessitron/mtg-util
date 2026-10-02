@@ -119,6 +119,12 @@ class CardPickerTest(unittest.TestCase):
         self.assertEqual(picker.save_and_render(["A", "B"]), "1 A\n1 B\n")
 
 
+class GathererLinkTest(unittest.TestCase):
+    def test_searches_by_front_face_name(self):
+        self.assertEqual(card("Harmonized Trio // Brainstorm", 3.0).gatherer_url,
+                         "https://gatherer.wizards.com/advanced-search?name=Harmonized+Trio")
+
+
 class PageJsonTest(unittest.TestCase):
     def test_labels_whole_mana_values_without_decimal(self):
         data = pool_to_json(CardPool.of([card("A", 3.0), card("B", 0.5)]))

@@ -11,7 +11,7 @@ Pick cards from a Scryfall search (default `o:prepared`) on a web page, and copy
 Opens a tiny local server (Python 3, standard library only) at http://localhost:8765. If an earlier copy is still listening on the port, `./run` stops it first.
 
 1. First run fetches the search from Scryfall and caches it in `scryfall-cache.json`. Delete that file, or visit `/api/refresh`, to refetch.
-2. The page shows every card, grouped and sorted by mana value. Click a card to check it.
+2. The page shows every card, grouped and sorted by mana value. Tick a card's checkbox to pick it. Clicking the card itself opens its Gatherer search in a new window.
 3. "Copy selection to clipboard" puts one `1 Card Name` per line in the clipboard (it works on `http://localhost`, which browsers treat as a secure context). It also writes `selected.txt`, so picks reload when you reopen the page.
 4. In Archidekt, use the deck's import feature and paste.
 

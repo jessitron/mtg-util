@@ -1,3 +1,4 @@
+import urllib.parse
 from dataclasses import dataclass
 
 
@@ -11,3 +12,9 @@ class Card:
     type_line: str
     image_url: str
     page_url: str
+
+    @property
+    def gatherer_url(self) -> str:
+        """Gatherer's name search, on the front face. Scryfall has no Gatherer id for unreleased cards."""
+        front = self.name.split(" // ")[0]
+        return "https://gatherer.wizards.com/advanced-search?" + urllib.parse.urlencode({"name": front})
