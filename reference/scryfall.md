@@ -11,3 +11,4 @@ Docs: https://scryfall.com/docs/api
 ## Card shape quirks
 - Layout `prepare`: two faces, name is `Front // Back`, `cmc` is the front face's. Top-level `image_uris` is present, so no need to dig into `card_faces` (other multi-face layouts, like `transform`, put images only in `card_faces[n].image_uris`).
 - `cmc` is a float (`1.0`).
+- New cards have no `multiverse_ids` and no `related_uris.gatherer`. See [gatherer.md](gatherer.md).

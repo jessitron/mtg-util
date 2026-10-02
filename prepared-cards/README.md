@@ -46,4 +46,6 @@ Language boundaries: Scryfall says `cmc` and `card_faces`; Archidekt says `1 Nam
 
 - `prepared` cards have layout `prepare` and two faces. Their name is `Front // Back`. We write that full name to the import file. Untested in Archidekt; if it fails to match, switch to the front-face name only.
 - Images come from the front face.
+- The Copy button gives the clipboard a promise (`ClipboardItem` with a `Blob` promise), so the server formats the text and the click keeps its permission in Safari too. It needs a secure context (https or localhost); otherwise it shows an alert.
+- Card links go to Gatherer's name search, on the front-face name. See [../reference/gatherer.md](../reference/gatherer.md).
 - API details: see [../reference/](../reference/README.md).
