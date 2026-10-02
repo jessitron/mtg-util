@@ -71,13 +71,15 @@ class HoneycombTelemetry:
             span.set_attributes({"gen_ai.provider.name": model.provider, "gen_ai.request.model": model.request_model, "gen_ai.response.model": model.response_model})
             if model.finish_reasons:
                 span.set_attribute("gen_ai.response.finish_reasons", list(model.finish_reasons))
-            details = {
-                "gen_ai.input.messages": json.dumps([_text_message("user", model.input)]),
-                "gen_ai.output.messages": json.dumps([_text_message("assistant", model.output)]),
-            }
+            # Span events are deprecated, so the messages ride on the span itself.
+            span.set_attributes(
+                {
+                    "gen_ai.input.messages": json.dumps([_text_message("user", model.input)]),
+                    "gen_ai.output.messages": json.dumps([_text_message("assistant", model.output)]),
+                }
+            )
             if model.system:
-                details["gen_ai.system_instructions"] = json.dumps([{"type": "text", "content": model.system}])
-            span.add_event("gen_ai.client.inference.operation.details", details, timestamp=call.ended_ns)
+                span.set_attribute("gen_ai.system_instructions", json.dumps([{"type": "text", "content": model.system}]))
         if verdict and verdict.usage:
             span.set_attributes({"gen_ai.usage.input_tokens": verdict.usage.input_tokens, "gen_ai.usage.output_tokens": verdict.usage.output_tokens})
         if call.cost_usd is not None:

@@ -21,7 +21,7 @@ Span names follow `{operation} {identifier}`, such as `chat claude-haiku-4-5`. E
 ## Shapes we chose (from the OTel GenAI semconv, not the Honeycomb page)
 
 - Messages are JSON strings: `[{"role": "user", "parts": [{"type": "text", "content": "..."}]}]`. OTel attributes can't hold nested objects.
-- The inference event is named `gen_ai.client.inference.operation.details`; the messages and `gen_ai.system_instructions` ride on it.
+- The messages and `gen_ai.system_instructions` go on the span as attributes. The Honeycomb page lists the messages under "Span Events" (as a small model summarized it; we did not read the raw page), but span events are deprecated, so we use attributes. We first sent them on an event named `gen_ai.client.inference.operation.details`, from memory of the semconv, and dropped that.
 - The evaluation event carries `gen_ai.evaluation.name`, `.score.value`, `.score.label`, `.explanation`.
 - `gen_ai.provider.name` names the vendor (`anthropic`).
 

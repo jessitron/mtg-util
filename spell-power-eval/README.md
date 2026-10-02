@@ -60,7 +60,7 @@ When `HONEYCOMB_API_KEY` is set, a real run sends one OpenTelemetry trace: a roo
 
 Each `chat` span has the GenAI fields (`gen_ai.operation.name`, `gen_ai.agent.name`, `gen_ai.conversation.id`, `gen_ai.provider.name`, request and response model, token counts, finish reasons) plus:
 
-- **An inference event** (`gen_ai.client.inference.operation.details`) with `gen_ai.input.messages`, `gen_ai.output.messages`, and for Claude `gen_ai.system_instructions`. For Claude, the input is the card facts and the output is the response content blocks (thinking included). For Jev, input and output are the whole request and response JSON.
+- **The messages, as span attributes** (span events are deprecated): `gen_ai.input.messages`, `gen_ai.output.messages`, and for Claude `gen_ai.system_instructions`. For Claude, the input is the card facts and the output is the response content blocks (thinking included). For Jev, input and output are the whole request and response JSON.
 - **An evaluation event** (`gen_ai.evaluation.result`) with the distance from your score and a sentence such as "haiku scored 1.60 (powerful); Jess scored 1.40 (balanced); off by 0.20."
 - **Our own fields, for queries**: `spell_eval.classifier`, `.card`, `.human_score`, `.human_label`, `.score`, `.label`, `.score_error` (distance from you), `.score_diff` (signed; positive means more powerful than you said), `.steps_off`, `.label_match`, `.confidence`, `.reason`, `.cost_usd`.
 

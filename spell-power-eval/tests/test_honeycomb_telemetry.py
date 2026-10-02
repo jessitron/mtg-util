@@ -51,13 +51,14 @@ class HoneycombTelemetryTest(unittest.TestCase):
         self.assertEqual(attributes["gen_ai.response.model"], "claude-haiku-4-5-20251001")
         self.assertEqual(list(attributes["gen_ai.response.finish_reasons"]), ["end_turn"])
 
-    def test_messages_ride_on_an_event(self):
-        event = {e.name: e for e in self.run_eval([Claudish()])["chat claude-haiku-4-5"].events}["gen_ai.client.inference.operation.details"]
-        sent = json.loads(event.attributes["gen_ai.input.messages"])
+    def test_messages_ride_on_the_span(self):
+        span = self.run_eval([Claudish()])["chat claude-haiku-4-5"]
+        sent = json.loads(span.attributes["gen_ai.input.messages"])
         self.assertEqual(sent[0]["role"], "user")
         self.assertIn("Name: Serra Angel", sent[0]["parts"][0]["content"])
-        self.assertEqual(json.loads(event.attributes["gen_ai.output.messages"])[0]["role"], "assistant")
-        self.assertIn("Be fair.", event.attributes["gen_ai.system_instructions"])
+        self.assertEqual(json.loads(span.attributes["gen_ai.output.messages"])[0]["role"], "assistant")
+        self.assertIn("Be fair.", span.attributes["gen_ai.system_instructions"])
+        self.assertNotIn("gen_ai.client.inference.operation.details", [e.name for e in span.events])
 
     def test_the_comparison_with_the_human_is_recorded(self):
         span = self.run_eval([Claudish()])["chat claude-haiku-4-5"]
