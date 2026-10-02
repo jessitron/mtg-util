@@ -15,7 +15,7 @@
 </style>
 <header>
   <strong id="count"></strong>
-  <button id="save">Save selection</button>
+  <button id="copy">Copy selection to clipboard</button>
   <span id="status"></span>
 </header>
 <main id="main"></main>
@@ -71,9 +71,27 @@ async function init() {
   show();
 }
 
-$("save").onclick = async () => {
-  const r = await fetch("/api/selection", {method: "POST", body: JSON.stringify([...picked])}).then(r => r.json());
-  $("status").textContent = `Wrote ${r.saved} cards to ${r.file}`;
+async function copyText(text) {
+  if (navigator.clipboard && window.isSecureContext) return navigator.clipboard.writeText(text);
+  const area = document.createElement("textarea");  // fallback for non-secure origins
+  area.value = text;
+  document.body.append(area);
+  area.select();
+  const ok = document.execCommand("copy");
+  area.remove();
+  if (!ok) throw new Error("copy was blocked");
+}
+
+$("copy").onclick = async () => {
+  const names = [...picked];
+  const text = names.map(name => `1 ${name}`).join("\n") + "\n";  // Archidekt import format
+  try {
+    await copyText(text);
+    $("status").textContent = `Copied ${names.length} cards. Paste into Archidekt's import box.`;
+  } catch (e) {
+    $("status").textContent = `Copy failed: ${e.message}`;
+  }
+  fetch("/api/selection", {method: "POST", body: JSON.stringify(names)});  // remember picks across reloads
 };
 init();
 </script>

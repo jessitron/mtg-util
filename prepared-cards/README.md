@@ -1,6 +1,6 @@
 # prepared-cards
 
-Pick cards from a Scryfall search (default `o:prepared`) on a web page, and write the picks as an Archidekt import list.
+Pick cards from a Scryfall search (default `o:prepared`) on a web page, and copy the picks as an Archidekt import list.
 
 ## Usage
 
@@ -12,8 +12,8 @@ Opens a tiny local server (Python 3, standard library only) at http://localhost:
 
 1. First run fetches the search from Scryfall and caches it in `scryfall-cache.json`. Delete that file, or visit `/api/refresh`, to refetch.
 2. The page shows every card, grouped and sorted by mana value. Click a card to check it.
-3. "Save selection" writes `selected.txt`, one `1 Card Name` per line. Saved picks reload when you reopen the page.
-4. In Archidekt, use the deck's import feature and paste (or upload) `selected.txt`.
+3. "Copy selection to clipboard" puts one `1 Card Name` per line in the clipboard (it works on `http://localhost`, which browsers treat as a secure context). It also writes `selected.txt`, so picks reload when you reopen the page.
+4. In Archidekt, use the deck's import feature and paste.
 
 ## Settings (environment variables)
 
