@@ -23,6 +23,8 @@ A collection of MTG-related utility scripts, plus accumulated knowledge about Sc
 - **API keys live in an untracked `.be` file at the repo root** (`export NAME=...` lines; globally git-ignored). Run `source .be` before a script that calls a paid API. Never print the values; list names only (`sed -E 's/=.*/=<redacted>/' .be`).
 - **A script that spends money gets a free `--dry-run`, and its first real run uses one card.** Ask Jess before any run that costs more than cents.
 - **Chrome (the claude-in-chrome tools) refuses `file://` URLs.** To check a generated page in a browser, serve a copy over http on a throwaway port (`python3 -m http.server <port> --bind 127.0.0.1` from a temp directory). Check that the port is free first (`lsof -i :<port>`); Jess often has her own servers running. Afterward: clear `localStorage` on that origin, close the tab, stop the server, delete the copy.
+- **Ports in use.** prepared-cards defaults to 8765, spell-power-eval `--serve` to 8780, and Jess runs another server on 8799. Pick a different throwaway port for browser checks, stop the server afterward, and close the tab. Chrome blocks `file://`, so serve over http.
+- **Page tests with fixtures.** For a results page, copy `spell-power-eval/tests/fixtures/sample_run.json` into `results/` under a throwaway name, then delete it. Never run a paid arm just to get data.
 
 ## Keeping docs current
 
