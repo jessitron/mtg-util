@@ -1,7 +1,8 @@
+import time
 from dataclasses import dataclass
 from typing import Callable, Optional, Sequence
 
-from ..domain.ports import Classifier, Verdict
+from ..domain.ports import Classifier, NoTelemetry, RecordedCall, Telemetry, Verdict
 from ..domain.pricing import estimate_cost
 from ..domain.scoring import LabeledCard, Scorecard
 
@@ -32,13 +33,24 @@ class Evaluation:
         return sum(costs) if costs else None
 
 
-def evaluate(cards: Sequence[LabeledCard], classifiers: Sequence[Classifier], on_progress: Callable[[str], None] = lambda _: None) -> Evaluation:
+def evaluate(
+    cards: Sequence[LabeledCard],
+    classifiers: Sequence[Classifier],
+    on_progress: Callable[[str], None] = lambda _: None,
+    telemetry: Telemetry = NoTelemetry(),
+    run_id: str = "",
+) -> Evaluation:
     attempts = {}
-    for classifier in classifiers:
-        for labeled in cards:
-            on_progress(f"{classifier.name}: {labeled.card.name}")
-            try:
-                attempts[(labeled.card.name, classifier.name)] = Attempt(verdict=classifier.classify(labeled.card))
-            except Exception as e:  # one bad call must not lose the rest of a paid run
-                attempts[(labeled.card.name, classifier.name)] = Attempt(error=f"{type(e).__name__}: {e}")
+    with telemetry.run(run_id):
+        for classifier in classifiers:
+            for labeled in cards:
+                on_progress(f"{classifier.name}: {labeled.card.name}")
+                started = time.time_ns()
+                try:
+                    attempt = Attempt(verdict=classifier.classify(labeled.card))
+                except Exception as e:  # one bad call must not lose the rest of a paid run
+                    attempt = Attempt(error=f"{type(e).__name__}: {e}")
+                attempts[(labeled.card.name, classifier.name)] = attempt
+                if attempt.error or (attempt.verdict and attempt.verdict.call):  # a rubber stamp makes no call
+                    telemetry.record_call(RecordedCall(run_id, classifier.name, labeled.card, labeled.score, started, time.time_ns(), attempt.verdict, attempt.error, attempt.cost(classifier.name)))
     return Evaluation(cards, [c.name for c in classifiers], attempts)

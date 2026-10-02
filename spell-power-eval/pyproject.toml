@@ -3,7 +3,11 @@ name = "spell-power-eval"
 version = "0.1.0"
 description = "Compare classifiers (Claude, Jev) against hand labels of MTG spells."
 requires-python = ">=3.10"
-dependencies = ["anthropic"]
+dependencies = [
+    "anthropic",
+    "opentelemetry-exporter-otlp-proto-http>=1.45.0",
+    "opentelemetry-sdk>=1.45.0",
+]
 
 [tool.uv]
 package = false

@@ -54,7 +54,23 @@ The **Table view** button swaps the charts for the same data in tables, with eve
 
 The page reads `spell_power_eval/orchestration/results_page.html` on each request, so a browser refresh picks up edits. Routes: `/` (the page), `/api/runs` (the list), `/api/runs/<file>` (one run).
 
+## Sending each call to Honeycomb
+
+When `HONEYCOMB_API_KEY` is set, a real run sends one OpenTelemetry trace: a root span `invoke_agent spell-power-eval` (its `gen_ai.conversation.id` is the run's timestamp, the same as the results file name) with one child span `chat <model>` per API call. `always-balanced` makes no call and sends nothing. `--no-telemetry` turns it off; `--dry-run` never sends. The dataset is `spell-power-eval`. Field notes: [reference/honeycomb.md](../reference/honeycomb.md).
+
+Each `chat` span has the GenAI fields (`gen_ai.operation.name`, `gen_ai.agent.name`, `gen_ai.conversation.id`, `gen_ai.provider.name`, request and response model, token counts, finish reasons) plus:
+
+- **An inference event** (`gen_ai.client.inference.operation.details`) with `gen_ai.input.messages`, `gen_ai.output.messages`, and for Claude `gen_ai.system_instructions`. For Claude, the input is the card facts and the output is the response content blocks (thinking included). For Jev, input and output are the whole request and response JSON.
+- **An evaluation event** (`gen_ai.evaluation.result`) with the distance from your score and a sentence such as "haiku scored 1.60 (powerful); Jess scored 1.40 (balanced); off by 0.20."
+- **Our own fields, for queries**: `spell_eval.classifier`, `.card`, `.human_score`, `.human_label`, `.score`, `.label`, `.score_error` (distance from you), `.score_diff` (signed; positive means more powerful than you said), `.steps_off`, `.label_match`, `.confidence`, `.reason`, `.cost_usd`.
+
+A failed call becomes an error span (`error.type`, `error.message`) with no evaluation. Try `AVG(spell_eval.score_error) GROUP BY spell_eval.classifier`.
+
+The messages hold only card text and model answers, no personal data.
+
 ## Credentials (environment variables)
+
+- Honeycomb: `HONEYCOMB_API_KEY` (an ingest key; optional) and `HONEYCOMB_API_ENDPOINT` (default `https://api.honeycomb.io`; set `https://api.eu1.honeycomb.io` for EU).
 
 - Claude: the Anthropic SDK finds credentials itself: `ANTHROPIC_API_KEY` (create one in the Anthropic Console), or an `ant auth login` profile.
 - Jev: `TYPESAFE_API_KEY`, from https://console.typesafe.ai/keys. Without it the `jev-*` arms are skipped with a message.

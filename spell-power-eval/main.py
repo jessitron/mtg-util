@@ -8,10 +8,12 @@ from datetime import datetime, timezone
 from spell_power_eval.adapters.claude_classifier import CLAUDE_MODELS, ClaudeClassifier
 from spell_power_eval.adapters.jev_classifier import KEY_VARIABLE, JevClassifier
 from spell_power_eval.adapters.cards_page import cards_page
+from spell_power_eval.adapters.honeycomb_telemetry import KEY_VARIABLE as HONEYCOMB_KEY, HoneycombTelemetry
 from spell_power_eval.adapters.labels_file import LabelsFile
 from spell_power_eval.adapters.results_file import ResultsDirectory, write_results
 from spell_power_eval.adapters.scryfall_catalog import ScryfallCatalog
 from spell_power_eval.domain.baseline import AlwaysBalanced
+from spell_power_eval.domain.ports import NoTelemetry
 from spell_power_eval.domain.rubric import CLAUDE_SYSTEM_PROMPT
 from spell_power_eval.domain.scoring import LabeledCard
 from spell_power_eval.orchestration.evaluation import evaluate
@@ -60,6 +62,7 @@ def main():
     parser.add_argument("--out", default=os.path.join(HERE, "cards.html"), help="where --page writes")
     parser.add_argument("--serve", action="store_true", help="serve a page that shows the runs in results/ (PORT sets the port, default 8780), and stop with Ctrl-C")
     parser.add_argument("--dry-run", action="store_true", help="look up the cards and print what the classifiers would be asked; call no model")
+    parser.add_argument("--no-telemetry", action="store_true", help=f"don't send spans to Honeycomb, even if {HONEYCOMB_KEY} is set")
     args = parser.parse_args()
     unknown = [c for c in args.classifiers if c not in CLASSIFIERS]
     if unknown:
@@ -106,9 +109,17 @@ def main():
             print(f"Skipping {', '.join(skipped)}: {KEY_VARIABLE} is not set.", file=sys.stderr)
             arms = [a for a in arms if a not in skipped]
 
-    evaluation = evaluate(labeled, [CLASSIFIERS[a]() for a in arms], on_progress=lambda m: print(m, file=sys.stderr))
+    stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")  # names the results file and is the Honeycomb conversation id
+    telemetry = None if args.no_telemetry else HoneycombTelemetry.from_environment()
+    if telemetry is None:
+        print(f"Not sending to Honeycomb ({'--no-telemetry' if args.no_telemetry else HONEYCOMB_KEY + ' is not set'}).", file=sys.stderr)
+    try:
+        evaluation = evaluate(labeled, [CLASSIFIERS[a]() for a in arms], on_progress=lambda m: print(m, file=sys.stderr), telemetry=telemetry or NoTelemetry(), run_id=stamp)
+    finally:
+        if telemetry:
+            telemetry.close()
+            print(f"Sent spans to Honeycomb, conversation {stamp}.", file=sys.stderr)
     print(text_report(evaluation))
-    stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
     path = write_results(os.path.join(HERE, "results"), stamp, results_json(evaluation, {a: CLAUDE_MODELS.get(a, "") for a in arms}))
     print(f"\nWrote {path}", file=sys.stderr)
 

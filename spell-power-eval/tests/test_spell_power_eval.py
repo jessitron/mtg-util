@@ -1,3 +1,4 @@
+import json
 import os
 import tempfile
 import unittest
@@ -223,6 +224,11 @@ class ClaudeClassifierTest(unittest.TestCase):
         verdict = ClaudeClassifier("haiku", client=self.fake_client(ClaudeAnswer(reason="Fair.", score=1.0))).classify(card())
         self.assertEqual(verdict.usage, Usage(200, 1000))
 
+    def test_keeps_the_exchange_for_telemetry(self):
+        verdict = ClaudeClassifier("haiku", client=self.fake_client(ClaudeAnswer(reason="Fair.", score=1.0))).classify(card())
+        self.assertEqual((verdict.call.provider, verdict.call.request_model, verdict.call.finish_reasons), ("anthropic", "claude-haiku-4-5", ("end_turn",)))
+        self.assertIn("Name: Serra Angel", verdict.call.input)
+
     def test_clamps_a_score_outside_the_scale(self):
         verdict = ClaudeClassifier("haiku", client=self.fake_client(ClaudeAnswer(reason="Wow.", score=3.5))).classify(card())
         self.assertEqual((verdict.power, verdict.score), (Power.POWERFUL, 2.0))
@@ -261,6 +267,12 @@ class JevClassifierTest(unittest.TestCase):
     def test_reports_the_tokens_the_call_used(self):
         verdict, _ = self.run_jev("score", {"type": "score", "score": 1.0, "probabilities": {"0": 0.0, "1": 1.0, "2": 0.0}})
         self.assertEqual(verdict.usage, Usage(300, 0))
+
+    def test_keeps_the_whole_request_and_response_json_for_telemetry(self):
+        verdict, sent = self.run_jev("score", {"type": "score", "score": 1.0, "probabilities": {"0": 0.0, "1": 1.0, "2": 0.0}})
+        self.assertEqual(json.loads(verdict.call.input), sent["body"])
+        self.assertEqual(json.loads(verdict.call.output)["answers"][QUESTION_ID]["score"], 1.0)
+        self.assertEqual(verdict.call.provider, "typesafe")
 
     def test_no_key_is_an_error_not_a_crash_of_the_run(self):
         with mock.patch.dict(os.environ, {}, clear=True):

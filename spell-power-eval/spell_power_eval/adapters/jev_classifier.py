@@ -8,7 +8,7 @@ from typing import Callable, Literal
 from ..domain.card import Card
 from ..domain.power import Power
 from ..domain.pricing import Usage
-from ..domain.ports import Verdict
+from ..domain.ports import ModelCall, Verdict
 from ..domain.rubric import DESCRIPTIONS, QUESTION
 
 URL = "https://api.typesafe.ai/v1/systemone"
@@ -58,7 +58,8 @@ class JevClassifier:
         api_key = os.environ.get(KEY_VARIABLE)
         if not api_key:
             raise RuntimeError(f"{KEY_VARIABLE} is not set")
-        response = self._post_json(URL, jev_request(self._kind, card), api_key)
+        request = jev_request(self._kind, card)
+        response = self._post_json(URL, request, api_key)
         answer = response["answers"][QUESTION_ID]
         reported = response.get("usage")
         usage = Usage(reported["input_tokens"], reported["output_tokens"]) if reported else None
@@ -72,4 +73,5 @@ class JevClassifier:
             power = Power.nearest(score)
             shown = {Power(int(k)).label: v for k, v in probabilities.items()}
         detail = ", ".join(f"{label} {p:.2f}" for label, p in shown.items())
-        return Verdict(power, score, confidence=answer.get("confidence"), detail=detail, usage=usage)
+        call = ModelCall("typesafe", request["model"], response.get("model", request["model"]), input=json.dumps(request), output=json.dumps(response))
+        return Verdict(power, score, confidence=answer.get("confidence"), detail=detail, usage=usage, call=call)
