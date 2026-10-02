@@ -41,8 +41,9 @@ Ten cards is a few cents at most. Each card is about 150-300 input tokens and a 
 
 ## Status
 
-- Unit tests pass, and the Scryfall lookup is verified live.
-- **The Claude and Jev adapters have never called the real APIs.** Their request shapes come from SDK docs and TypeSafe's docs, and the tests use fakes. Expect to fix something on the first real run. Whether Haiku 4.5 accepts the SDK's structured-output call (`messages.parse`) is unconfirmed.
+- Unit tests pass. On 2026-10-02 every arm (haiku, sonnet, opus, jev-choice, jev-score) ran against the real APIs on one card (Serra Angel) and returned a verdict. Haiku 4.5 accepts the SDK's structured-output call (`messages.parse`).
+- That run only proved the plumbing. No one has yet compared a model's accuracy against real labels.
+- Keys live in an untracked `../.be` file (globally git-ignored). Run `source ../.be` before `./run`.
 
 ## Tests
 
