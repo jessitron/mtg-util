@@ -12,6 +12,7 @@ from spell_power_eval.adapters.scryfall_catalog import ScryfallCatalog, card_fro
 from spell_power_eval.domain.baseline import AlwaysBalanced
 from spell_power_eval.domain.card import Card
 from spell_power_eval.domain.power import Power
+from spell_power_eval.domain.pricing import Usage, estimate_cost
 from spell_power_eval.domain.ports import Verdict
 from spell_power_eval.domain.scoring import LabeledCard, Scorecard
 from spell_power_eval.orchestration.evaluation import evaluate
@@ -146,7 +147,7 @@ class ClaudeClassifierTest(unittest.TestCase):
 
         def parse(**kwargs):
             self.seen = kwargs
-            return SimpleNamespace(parsed_output=parsed, stop_reason=stop_reason)
+            return SimpleNamespace(parsed_output=parsed, stop_reason=stop_reason, usage=SimpleNamespace(input_tokens=200, output_tokens=1000))
 
         return SimpleNamespace(messages=SimpleNamespace(parse=parse))
 
@@ -157,6 +158,10 @@ class ClaudeClassifierTest(unittest.TestCase):
         self.assertEqual(self.seen["model"], "claude-haiku-4-5")
         self.assertIn("Name: Serra Angel", self.seen["messages"][0]["content"])
         self.assertIs(self.seen["output_format"], ClaudeAnswer)
+
+    def test_reports_the_tokens_the_call_used(self):
+        verdict = ClaudeClassifier("haiku", client=self.fake_client(ClaudeAnswer(reason="Fair.", score=1.0))).classify(card())
+        self.assertEqual(verdict.usage, Usage(200, 1000))
 
     def test_clamps_a_score_outside_the_scale(self):
         verdict = ClaudeClassifier("haiku", client=self.fake_client(ClaudeAnswer(reason="Wow.", score=3.5))).classify(card())
@@ -174,7 +179,7 @@ class JevClassifierTest(unittest.TestCase):
 
         def post(url, body, key):
             sent.update(url=url, body=body, key=key)
-            return {"answers": {QUESTION_ID: answer}}
+            return {"answers": {QUESTION_ID: answer}, "usage": {"input_tokens": 300, "output_tokens": 0}}
 
         with mock.patch.dict(os.environ, {KEY_VARIABLE: "k"}):
             return JevClassifier(kind, post_json=post).classify(card()), sent
@@ -193,10 +198,26 @@ class JevClassifierTest(unittest.TestCase):
         self.assertIn("balanced 0.57", verdict.detail)
         self.assertEqual(len(sent["body"]["questions"][QUESTION_ID]["criteria"]), 3)
 
+    def test_reports_the_tokens_the_call_used(self):
+        verdict, _ = self.run_jev("score", {"type": "score", "score": 1.0, "probabilities": {"0": 0.0, "1": 1.0, "2": 0.0}})
+        self.assertEqual(verdict.usage, Usage(300, 0))
+
     def test_no_key_is_an_error_not_a_crash_of_the_run(self):
         with mock.patch.dict(os.environ, {}, clear=True):
             with self.assertRaisesRegex(RuntimeError, KEY_VARIABLE):
                 JevClassifier("choice").classify(card())
+
+
+class PricingTest(unittest.TestCase):
+    def test_multiplies_tokens_by_the_per_million_prices(self):
+        self.assertAlmostEqual(estimate_cost("sonnet", Usage(200, 1000)), (200 * 2 + 1000 * 10) / 1e6)
+
+    def test_jev_charges_for_input_only(self):
+        self.assertAlmostEqual(estimate_cost("jev-choice", Usage(1_000_000, 50)), 0.042)
+
+    def test_no_usage_or_no_price_means_no_estimate(self):
+        self.assertIsNone(estimate_cost("sonnet", None))
+        self.assertIsNone(estimate_cost("mystery", Usage(1, 1)))
 
 
 class EvaluationTest(unittest.TestCase):
@@ -219,7 +240,7 @@ class EvaluationTest(unittest.TestCase):
         self.assertIn("1.0 balanced ✗", text)
         self.assertIn("1.0 balanced ✓", text)
         self.assertIn("broken on A: RuntimeError: boom", text)
-        self.assertRegex(text, r"A\s+0.0 weak\s+ERROR\s+1.0 balanced ✗\s+5")
+        self.assertRegex(text, r"A\s+0.0 weak\s+ERROR\s+1.0 balanced ✗ \$0.0000\s+5")
 
     def test_results_json_keeps_the_reasons(self):
         results = results_json(evaluate(self.cards, [AlwaysBalanced()]), {})
@@ -227,6 +248,28 @@ class EvaluationTest(unittest.TestCase):
         self.assertEqual(results["cards"][0]["answers"]["always-balanced"]["score"], 1.0)
         self.assertEqual(results["scorecards"]["always-balanced"]["mean_score_error"], 0.5)
         self.assertEqual(results["scorecards"]["always-balanced"]["confusion"], {"weak->balanced": 1, "balanced->balanced": 1})
+
+    class Priced:
+        name = "sonnet"
+
+        def classify(self, card):
+            return Verdict(Power.BALANCED, 1.0, usage=Usage(200, 1000))
+
+    def test_cost_is_estimated_per_answer_and_per_run(self):
+        evaluation = evaluate(self.cards, [self.Priced(), AlwaysBalanced()])
+        results = results_json(evaluation, {})
+        each = (200 * 2 + 1000 * 10) / 1e6
+        self.assertAlmostEqual(results["cards"][0]["answers"]["sonnet"]["cost_usd"], each)
+        self.assertEqual(results["cards"][0]["answers"]["sonnet"]["usage"], {"input_tokens": 200, "output_tokens": 1000})
+        self.assertAlmostEqual(results["scorecards"]["sonnet"]["cost_usd"], 2 * each)
+        self.assertEqual(results["scorecards"]["always-balanced"]["cost_usd"], 0.0)
+        text = text_report(evaluation)
+        self.assertIn("$0.0104", text)  # one answer
+        self.assertIn("$0.0208", text)  # the run
+
+    def test_a_failed_call_costs_nothing_to_report(self):
+        results = results_json(evaluate(self.cards, [self.Broken()]), {})
+        self.assertIsNone(results["scorecards"]["broken"]["cost_usd"])
 
     def test_results_json_carries_the_image_and_mana_cost_for_the_page(self):
         cards = [LabeledCard(card("A", image_url="https://img/a.jpg"), 1.0)]

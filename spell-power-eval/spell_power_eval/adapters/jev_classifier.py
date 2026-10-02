@@ -7,6 +7,7 @@ from typing import Callable, Literal
 
 from ..domain.card import Card
 from ..domain.power import Power
+from ..domain.pricing import Usage
 from ..domain.ports import Verdict
 from ..domain.rubric import DESCRIPTIONS, QUESTION
 
@@ -53,7 +54,10 @@ class JevClassifier:
         if not api_key:
             raise RuntimeError(f"{KEY_VARIABLE} is not set")
         body = {"model": "jev-latest", "state": card.facts(), "questions": {QUESTION_ID: _question(self._kind)}}
-        answer = self._post_json(URL, body, api_key)["answers"][QUESTION_ID]
+        response = self._post_json(URL, body, api_key)
+        answer = response["answers"][QUESTION_ID]
+        reported = response.get("usage")
+        usage = Usage(reported["input_tokens"], reported["output_tokens"]) if reported else None
         probabilities = answer.get("probabilities", {})
         if self._kind == "choice":
             power = Power.from_label(answer["choice"])
@@ -64,4 +68,4 @@ class JevClassifier:
             power = Power.nearest(score)
             shown = {Power(int(k)).label: v for k, v in probabilities.items()}
         detail = ", ".join(f"{label} {p:.2f}" for label, p in shown.items())
-        return Verdict(power, score, confidence=answer.get("confidence"), detail=detail)
+        return Verdict(power, score, confidence=answer.get("confidence"), detail=detail, usage=usage)

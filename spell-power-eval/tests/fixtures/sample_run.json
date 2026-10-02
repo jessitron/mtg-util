@@ -20,37 +20,67 @@
           "power": "balanced",
           "score": 1.0,
           "confidence": null,
-          "detail": "no reading of the card"
+          "detail": "no reading of the card",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0
+          },
+          "cost_usd": 0.0
         },
         "haiku": {
           "power": "powerful",
           "score": 1.9,
           "confidence": null,
-          "detail": "Lightning Bolt is powerful for its cost."
+          "detail": "Lightning Bolt is powerful for its cost.",
+          "usage": {
+            "input_tokens": 260,
+            "output_tokens": 90
+          },
+          "cost_usd": 0.00071
         },
         "sonnet": {
           "power": "powerful",
           "score": 1.8,
           "confidence": null,
-          "detail": "Lightning Bolt is powerful for its cost."
+          "detail": "Lightning Bolt is powerful for its cost.",
+          "usage": {
+            "input_tokens": 260,
+            "output_tokens": 700
+          },
+          "cost_usd": 0.00752
         },
         "opus": {
           "power": "powerful",
           "score": 1.7,
           "confidence": null,
-          "detail": "Lightning Bolt is powerful for its cost."
+          "detail": "Lightning Bolt is powerful for its cost.",
+          "usage": {
+            "input_tokens": 260,
+            "output_tokens": 800
+          },
+          "cost_usd": 0.01704
         },
         "jev-choice": {
           "power": "balanced",
           "score": 1.29,
           "confidence": 0.5,
-          "detail": "weak 0.10, balanced 0.40, powerful 0.50"
+          "detail": "weak 0.10, balanced 0.40, powerful 0.50",
+          "usage": {
+            "input_tokens": 240,
+            "output_tokens": 0
+          },
+          "cost_usd": 1.008e-05
         },
         "jev-score": {
           "power": "powerful",
           "score": 1.5,
           "confidence": 0.5,
-          "detail": "weak 0.10, balanced 0.40, powerful 0.50"
+          "detail": "weak 0.10, balanced 0.40, powerful 0.50",
+          "usage": {
+            "input_tokens": 260,
+            "output_tokens": 0
+          },
+          "cost_usd": 1.092e-05
         }
       }
     },
@@ -66,37 +96,67 @@
           "power": "balanced",
           "score": 1.0,
           "confidence": null,
-          "detail": "no reading of the card"
+          "detail": "no reading of the card",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0
+          },
+          "cost_usd": 0.0
         },
         "haiku": {
           "power": "powerful",
           "score": 2.0,
           "confidence": null,
-          "detail": "Sol Ring is powerful for its cost."
+          "detail": "Sol Ring is powerful for its cost.",
+          "usage": {
+            "input_tokens": 260,
+            "output_tokens": 90
+          },
+          "cost_usd": 0.00071
         },
         "sonnet": {
           "power": "powerful",
           "score": 2.0,
           "confidence": null,
-          "detail": "Sol Ring is powerful for its cost."
+          "detail": "Sol Ring is powerful for its cost.",
+          "usage": {
+            "input_tokens": 260,
+            "output_tokens": 700
+          },
+          "cost_usd": 0.00752
         },
         "opus": {
           "power": "powerful",
           "score": 2.0,
           "confidence": null,
-          "detail": "Sol Ring is powerful for its cost."
+          "detail": "Sol Ring is powerful for its cost.",
+          "usage": {
+            "input_tokens": 260,
+            "output_tokens": 800
+          },
+          "cost_usd": 0.01704
         },
         "jev-choice": {
           "power": "powerful",
           "score": 1.9,
           "confidence": 0.5,
-          "detail": "weak 0.10, balanced 0.40, powerful 0.50"
+          "detail": "weak 0.10, balanced 0.40, powerful 0.50",
+          "usage": {
+            "input_tokens": 240,
+            "output_tokens": 0
+          },
+          "cost_usd": 1.008e-05
         },
         "jev-score": {
           "power": "powerful",
           "score": 1.8,
           "confidence": 0.5,
-          "detail": "weak 0.10, balanced 0.40, powerful 0.50"
+          "detail": "weak 0.10, balanced 0.40, powerful 0.50",
+          "usage": {
+            "input_tokens": 260,
+            "output_tokens": 0
+          },
+          "cost_usd": 1.092e-05
         }
       }
     },
@@ -112,37 +172,67 @@
           "power": "balanced",
           "score": 1.0,
           "confidence": null,
-          "detail": "no reading of the card"
+          "detail": "no reading of the card",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0
+          },
+          "cost_usd": 0.0
         },
         "haiku": {
           "power": "balanced",
           "score": 1.4,
           "confidence": null,
-          "detail": "Llanowar Elves is balanced for its cost."
+          "detail": "Llanowar Elves is balanced for its cost.",
+          "usage": {
+            "input_tokens": 260,
+            "output_tokens": 90
+          },
+          "cost_usd": 0.00071
         },
         "sonnet": {
           "power": "powerful",
           "score": 1.6,
           "confidence": null,
-          "detail": "Llanowar Elves is powerful for its cost."
+          "detail": "Llanowar Elves is powerful for its cost.",
+          "usage": {
+            "input_tokens": 260,
+            "output_tokens": 700
+          },
+          "cost_usd": 0.00752
         },
         "opus": {
           "power": "powerful",
           "score": 1.5,
           "confidence": null,
-          "detail": "<img src=x onerror=\"document.title='pwned'\"> Fast mana, but a 1/1."
+          "detail": "<img src=x onerror=\"document.title='pwned'\"> Fast mana, but a 1/1.",
+          "usage": {
+            "input_tokens": 260,
+            "output_tokens": 800
+          },
+          "cost_usd": 0.01704
         },
         "jev-choice": {
           "power": "balanced",
           "score": 1.1,
           "confidence": 0.5,
-          "detail": "weak 0.10, balanced 0.40, powerful 0.50"
+          "detail": "weak 0.10, balanced 0.40, powerful 0.50",
+          "usage": {
+            "input_tokens": 240,
+            "output_tokens": 0
+          },
+          "cost_usd": 1.008e-05
         },
         "jev-score": {
           "power": "balanced",
           "score": 1.2,
           "confidence": 0.5,
-          "detail": "weak 0.10, balanced 0.40, powerful 0.50"
+          "detail": "weak 0.10, balanced 0.40, powerful 0.50",
+          "usage": {
+            "input_tokens": 260,
+            "output_tokens": 0
+          },
+          "cost_usd": 1.092e-05
         }
       }
     },
@@ -158,37 +248,67 @@
           "power": "balanced",
           "score": 1.0,
           "confidence": null,
-          "detail": "no reading of the card"
+          "detail": "no reading of the card",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0
+          },
+          "cost_usd": 0.0
         },
         "haiku": {
           "power": "powerful",
           "score": 2.0,
           "confidence": null,
-          "detail": "Grizzly Bears is powerful for its cost."
+          "detail": "Grizzly Bears is powerful for its cost.",
+          "usage": {
+            "input_tokens": 260,
+            "output_tokens": 90
+          },
+          "cost_usd": 0.00071
         },
         "sonnet": {
           "power": "weak",
           "score": 0.3,
           "confidence": null,
-          "detail": "Grizzly Bears is weak for its cost."
+          "detail": "Grizzly Bears is weak for its cost.",
+          "usage": {
+            "input_tokens": 260,
+            "output_tokens": 700
+          },
+          "cost_usd": 0.00752
         },
         "opus": {
           "power": "weak",
           "score": 0.2,
           "confidence": null,
-          "detail": "Grizzly Bears is weak for its cost."
+          "detail": "Grizzly Bears is weak for its cost.",
+          "usage": {
+            "input_tokens": 260,
+            "output_tokens": 800
+          },
+          "cost_usd": 0.01704
         },
         "jev-choice": {
           "power": "weak",
           "score": 0.4,
           "confidence": 0.5,
-          "detail": "weak 0.10, balanced 0.40, powerful 0.50"
+          "detail": "weak 0.10, balanced 0.40, powerful 0.50",
+          "usage": {
+            "input_tokens": 240,
+            "output_tokens": 0
+          },
+          "cost_usd": 1.008e-05
         },
         "jev-score": {
           "power": "balanced",
           "score": 0.5,
           "confidence": 0.5,
-          "detail": "weak 0.10, balanced 0.40, powerful 0.50"
+          "detail": "weak 0.10, balanced 0.40, powerful 0.50",
+          "usage": {
+            "input_tokens": 260,
+            "output_tokens": 0
+          },
+          "cost_usd": 1.092e-05
         }
       }
     },
@@ -204,37 +324,67 @@
           "power": "balanced",
           "score": 1.0,
           "confidence": null,
-          "detail": "no reading of the card"
+          "detail": "no reading of the card",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0
+          },
+          "cost_usd": 0.0
         },
         "haiku": {
           "power": "balanced",
           "score": 1.4,
           "confidence": null,
-          "detail": "Serra Angel is balanced for its cost."
+          "detail": "Serra Angel is balanced for its cost.",
+          "usage": {
+            "input_tokens": 260,
+            "output_tokens": 90
+          },
+          "cost_usd": 0.00071
         },
         "sonnet": {
           "power": "balanced",
           "score": 1.2,
           "confidence": null,
-          "detail": "Serra Angel is balanced for its cost."
+          "detail": "Serra Angel is balanced for its cost.",
+          "usage": {
+            "input_tokens": 260,
+            "output_tokens": 700
+          },
+          "cost_usd": 0.00752
         },
         "opus": {
           "power": "balanced",
           "score": 1.0,
           "confidence": null,
-          "detail": "Serra Angel is balanced for its cost."
+          "detail": "Serra Angel is balanced for its cost.",
+          "usage": {
+            "input_tokens": 260,
+            "output_tokens": 800
+          },
+          "cost_usd": 0.01704
         },
         "jev-choice": {
           "power": "balanced",
           "score": 1.35,
           "confidence": 0.5,
-          "detail": "weak 0.10, balanced 0.40, powerful 0.50"
+          "detail": "weak 0.10, balanced 0.40, powerful 0.50",
+          "usage": {
+            "input_tokens": 240,
+            "output_tokens": 0
+          },
+          "cost_usd": 1.008e-05
         },
         "jev-score": {
           "power": "balanced",
           "score": 1.1,
           "confidence": 0.5,
-          "detail": "weak 0.10, balanced 0.40, powerful 0.50"
+          "detail": "weak 0.10, balanced 0.40, powerful 0.50",
+          "usage": {
+            "input_tokens": 260,
+            "output_tokens": 0
+          },
+          "cost_usd": 1.092e-05
         }
       }
     },
@@ -250,31 +400,56 @@
           "power": "balanced",
           "score": 1.0,
           "confidence": null,
-          "detail": "no reading of the card"
+          "detail": "no reading of the card",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0
+          },
+          "cost_usd": 0.0
         },
         "haiku": {
           "power": "balanced",
           "score": 0.6,
           "confidence": null,
-          "detail": "Divination is balanced for its cost."
+          "detail": "Divination is balanced for its cost.",
+          "usage": {
+            "input_tokens": 260,
+            "output_tokens": 90
+          },
+          "cost_usd": 0.00071
         },
         "sonnet": {
           "power": "balanced",
           "score": 0.5,
           "confidence": null,
-          "detail": "Divination is balanced for its cost."
+          "detail": "Divination is balanced for its cost.",
+          "usage": {
+            "input_tokens": 260,
+            "output_tokens": 700
+          },
+          "cost_usd": 0.00752
         },
         "opus": {
           "power": "balanced",
           "score": 0.5,
           "confidence": null,
-          "detail": "Divination is balanced for its cost."
+          "detail": "Divination is balanced for its cost.",
+          "usage": {
+            "input_tokens": 260,
+            "output_tokens": 800
+          },
+          "cost_usd": 0.01704
         },
         "jev-choice": {
           "power": "balanced",
           "score": 0.9,
           "confidence": 0.5,
-          "detail": "weak 0.10, balanced 0.40, powerful 0.50"
+          "detail": "weak 0.10, balanced 0.40, powerful 0.50",
+          "usage": {
+            "input_tokens": 240,
+            "output_tokens": 0
+          },
+          "cost_usd": 1.008e-05
         },
         "jev-score": {
           "error": "HTTP 503 from the Jev API"
@@ -293,37 +468,67 @@
           "power": "balanced",
           "score": 1.0,
           "confidence": null,
-          "detail": "no reading of the card"
+          "detail": "no reading of the card",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0
+          },
+          "cost_usd": 0.0
         },
         "haiku": {
           "power": "powerful",
           "score": 1.9,
           "confidence": null,
-          "detail": "Wrath of God is powerful for its cost."
+          "detail": "Wrath of God is powerful for its cost.",
+          "usage": {
+            "input_tokens": 260,
+            "output_tokens": 90
+          },
+          "cost_usd": 0.00071
         },
         "sonnet": {
           "power": "powerful",
           "score": 1.8,
           "confidence": null,
-          "detail": "Wrath of God is powerful for its cost."
+          "detail": "Wrath of God is powerful for its cost.",
+          "usage": {
+            "input_tokens": 260,
+            "output_tokens": 700
+          },
+          "cost_usd": 0.00752
         },
         "opus": {
           "power": "powerful",
           "score": 1.9,
           "confidence": null,
-          "detail": "Wrath of God is powerful for its cost."
+          "detail": "Wrath of God is powerful for its cost.",
+          "usage": {
+            "input_tokens": 260,
+            "output_tokens": 800
+          },
+          "cost_usd": 0.01704
         },
         "jev-choice": {
           "power": "powerful",
           "score": 1.6,
           "confidence": 0.5,
-          "detail": "weak 0.10, balanced 0.40, powerful 0.50"
+          "detail": "weak 0.10, balanced 0.40, powerful 0.50",
+          "usage": {
+            "input_tokens": 240,
+            "output_tokens": 0
+          },
+          "cost_usd": 1.008e-05
         },
         "jev-score": {
           "power": "powerful",
           "score": 1.7,
           "confidence": 0.5,
-          "detail": "weak 0.10, balanced 0.40, powerful 0.50"
+          "detail": "weak 0.10, balanced 0.40, powerful 0.50",
+          "usage": {
+            "input_tokens": 260,
+            "output_tokens": 0
+          },
+          "cost_usd": 1.092e-05
         }
       }
     },
@@ -339,37 +544,67 @@
           "power": "balanced",
           "score": 1.0,
           "confidence": null,
-          "detail": "no reading of the card"
+          "detail": "no reading of the card",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0
+          },
+          "cost_usd": 0.0
         },
         "haiku": {
           "power": "weak",
           "score": 0.3,
           "confidence": null,
-          "detail": "Craw Wurm is weak for its cost."
+          "detail": "Craw Wurm is weak for its cost.",
+          "usage": {
+            "input_tokens": 260,
+            "output_tokens": 90
+          },
+          "cost_usd": 0.00071
         },
         "sonnet": {
           "power": "weak",
           "score": 0.2,
           "confidence": null,
-          "detail": "Craw Wurm is weak for its cost."
+          "detail": "Craw Wurm is weak for its cost.",
+          "usage": {
+            "input_tokens": 260,
+            "output_tokens": 700
+          },
+          "cost_usd": 0.00752
         },
         "opus": {
           "power": "weak",
           "score": 0.1,
           "confidence": null,
-          "detail": "Craw Wurm is weak for its cost."
+          "detail": "Craw Wurm is weak for its cost.",
+          "usage": {
+            "input_tokens": 260,
+            "output_tokens": 800
+          },
+          "cost_usd": 0.01704
         },
         "jev-choice": {
           "power": "balanced",
           "score": 0.6,
           "confidence": 0.5,
-          "detail": "weak 0.10, balanced 0.40, powerful 0.50"
+          "detail": "weak 0.10, balanced 0.40, powerful 0.50",
+          "usage": {
+            "input_tokens": 240,
+            "output_tokens": 0
+          },
+          "cost_usd": 1.008e-05
         },
         "jev-score": {
           "power": "weak",
           "score": 0.4,
           "confidence": 0.5,
-          "detail": "weak 0.10, balanced 0.40, powerful 0.50"
+          "detail": "weak 0.10, balanced 0.40, powerful 0.50",
+          "usage": {
+            "input_tokens": 260,
+            "output_tokens": 0
+          },
+          "cost_usd": 1.092e-05
         }
       }
     },
@@ -385,37 +620,67 @@
           "power": "balanced",
           "score": 1.0,
           "confidence": null,
-          "detail": "no reading of the card"
+          "detail": "no reading of the card",
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0
+          },
+          "cost_usd": 0.0
         },
         "haiku": {
           "power": "powerful",
           "score": 1.7,
           "confidence": null,
-          "detail": "Mind Control is powerful for its cost."
+          "detail": "Mind Control is powerful for its cost.",
+          "usage": {
+            "input_tokens": 260,
+            "output_tokens": 90
+          },
+          "cost_usd": 0.00071
         },
         "sonnet": {
           "power": "balanced",
           "score": 1.2,
           "confidence": null,
-          "detail": "Mind Control is balanced for its cost."
+          "detail": "Mind Control is balanced for its cost.",
+          "usage": {
+            "input_tokens": 260,
+            "output_tokens": 700
+          },
+          "cost_usd": 0.00752
         },
         "opus": {
           "power": "balanced",
           "score": 1.0,
           "confidence": null,
-          "detail": "Mind Control is balanced for its cost."
+          "detail": "Mind Control is balanced for its cost.",
+          "usage": {
+            "input_tokens": 260,
+            "output_tokens": 800
+          },
+          "cost_usd": 0.01704
         },
         "jev-choice": {
           "power": "balanced",
           "score": 0.8,
           "confidence": 0.5,
-          "detail": "weak 0.10, balanced 0.40, powerful 0.50"
+          "detail": "weak 0.10, balanced 0.40, powerful 0.50",
+          "usage": {
+            "input_tokens": 240,
+            "output_tokens": 0
+          },
+          "cost_usd": 1.008e-05
         },
         "jev-score": {
           "power": "balanced",
           "score": 1.0,
           "confidence": 0.5,
-          "detail": "weak 0.10, balanced 0.40, powerful 0.50"
+          "detail": "weak 0.10, balanced 0.40, powerful 0.50",
+          "usage": {
+            "input_tokens": 260,
+            "output_tokens": 0
+          },
+          "cost_usd": 1.092e-05
         }
       }
     }
@@ -431,7 +696,8 @@
         "powerful->balanced": 4,
         "weak->balanced": 3,
         "balanced->balanced": 2
-      }
+      },
+      "cost_usd": 0.0
     },
     "haiku": {
       "exact": 5,
@@ -447,7 +713,8 @@
         "weak->balanced": 1,
         "weak->weak": 1,
         "balanced->powerful": 1
-      }
+      },
+      "cost_usd": 0.006389999999999999
     },
     "sonnet": {
       "exact": 8,
@@ -460,7 +727,8 @@
         "weak->weak": 2,
         "balanced->balanced": 2,
         "weak->balanced": 1
-      }
+      },
+      "cost_usd": 0.06768
     },
     "opus": {
       "exact": 8,
@@ -473,7 +741,8 @@
         "weak->weak": 2,
         "balanced->balanced": 2,
         "weak->balanced": 1
-      }
+      },
+      "cost_usd": 0.15336
     },
     "jev-choice": {
       "exact": 5,
@@ -487,7 +756,8 @@
         "weak->weak": 1,
         "balanced->balanced": 2,
         "weak->balanced": 2
-      }
+      },
+      "cost_usd": 9.072e-05
     },
     "jev-score": {
       "exact": 6,
@@ -501,7 +771,8 @@
         "weak->balanced": 1,
         "balanced->balanced": 2,
         "weak->weak": 1
-      }
+      },
+      "cost_usd": 8.735999999999999e-05
     }
   }
 }

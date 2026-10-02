@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from typing import Optional, Protocol, Sequence
 
 from .card import Card
+from .pricing import Usage
 from .power import Power
 
 
@@ -13,6 +14,7 @@ class Verdict:
     score: float  # 0 (weak) to 2 (powerful); decimals allowed. Every classifier gives one.
     confidence: Optional[float] = None  # the classifier's own claim, if it makes one
     detail: str = ""  # a reason, or the probabilities behind the label
+    usage: Optional[Usage] = None  # tokens the call used; the basis for a cost estimate
 
 
 class Classifier(Protocol):

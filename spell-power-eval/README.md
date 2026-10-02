@@ -27,7 +27,9 @@ Background on Jev and why we compare it: `references/jev.md` in the infra repo. 
    ./run haiku opus       # just these arms
    ```
 
-The report prints a card-by-card table (each cell is the score, its label, and ✓ if the label matched yours), then one summary line per arm: exact matches, **mean steps off** (a weak card called balanced is 1 step off, called powerful is 2), and **mean score error** (the average distance from your score). The score error is the finer measure: your 1.4 and a model's 1.6 are close even if the labels differ. "Exact" and "steps off" compare labels, which are your score and the model's score rounded. Each run also writes `results/<timestamp>.json` with every classifier's reason (Claude) or probabilities (Jev), plus a confusion count per arm.
+The report prints a card-by-card table (each cell is the score, its label, and ✓ if the label matched yours), then one summary line per arm: estimated cost, exact matches, **mean steps off** (a weak card called balanced is 1 step off, called powerful is 2), and **mean score error** (the average distance from your score). The score error is the finer measure: your 1.4 and a model's 1.6 are close even if the labels differ. "Exact" and "steps off" compare labels, which are your score and the model's score rounded. Each run also writes `results/<timestamp>.json` with every classifier's reason (Claude) or probabilities (Jev), the tokens each call used, an estimated cost per answer (`cost_usd`) and per arm, plus a confusion count per arm.
+
+Each cell in the report ends with that answer's estimated cost, and the summary has an `est. cost` column. The estimate is the tokens the API reported times the cached prices in `spell_power_eval/domain/pricing.py` (update them there). Claude's output tokens include thinking. The page shows the total in the ranking and each answer's cost in the hover read-out and the table view; runs from before cost tracking show a dash.
 
 The `edhrec rank` column comes from Scryfall (lower means more popular in Commander). It is context for your labels, not ground truth, and no classifier sees it.
 
@@ -79,7 +81,7 @@ Three tiers; dependencies point downward only.
 | Tier | Package | What lives there |
 | ---- | ------- | ---------------- |
 | I. Orchestration | `spell_power_eval/orchestration` | `evaluate` runs every classifier on every labeled card, and keeps going when one call fails. `report` builds the table and the results JSON. `http_app` serves the results page. |
-| II. Domain | `spell_power_eval/domain` | `Card` (with `facts()`, the text every classifier sees), `Power`, the shared `rubric`, `LabeledCard` (a card plus your score) and `Scorecard`, the `AlwaysBalanced` baseline, and the ports `Classifier`, `CardCatalog`, and `RunStore`. No I/O. |
+| II. Domain | `spell_power_eval/domain` | `Card` (with `facts()`, the text every classifier sees), `Power`, `Usage` and `estimate_cost` (`pricing.py`), the shared `rubric`, `LabeledCard` (a card plus your score) and `Scorecard`, the `AlwaysBalanced` baseline, and the ports `Classifier`, `CardCatalog`, and `RunStore`. No I/O. |
 | III. Interface | `spell_power_eval/adapters` | `ScryfallCatalog` (batched lookup, disk cache; the anti-corruption layer), `ClaudeClassifier`, `JevClassifier`, `LabelsFile`, `write_results`, `cards_page` (the HTML for `--page`). |
 
 Every arm gets identical card facts and identical rubric wording (`domain/rubric.py`). Arithmetic such as power plus toughness per mana is computed in `Card.facts()`, because Jev's docs say to keep arithmetic in code.

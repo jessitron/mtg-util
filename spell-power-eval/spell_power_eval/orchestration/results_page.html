@@ -107,7 +107,7 @@ details summary { cursor: pointer; color: var(--ink-2); }
   <div id="content" class="hidden">
     <section class="card" aria-labelledby="h-rank">
       <h2 id="h-rank">Which classifier agrees best with you?</h2>
-      <p class="sub">Ranked by mean score error: the average distance between its 0 to 2 score and yours. Lower is better.</p>
+      <p class="sub">Ranked by mean score error: the average distance between its 0 to 2 score and yours. Lower is better. Cost is an estimate: the tokens each API reported times cached prices, summed over the run. Runs written before cost was tracked show a dash.</p>
       <table id="rank"></table>
     </section>
 
@@ -172,6 +172,7 @@ function svg(tag, attrs = {}, ...children) {
 const $ = (id) => document.getElementById(id);
 const fmt = (n, digits = 2) => Number(n).toFixed(digits);
 const signed = (n) => { const r = Number(n.toFixed(1)); return (r > 0 ? "+" : r < 0 ? "−" : "") + Math.abs(r).toFixed(1); };
+const dollars = (n) => (n == null ? "-" : "$" + Number(n).toFixed(n < 0.01 ? 4 : 3));
 const labelOf = (score) => LABELS[Math.min(2, Math.max(0, Math.round(score)))];
 
 function armsOf(run) {
@@ -205,6 +206,7 @@ function readout(card, arm) {
     el("div", { class: "tip-label", text: `You: ${fmt(card.yours_score, 1)} ${card.yours}. Off by ${signed(miss)}.` }),
   );
   if (answer.confidence != null) box.append(el("div", { class: "tip-label", text: `Confidence ${fmt(answer.confidence)}` }));
+  if (answer.cost_usd != null) box.append(el("div", { class: "tip-label", text: `Cost about ${dollars(answer.cost_usd)} (${answer.usage.input_tokens} in, ${answer.usage.output_tokens} out)` }));
   if (answer.detail) box.append(el("div", { class: "tip-detail", text: answer.detail }));
   return box;
 }
@@ -241,7 +243,8 @@ function renderRanking(run, arms) {
     el("thead", {}, el("tr", {},
       el("th", { text: "#" }), el("th", { text: "Classifier" }),
       el("th", { class: "num", text: "Mean score error" }), el("th", { class: "num", text: "Exact matches" }),
-      el("th", { class: "num", text: "Mean steps off" }), el("th", { class: "num", text: "Failed" }))),
+      el("th", { class: "num", text: "Mean steps off" }), el("th", { class: "num", text: "Failed" }),
+      el("th", { class: "num", text: "Est. cost" }))),
   );
   const body = el("tbody");
   rows.forEach(({ arm, s }, i) => {
@@ -255,7 +258,8 @@ function renderRanking(run, arms) {
       el("td", { class: "muted", text: String(i + 1) }), name, error,
       el("td", { class: "num", text: `${s.exact}/${s.answered}` }),
       el("td", { class: "num", text: answered ? fmt(s.mean_ordinal_error) : "-" }),
-      el("td", { class: "num" + (s.failed ? " bad" : ""), text: s.failed ? `⚠ ${s.failed}` : "0" })));
+      el("td", { class: "num" + (s.failed ? " bad" : ""), text: s.failed ? `⚠ ${s.failed}` : "0" }),
+      el("td", { class: "num", text: dollars(s.cost_usd) })));
   });
   table.append(body);
 }
@@ -397,6 +401,7 @@ function renderTable(run, arms, cards) {
       else {
         cell.append(el("div", { text: `${fmt(answer.score)} ${answer.power} (${signed(answer.score - card.yours_score)})` }));
         if (answer.confidence != null) cell.append(el("div", { class: "muted", text: `confidence ${fmt(answer.confidence)}` }));
+        if (answer.cost_usd != null) cell.append(el("div", { class: "muted", text: `cost ${dollars(answer.cost_usd)}` }));
         if (answer.detail) cell.append(el("details", {}, el("summary", { text: "reason" }), el("div", { class: "detail-text", text: answer.detail })));
       }
       row.append(cell);

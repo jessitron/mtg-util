@@ -3,6 +3,7 @@ from pydantic import BaseModel
 
 from ..domain.card import Card
 from ..domain.power import Power
+from ..domain.pricing import Usage
 from ..domain.ports import Verdict
 from ..domain.rubric import CLAUDE_SYSTEM_PROMPT
 
@@ -41,4 +42,5 @@ class ClaudeClassifier:
         if answer is None:
             raise RuntimeError(f"no parsed answer (stop_reason={response.stop_reason})")
         score = min(max(answer.score, 0.0), 2.0)  # the schema can't enforce the range
-        return Verdict(Power.nearest(score), score, detail=answer.reason)
+        usage = Usage(response.usage.input_tokens, response.usage.output_tokens)
+        return Verdict(Power.nearest(score), score, detail=answer.reason, usage=usage)

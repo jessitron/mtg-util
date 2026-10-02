@@ -1,5 +1,6 @@
 from .card import Card
 from .power import Power
+from .pricing import Usage
 from .ports import Verdict
 
 
@@ -9,4 +10,4 @@ class AlwaysBalanced:
     name = "always-balanced"
 
     def classify(self, card: Card) -> Verdict:
-        return Verdict(Power.BALANCED, 1.0, detail="no reading of the card")
+        return Verdict(Power.BALANCED, 1.0, detail="no reading of the card", usage=Usage(0, 0))
