@@ -15,6 +15,6 @@ class Card:
 
     @property
     def gatherer_url(self) -> str:
-        """Gatherer's name search, on the front face. Scryfall has no Gatherer id for unreleased cards."""
+        """Gatherer's quick search (the top search box), on the front face. Scryfall has no Gatherer id for unreleased cards."""
         front = self.name.split(" // ")[0]
-        return "https://gatherer.wizards.com/advanced-search?" + urllib.parse.urlencode({"name": front})
+        return "https://gatherer.wizards.com/search?" + urllib.parse.urlencode({"searchTerm": front}, quote_via=urllib.parse.quote)

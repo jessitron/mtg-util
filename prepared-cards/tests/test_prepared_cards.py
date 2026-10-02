@@ -122,7 +122,9 @@ class CardPickerTest(unittest.TestCase):
 class GathererLinkTest(unittest.TestCase):
     def test_searches_by_front_face_name(self):
         self.assertEqual(card("Harmonized Trio // Brainstorm", 3.0).gatherer_url,
-                         "https://gatherer.wizards.com/advanced-search?name=Harmonized+Trio")
+                         "https://gatherer.wizards.com/search?searchTerm=Harmonized%20Trio")
+        self.assertEqual(card("Abigale, Poet Laureate // Heroic Stanza", 3.0).gatherer_url,
+                         "https://gatherer.wizards.com/search?searchTerm=Abigale%2C%20Poet%20Laureate")
 
 
 class PageJsonTest(unittest.TestCase):
