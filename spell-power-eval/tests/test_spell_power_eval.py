@@ -4,6 +4,7 @@ import unittest
 from types import SimpleNamespace
 from unittest import mock
 
+from spell_power_eval.adapters.cards_page import cards_page
 from spell_power_eval.adapters.claude_classifier import ClaudeAnswer, ClaudeClassifier
 from spell_power_eval.adapters.jev_classifier import KEY_VARIABLE, QUESTION_ID, JevClassifier
 from spell_power_eval.adapters.labels_file import LabelsFile
@@ -75,12 +76,36 @@ class LabelsFileTest(unittest.TestCase):
         self.assertEqual(labels, {"Cancel": Power.WEAK, "Lightning Bolt": Power.POWERFUL})
         self.assertEqual(unlabeled, ["Sol Ring"])
 
+    def test_names_lists_judged_and_unjudged_in_file_order(self):
+        with tempfile.NamedTemporaryFile("w", suffix=".txt", delete=False) as f:
+            f.write("# c\n? | Sol Ring\nweak | Cancel\n")
+        self.addCleanup(os.remove, f.name)
+        self.assertEqual(LabelsFile(f.name).names(), ["Sol Ring", "Cancel"])
+
     def test_names_the_bad_line(self):
         with self.assertRaisesRegex(ValueError, ":1:"):
             self.read("Cancel\n")
 
 
+class CardsPageTest(unittest.TestCase):
+    def test_lists_cards_with_choices_and_hides_model_inputs(self):
+        page = cards_page([card("Serra Angel", power="4", toughness="4", image_url="http://img/a.jpg", edhrec_rank=9451), card('A <b> "Card"')], {"Serra Angel": Power.WEAK})
+        self.assertIn('<img src="http://img/a.jpg"', page)
+        self.assertIn('Serra Angel</b> {3}{W}{W} (mana value 5)', page)
+        self.assertEqual(page.count('type="radio"'), 6)
+        self.assertRegex(page, r'value="weak" data-card="Serra Angel" checked')
+        self.assertNotIn("9451", page)  # popularity would anchor the human
+        self.assertIn("A &lt;b&gt; &quot;Card&quot;", page)  # card text is escaped
+
+    def test_names_in_the_script_survive_a_closing_script_tag(self):
+        self.assertNotIn("</script>x", cards_page([card("</script>x")], {}).split("const names")[1].split("const out")[0])
+
+
 class ScryfallTest(unittest.TestCase):
+    def test_takes_the_image_from_a_face_when_the_card_has_none(self):
+        c = card_from_scryfall(raw("F // B", card_faces=[{"image_uris": {"normal": "front.jpg"}}, {}]))
+        self.assertEqual(c.image_url, "front.jpg")
+
     def test_reads_two_faced_cards_from_the_front_face(self):
         c = card_from_scryfall(
             raw("Front // Back", cmc=3.0, card_faces=[{"mana_cost": "{2}{G}", "oracle_text": "A", "power": "2", "toughness": "3"}, {"oracle_text": "B"}], edhrec_rank=7)

@@ -18,6 +18,7 @@ class Card:
     power: Optional[str] = None
     toughness: Optional[str] = None
     loyalty: Optional[str] = None
+    image_url: str = ""
     edhrec_rank: Optional[int] = None  # popularity among Commander decks; lower is more popular. Never shown to classifiers.
 
     def facts(self) -> str:

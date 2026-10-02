@@ -26,6 +26,7 @@ def card_from_scryfall(raw: dict) -> Card:
         power=raw.get("power") or front.get("power"),
         toughness=raw.get("toughness") or front.get("toughness"),
         loyalty=raw.get("loyalty") or front.get("loyalty"),
+        image_url=(raw.get("image_uris") or front.get("image_uris") or {}).get("normal", ""),
         edhrec_rank=raw.get("edhrec_rank"),
     )
 

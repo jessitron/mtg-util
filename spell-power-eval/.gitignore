@@ -1,3 +1,4 @@
 scryfall-cache.json
 .venv/
 __pycache__/
+cards.html

@@ -15,6 +15,7 @@ Background on Jev and why we compare it: `references/jev.md` in the infra repo. 
 
 ## Usage
 
+0. Want to look at the cards first? `./run --page` writes `cards.html` (card images, rules text, and weak / balanced / powerful buttons). Open it with `open cards.html`. It remembers your picks in the browser and builds the `labels.txt` lines for you to copy. It shows no model answers and no popularity rank, so nothing anchors you.
 1. Edit `labels.txt`. Replace each `?` with `weak`, `balanced`, or `powerful`. **Label before you look at any model's answer**, so the models can't anchor you. Add or swap cards freely; a card marked `?` is skipped and costs nothing.
 2. Look at what the models will be asked (free; calls Scryfall once, no model):
    ```

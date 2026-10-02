@@ -7,6 +7,7 @@ from datetime import datetime, timezone
 
 from spell_power_eval.adapters.claude_classifier import CLAUDE_MODELS, ClaudeClassifier
 from spell_power_eval.adapters.jev_classifier import KEY_VARIABLE, JevClassifier
+from spell_power_eval.adapters.cards_page import cards_page
 from spell_power_eval.adapters.labels_file import LabelsFile
 from spell_power_eval.adapters.results_file import write_results
 from spell_power_eval.adapters.scryfall_catalog import ScryfallCatalog
@@ -34,13 +35,26 @@ def main():
     parser.add_argument("classifiers", nargs="*", metavar="CLASSIFIER",
                         help=f"any of: {', '.join(CLASSIFIERS)}. Default: {' '.join(DEFAULT_ARMS)}")
     parser.add_argument("--labels", default=os.path.join(HERE, "labels.txt"))
+    parser.add_argument("--page", action="store_true", help="write cards.html, a page for judging the cards by eye, and stop")
     parser.add_argument("--dry-run", action="store_true", help="look up the cards and print what the classifiers would be asked; call no model")
     args = parser.parse_args()
     unknown = [c for c in args.classifiers if c not in CLASSIFIERS]
     if unknown:
         parser.error(f"unknown classifier {unknown[0]!r}; choose from {', '.join(CLASSIFIERS)}")
 
-    labels, unlabeled = LabelsFile(args.labels).read()
+    labels_file = LabelsFile(args.labels)
+    labels, unlabeled = labels_file.read()
+    if args.page:
+        names = labels_file.names()
+        try:
+            cards = ScryfallCatalog(os.path.join(HERE, "scryfall-cache.json")).find(names)
+        except LookupError as e:
+            sys.exit(str(e))
+        path = os.path.join(HERE, "cards.html")
+        with open(path, "w", encoding="utf-8") as f:
+            f.write(cards_page(cards, labels))
+        print(f"Wrote {path}\nOpen it:  open {path}", file=sys.stderr)
+        return
     if unlabeled:
         print(f"Skipping {len(unlabeled)} card(s) still marked `?` in {args.labels}: {', '.join(unlabeled)}", file=sys.stderr)
     if not labels:
