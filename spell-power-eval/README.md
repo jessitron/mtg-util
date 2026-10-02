@@ -31,6 +31,23 @@ The report prints a card-by-card table (each cell is the score, its label, and â
 
 The `edhrec rank` column comes from Scryfall (lower means more popular in Commander). It is context for your labels, not ground truth, and no classifier sees it.
 
+## Looking at the results
+
+```
+./run --serve              # http://localhost:8780
+PORT=8800 ./run --serve    # another port
+```
+
+This starts a local page (bound to 127.0.0.1, stop with Ctrl-C) that lists the runs in `results/`, newest first. Pick one in the menu. If the port is taken, the script says so and suggests another. The page shows:
+
+1. **A ranking**: each classifier by mean score error (lower is better), with exact matches, mean steps off, and failures.
+2. **Where they disagree with you**: one column per classifier, one 0-2 axis per cell. The ink tick is your score, the dot is the classifier's, and the line between them is the miss. Hover, focus, or click a cell for the score, label, confidence, and the reason (Claude) or probabilities (Jev). A failed call shows as `error` with its text in the same place.
+3. **Where they miss in the same direction**: each classifier's score minus yours, per card, on a blue (weaker than you) to red (more powerful than you) scale, plus the average per classifier to show a lean.
+
+The **Table view** button swaps the charts for the same data in tables, with every reason and the confusion counts. The cards can be ordered by your score, by biggest miss, or as the run has them. The theme button switches between auto, light, and dark. Runs written before `image_url` and `mana_cost` joined the JSON still show, without thumbnails.
+
+The page reads `spell_power_eval/orchestration/results_page.html` on each request, so a browser refresh picks up edits. Routes: `/` (the page), `/api/runs` (the list), `/api/runs/<file>` (one run).
+
 ## Credentials (environment variables)
 
 - Claude: the Anthropic SDK finds credentials itself: `ANTHROPIC_API_KEY` (create one in the Anthropic Console), or an `ant auth login` profile.
@@ -61,8 +78,8 @@ Three tiers; dependencies point downward only.
 
 | Tier | Package | What lives there |
 | ---- | ------- | ---------------- |
-| I. Orchestration | `spell_power_eval/orchestration` | `evaluate` runs every classifier on every labeled card, and keeps going when one call fails. `report` builds the table and the results JSON. |
-| II. Domain | `spell_power_eval/domain` | `Card` (with `facts()`, the text every classifier sees), `Power`, the shared `rubric`, `LabeledCard` (a card plus your score) and `Scorecard`, the `AlwaysBalanced` baseline, and the ports `Classifier` and `CardCatalog`. No I/O. |
+| I. Orchestration | `spell_power_eval/orchestration` | `evaluate` runs every classifier on every labeled card, and keeps going when one call fails. `report` builds the table and the results JSON. `http_app` serves the results page. |
+| II. Domain | `spell_power_eval/domain` | `Card` (with `facts()`, the text every classifier sees), `Power`, the shared `rubric`, `LabeledCard` (a card plus your score) and `Scorecard`, the `AlwaysBalanced` baseline, and the ports `Classifier`, `CardCatalog`, and `RunStore`. No I/O. |
 | III. Interface | `spell_power_eval/adapters` | `ScryfallCatalog` (batched lookup, disk cache; the anti-corruption layer), `ClaudeClassifier`, `JevClassifier`, `LabelsFile`, `write_results`, `cards_page` (the HTML for `--page`). |
 
 Every arm gets identical card facts and identical rubric wording (`domain/rubric.py`). Arithmetic such as power plus toughness per mana is computed in `Card.facts()`, because Jev's docs say to keep arithmetic in code.
