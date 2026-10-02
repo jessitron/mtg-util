@@ -1,0 +1,18 @@
+# Prepared spells, judged alone (name the spell, not the creature). Same format as labels.txt:
+#   <score 0-2 | weak | balanced | powerful | ?> | <spell name>
+# Use it with:  ./run --labels labels-prepared.txt --page --out cards-prepared.html
+# Label before you look at any model's answer.
+? | Ancestral Recall
+? | Swords to Plowshares
+? | Demonic Tutor
+? | Sign in Blood
+? | Peer Review
+? | Aqueous Aria
+? | Vibrant Idea
+? | Awaken the Ages
+? | Exsanguinate
+? | Oracle's Gift
+? | Vicious Verse
+? | Rocket Volley
+? | Forum's Favor
+? | Seed Suture

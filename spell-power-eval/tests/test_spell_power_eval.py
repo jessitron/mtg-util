@@ -107,6 +107,22 @@ class CardsPageTest(unittest.TestCase):
         self.assertNotIn("9451", page)  # popularity would anchor the human
         self.assertIn("A &lt;b&gt; &quot;Card&quot;", page)  # card text is escaped
 
+    def test_shows_what_each_arm_is_sent_and_the_numbers_we_compute(self):
+        from spell_power_eval.adapters.claude_classifier import claude_request
+        from spell_power_eval.adapters.jev_classifier import jev_request
+
+        spell = card("Unwind History", mv=2.0, power=None, scryfall_cmc=1.0, note="Judge it alone.")
+        page = cards_page([spell, card(power="4", toughness="4")], {})
+        for kind in ("choice", "score"):
+            self.assertIn(f"Sent to Jev, <code>jev-{kind}</code>", page)
+        self.assertIn("&quot;system&quot;: &quot;You rate Magic", page)
+        self.assertIn("Name: Unwind History\nMana cost:", page)  # real line breaks, not \\n
+        self.assertIn("Note: Judge it alone.", page)  # inside the state sent to Jev and the user message sent to Claude
+        self.assertIn("Scryfall&#x27;s cmc (not sent; it belongs to the other face)</td><td>1<", page)
+        self.assertIn("Power plus toughness</td><td>8 (1.6 per mana)", page)
+        self.assertEqual(claude_request("opus", spell)["messages"][0]["content"], spell.facts())
+        self.assertEqual(jev_request("score", spell)["state"], spell.facts())
+
     def test_names_in_the_script_survive_a_closing_script_tag(self):
         script = cards_page([card("</script>x")], {"</script>x": 1.0}).split("<script>")[1]
         self.assertNotIn("</script>x", script)

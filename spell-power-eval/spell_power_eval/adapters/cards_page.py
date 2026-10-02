@@ -1,9 +1,11 @@
-"""A self-contained HTML page for judging cards by eye. Shows no model answers and no popularity, so nothing anchors you."""
+"""A self-contained HTML page for judging cards by eye. Shows what the models are sent (collapsed), but no model answers and no popularity, so nothing anchors you."""
 import html
 import json
 
 from ..domain.card import Card
 from ..domain.power import Power
+from .claude_classifier import CLAUDE_MODELS, claude_request
+from .jev_classifier import jev_request
 
 PAGE = """<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><title>Rate these spells</title>
@@ -24,6 +26,13 @@ PAGE = """<!doctype html>
   .readout {{ display: flex; justify-content: space-between; align-items: center; margin-top: .3rem; min-height: 1.6rem; font-weight: bold; }}
   .readout .clear {{ border: 0; background: none; color: #666; text-decoration: underline; cursor: pointer; font-weight: normal; }}
   .unset .readout .value {{ color: #999; font-weight: normal; }}
+  details {{ margin-top: .5rem; font-size: .8rem; }}
+  summary {{ cursor: pointer; color: #4a6fa5; }}
+  .computed {{ border-collapse: collapse; margin: .3rem 0; }}
+  .computed td {{ padding: .1rem .5rem .1rem 0; vertical-align: top; }}
+  .computed td:last-child {{ font-weight: bold; }}
+  pre {{ white-space: pre-wrap; word-break: break-word; background: #f0eee8; padding: .5rem; border-radius: .3rem; margin: .3rem 0; font-size: .75rem; }}
+  .sent h4 {{ margin: .6rem 0 0; }}
   footer {{ padding: 0 1rem 1rem; font-size: .8rem; color: #666; }}
 </style></head><body>
 <header>
@@ -76,6 +85,35 @@ PAGE = """<!doctype html>
 """
 
 
+def _pretty(value) -> str:
+    """JSON for a human: the `\\n` inside a string shows as a line break, so the prompt reads as written."""
+    return html.escape(json.dumps(value, indent=2, ensure_ascii=False)).replace("\\n", "\n")
+
+
+def _claude_sent(card: Card) -> str:
+    """The `messages.parse` arguments, with the answer class shown as the JSON schema the SDK turns it into."""
+    request = claude_request("haiku", card)
+    request["output_format"] = request["output_format"].model_json_schema()
+    models = ", ".join(CLAUDE_MODELS.values())
+    return (
+        f"<h4>Sent to Claude ({html.escape(models)})</h4>"
+        f"<p>One call per model. Only <code>model</code> changes. Line breaks inside strings are shown as real line breaks. The SDK's <code>messages.parse</code> sends <code>output_format</code> as a JSON schema.</p>"
+        f"<pre>{_pretty(request)}</pre>"
+    )
+
+
+def _jev_sent(card: Card) -> str:
+    return "".join(
+        f"<h4>Sent to Jev, <code>jev-{kind}</code></h4><p>POST to the TypeSafe <code>systemone</code> endpoint. Line breaks inside strings are shown as real line breaks.</p><pre>{_pretty(jev_request(kind, card))}</pre>"
+        for kind in ("choice", "score")
+    )
+
+
+def _computed_html(card: Card) -> str:
+    rows = "".join(f"<tr><td>{html.escape(what)}</td><td>{html.escape(value)}</td></tr>" for what, value in card.computed())
+    return f'<table class="computed">{rows}</table>'
+
+
 def _card_html(card: Card) -> str:
     name = html.escape(card.name)
     image = f'<img src="{html.escape(card.image_url)}" alt="{name}" loading="lazy">' if card.image_url else ""
@@ -85,6 +123,8 @@ def _card_html(card: Card) -> str:
         f'<section class="card">{image}'
         f'<div class="facts"><b>{name}</b> {html.escape(card.mana_cost)} (mana value {int(card.mana_value)})<br>'
         f'{html.escape(card.type_line)}{stats}<div class="text">{html.escape(card.oracle_text)}</div></div>'
+        f'<details><summary>Numbers we compute</summary>{_computed_html(card)}</details>'
+        f'<details class="sent"><summary>Full input to the models</summary>{_claude_sent(card)}{_jev_sent(card)}</details>'
         f'<div class="judge unset" data-card="{name}">'
         f'<div class="quick">{quick}</div>'
         f'<input type="range" min="0" max="2" step="0.1" value="1" aria-label="Score for {name}">'

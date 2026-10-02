@@ -56,7 +56,8 @@ def main():
     parser.add_argument("classifiers", nargs="*", metavar="CLASSIFIER",
                         help=f"any of: {', '.join(CLASSIFIERS)}. Default: {' '.join(DEFAULT_ARMS)}")
     parser.add_argument("--labels", default=os.path.join(HERE, "labels.txt"))
-    parser.add_argument("--page", action="store_true", help="write cards.html, a page for judging the cards by eye, and stop")
+    parser.add_argument("--page", action="store_true", help="write a page for judging the cards by eye (cards.html, or --out), and stop")
+    parser.add_argument("--out", default=os.path.join(HERE, "cards.html"), help="where --page writes")
     parser.add_argument("--serve", action="store_true", help="serve a page that shows the runs in results/ (PORT sets the port, default 8780), and stop with Ctrl-C")
     parser.add_argument("--dry-run", action="store_true", help="look up the cards and print what the classifiers would be asked; call no model")
     args = parser.parse_args()
@@ -76,7 +77,7 @@ def main():
             cards = ScryfallCatalog(os.path.join(HERE, "scryfall-cache.json")).find(names)
         except LookupError as e:
             sys.exit(str(e))
-        path = os.path.join(HERE, "cards.html")
+        path = args.out
         with open(path, "w", encoding="utf-8") as f:
             f.write(cards_page(cards, labels))
         print(f"Wrote {path}\nOpen it:  open {path}", file=sys.stderr)

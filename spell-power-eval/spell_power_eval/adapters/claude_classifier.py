@@ -20,10 +20,20 @@ class ClaudeAnswer(BaseModel):
     score: float  # 0 weak, 1 balanced, 2 powerful
 
 
+def claude_request(short_name: str, card: Card) -> dict:
+    """Exactly what we send to `messages.parse` for a card. The results page shows this, so keep it the one place the request is built."""
+    return dict(
+        model=CLAUDE_MODELS[short_name],
+        max_tokens=4096,  # room for adaptive thinking on the models that always think
+        system=CLAUDE_SYSTEM_PROMPT,
+        messages=[{"role": "user", "content": card.facts()}],
+        output_format=ClaudeAnswer,
+    )
+
+
 class ClaudeClassifier:
     def __init__(self, short_name: str, client=None):
         self.name = short_name
-        self._model = CLAUDE_MODELS[short_name]
         self._client = client
 
     def classify(self, card: Card) -> Verdict:
@@ -31,13 +41,7 @@ class ClaudeClassifier:
             import anthropic  # deferred, so a dry run needs no credentials
 
             self._client = anthropic.Anthropic()
-        response = self._client.messages.parse(
-            model=self._model,
-            max_tokens=4096,  # room for adaptive thinking on the models that always think
-            system=CLAUDE_SYSTEM_PROMPT,
-            messages=[{"role": "user", "content": card.facts()}],
-            output_format=ClaudeAnswer,
-        )
+        response = self._client.messages.parse(**claude_request(self.name, card))
         answer = response.parsed_output
         if answer is None:
             raise RuntimeError(f"no parsed answer (stop_reason={response.stop_reason})")

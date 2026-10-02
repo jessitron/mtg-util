@@ -41,6 +41,11 @@ def _question(kind: str) -> dict:
     return {"type": "score", "instructions": QUESTION, "criteria": [DESCRIPTIONS[power] for power in Power]}
 
 
+def jev_request(kind: Literal["choice", "score"], card: Card) -> dict:
+    """Exactly the JSON body we POST to Jev for a card. The results page shows this, so keep it the one place the request is built."""
+    return {"model": "jev-latest", "state": card.facts(), "questions": {QUESTION_ID: _question(kind)}}
+
+
 class JevClassifier:
     """One arm of the eval per question type: `jev-choice` picks a label, `jev-score` rates on the ordered rubric."""
 
@@ -53,8 +58,7 @@ class JevClassifier:
         api_key = os.environ.get(KEY_VARIABLE)
         if not api_key:
             raise RuntimeError(f"{KEY_VARIABLE} is not set")
-        body = {"model": "jev-latest", "state": card.facts(), "questions": {QUESTION_ID: _question(self._kind)}}
-        response = self._post_json(URL, body, api_key)
+        response = self._post_json(URL, jev_request(self._kind, card), api_key)
         answer = response["answers"][QUESTION_ID]
         reported = response.get("usage")
         usage = Usage(reported["input_tokens"], reported["output_tokens"]) if reported else None

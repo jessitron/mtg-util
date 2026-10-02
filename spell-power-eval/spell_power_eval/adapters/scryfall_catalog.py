@@ -42,6 +42,7 @@ def _spell_from_prepared(raw: dict, spell: dict) -> Card:
         image_url=(raw.get("image_uris") or spell.get("image_uris") or {}).get("normal", ""),
         edhrec_rank=raw.get("edhrec_rank"),
         note=SPELL_NOTE,
+        scryfall_cmc=float(raw["cmc"]),
     )
 
 
