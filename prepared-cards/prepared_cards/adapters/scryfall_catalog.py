@@ -23,6 +23,7 @@ def card_from_scryfall(raw: dict) -> Card:
         type_line=raw.get("type_line", ""),
         image_url=images.get("normal", ""),
         page_url=raw["scryfall_uri"],
+        scryfall_id=raw["id"],
     )
 
 

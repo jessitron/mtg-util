@@ -16,7 +16,9 @@ class CachedCatalog:
 
     def pool(self) -> CardPool:
         if os.path.exists(self._path):
-            return self._read()
+            remembered = self._read()
+            if remembered is not None:
+                return remembered
         return self.refresh()
 
     def refresh(self) -> CardPool:
@@ -24,9 +26,14 @@ class CachedCatalog:
         self._write(pool)
         return pool
 
-    def _read(self) -> CardPool:
+    def _read(self) -> CardPool | None:
+        """The remembered pool, or None when the file predates a field Card now has (so we look again)."""
         with open(self._path) as f:
-            return CardPool.of(Card(**c) for c in json.load(f))
+            remembered = json.load(f)
+        fields = {f.name for f in dataclasses.fields(Card)}
+        if any(set(c) != fields for c in remembered):
+            return None
+        return CardPool.of(Card(**c) for c in remembered)
 
     def _write(self, pool: CardPool) -> None:
         with open(self._path, "w") as f:

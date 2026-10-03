@@ -35,10 +35,12 @@ Three tiers; dependencies point downward only.
 | Tier | Package | What lives there |
 | ---- | ------- | ---------------- |
 | I. Orchestration | `prepared_cards/orchestration` | `CardPicker` use cases; the HTTP server and page that drive them. |
-| II. Domain | `prepared_cards/domain` | `Card`, `CardPool` (`ranked` orders it by a `PowerScore`, the only ordering), `ScoredCard`, `Selection`, and the ports `PowerScore`, `CardCatalog`, and `SelectionStore`. No I/O. |
-| III. Interface | `prepared_cards/adapters` | `ScryfallCatalog` (anti-corruption layer for Scryfall JSON), `CachedCatalog` (JSON file decorator), `RandomPowerScore` (the fake scorer), `CachedPowerScore` (JSON file decorator: card name to score, written after each new score), `ArchidektImportFile` (the import-format file). |
+| II. Domain | `prepared_cards/domain` | `Card`, `CardPool` (`ranked` orders it by a `PowerScore`, the only ordering), `ScoredCard`, `Selection`, `CardRules` (every face with its own cost and text; `spell` is the last face), and the ports `PowerScore`, `CardCatalog`, `RulesText`, and `SelectionStore`. No I/O. |
+| III. Interface | `prepared_cards/adapters` | `ScryfallCatalog` (anti-corruption layer for Scryfall JSON), `CachedCatalog` (JSON file decorator), `RandomPowerScore` (the fake scorer), `CachedPowerScore` (JSON file decorator: card name to score, written after each new score), `MtgjsonRulesText` (the `RulesText` adapter: finds a card's faces in the local MTGJSON database by Scryfall id), `ArchidektImportFile` (the import-format file). |
 
-`main.py` is the composition root: it picks the adapters and wires them to `CardPicker`.
+`main.py` is the composition root: it picks the adapters and wires them to `CardPicker`. Nothing uses `RulesText` yet; it is for the LLM scorer, which will read each card's rules from it.
+
+`Card.scryfall_id` is how `MtgjsonRulesText` finds a card; one id covers every face of a printing. A `scryfall-cache.json` from before that field existed is refetched on the next run. The database is `../mtgjson/data/AllPrintings.sqlite` in the main checkout, opened read-only. All 75 `o:prepared` cards are in it. See [../reference/mtgjson.md](../reference/mtgjson.md).
 
 Language boundaries: Scryfall says `cmc` and `card_faces`; Archidekt says `1 Name` lines; the domain says mana value and selection. Each adapter translates at its edge.
 

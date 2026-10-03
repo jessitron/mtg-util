@@ -1,11 +1,15 @@
+import json
 import os
 import random
+import sqlite3
 import tempfile
 import unittest
+from dataclasses import replace
 
 from prepared_cards.adapters.archidekt_file import ArchidektImportFile
 from prepared_cards.adapters.cached_catalog import CachedCatalog
 from prepared_cards.adapters.cached_power_score import CachedPowerScore
+from prepared_cards.adapters.mtgjson_rules_text import MtgjsonRulesText
 from prepared_cards.adapters.random_power_score import RandomPowerScore
 from prepared_cards.adapters.scryfall_catalog import ScryfallCatalog, card_from_scryfall
 from prepared_cards.domain.card import Card
@@ -16,11 +20,11 @@ from prepared_cards.orchestration.use_cases import CardPicker
 
 
 def card(name, mv):
-    return Card(name, mv, "", "Creature", f"http://img/{name}", f"http://page/{name}")
+    return Card(name, mv, "", "Creature", f"http://img/{name}", f"http://page/{name}", f"id-{name}")
 
 
 def raw(name, cmc, **extra):
-    return {"name": name, "cmc": cmc, "scryfall_uri": f"http://s/{name}", **extra}
+    return {"name": name, "cmc": cmc, "scryfall_uri": f"http://s/{name}", "id": f"id-{name}", **extra}
 
 
 class FixedScores:
@@ -114,6 +118,62 @@ class CachedCatalogTest(unittest.TestCase):
             self.assertEqual(source.n, 1)
             self.assertEqual(cached.refresh().cards[0].name, "C2")
             self.assertEqual(cached.pool().cards[0].name, "C2")
+
+
+    def test_a_cache_written_before_scryfall_id_is_refetched(self):
+        class Source:
+            def pool(self):
+                return self.refresh()
+
+            def refresh(self):
+                return CardPool.of([card("New", 1.0)])
+
+        with tempfile.TemporaryDirectory() as d:
+            path = os.path.join(d, "cards.json")
+            with open(path, "w") as f:
+                json.dump([{"name": "Old", "mana_value": 1.0, "mana_cost": "", "type_line": "", "image_url": "", "page_url": ""}], f)
+            self.assertEqual(CachedCatalog(Source(), path).pool().cards[0].name, "New")
+
+
+class MtgjsonRulesTextTest(unittest.TestCase):
+    def database(self, d):
+        path = os.path.join(d, "cards.sqlite")
+        db = sqlite3.connect(path)
+        db.executescript("""
+            create table cards (uuid text, side text, faceName text, name text, manaCost text, faceManaValue real,
+                                manaValue real, type text, text text, power text, toughness text);
+            create table cardIdentifiers (uuid text, scryfallId text);
+            insert into cards values
+              ('u1', 'a', 'Trio', 'Trio // Brainstorm', '{U}', 1.0, 1.0, 'Creature', 'Becomes prepared.', '1', '1'),
+              ('u2', 'b', 'Brainstorm', 'Trio // Brainstorm', '{U}', 1.0, 1.0, 'Instant', 'Draw three cards.', NULL, NULL),
+              ('u3', NULL, NULL, 'Opt', '{U}', NULL, 1.0, 'Instant', 'Scry 1. Draw a card.', NULL, NULL);
+            insert into cardIdentifiers values ('u1', 'sid-trio'), ('u2', 'sid-trio'), ('u3', 'sid-opt');
+        """)
+        db.commit()
+        db.close()
+        return path
+
+    def test_finds_every_face_by_scryfall_id_front_first(self):
+        with tempfile.TemporaryDirectory() as d:
+            rules = MtgjsonRulesText(self.database(d)).rules_for(replace(card("Trio // Brainstorm", 1.0), scryfall_id="sid-trio"))
+            self.assertEqual([f.name for f in rules.faces], ["Trio", "Brainstorm"])
+            self.assertEqual((rules.faces[0].power, rules.faces[0].toughness), ("1", "1"))
+            self.assertEqual(rules.spell.text, "Draw three cards.")
+            self.assertEqual(rules.spell.type_line, "Instant")
+
+    def test_a_one_face_card_is_its_own_spell(self):
+        with tempfile.TemporaryDirectory() as d:
+            rules = MtgjsonRulesText(self.database(d)).rules_for(replace(card("Opt", 1.0), scryfall_id="sid-opt"))
+            self.assertEqual((rules.spell.name, rules.spell.mana_value, rules.spell.power), ("Opt", 1.0, ""))
+
+    def test_an_unknown_id_is_a_lookup_error(self):
+        with tempfile.TemporaryDirectory() as d:
+            with self.assertRaises(LookupError):
+                MtgjsonRulesText(self.database(d)).rules_for(card("Nope", 1.0))
+
+    def test_a_missing_database_says_how_to_fetch_it(self):
+        with self.assertRaisesRegex(FileNotFoundError, "mtgjson/run"):
+            MtgjsonRulesText("/no/such/file.sqlite")
 
 
 class ArchidektImportFileTest(unittest.TestCase):

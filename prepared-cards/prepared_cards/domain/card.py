@@ -12,6 +12,7 @@ class Card:
     type_line: str
     image_url: str
     page_url: str
+    scryfall_id: str  # one id per printing, shared by every face; how other sources find this card
 
     @property
     def gatherer_url(self) -> str:
