@@ -8,6 +8,8 @@ from typing import Callable
 
 from ..domain.card import Card
 from ..domain.ports import RulesText
+from ..domain.power_score import Scoring
+from .pricing import estimate_cost
 from .spell_rubric import LEVELS, QUESTION, spell_facts
 
 URL = "https://api.typesafe.ai/v1/systemone"
@@ -33,19 +35,21 @@ class JevPowerScore:
     """Asks Jev to rate a card's spell on an ordered three-level rubric (level 0 weak, level 2 powerful). Fetches the rules through the RulesText port."""
 
     def __init__(self, rules_text: RulesText, model: str = "jev-latest", post_json: Callable[[str, dict, str], dict] = _post_json):
-        self.model = model
+        self.name = model
         self._rules_text = rules_text
         self._post_json = post_json
 
-    def score(self, card: Card) -> float:
+    def scoring(self, card: Card) -> Scoring:
         api_key = os.environ.get(KEY_VARIABLE)
         if not api_key:
             raise RuntimeError(f"{KEY_VARIABLE} is not set")
         rules = self._rules_text.rules_for(card)
         body = {
-            "model": self.model,
+            "model": self.name,
             "state": spell_facts(rules.spell, two_faced=len(rules.faces) > 1),
             "questions": {QUESTION_ID: {"type": "score", "instructions": QUESTION, "criteria": [text for _, text in LEVELS]}},
         }
-        answer = self._post_json(URL, body, api_key)["answers"][QUESTION_ID]
-        return round(min(max(answer["score"], 0.0), 2.0), 2)
+        response = self._post_json(URL, body, api_key)
+        score = round(min(max(response["answers"][QUESTION_ID]["score"], 0.0), 2.0), 2)
+        usage = response.get("usage")
+        return Scoring(score, estimate_cost(self.name, usage["input_tokens"], usage["output_tokens"]) if usage else None)

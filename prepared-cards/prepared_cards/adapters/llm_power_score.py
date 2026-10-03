@@ -3,6 +3,8 @@ from pydantic import BaseModel
 
 from ..domain.card import Card
 from ..domain.ports import RulesText
+from ..domain.power_score import Scoring
+from .pricing import estimate_cost
 from .spell_rubric import LEVELS, QUESTION, spell_facts
 
 SYSTEM_PROMPT = (
@@ -24,18 +26,18 @@ class LlmPowerScore:
     """Asks Claude how powerful a card's spell is for its own cost. Fetches the rules through the RulesText port."""
 
     def __init__(self, rules_text: RulesText, model: str, client=None):
-        self.model = model
+        self.name = model
         self._rules_text = rules_text
         self._client = client
 
-    def score(self, card: Card) -> float:
+    def scoring(self, card: Card) -> Scoring:
         rules = self._rules_text.rules_for(card)
         if self._client is None:
             import anthropic  # deferred, so tests and a missing key fail only when a score is asked for
 
             self._client = anthropic.Anthropic()
         response = self._client.messages.parse(
-            model=self.model,
+            model=self.name,
             max_tokens=4096,  # room for adaptive thinking on the models that always think
             system=SYSTEM_PROMPT,
             messages=[{"role": "user", "content": spell_facts(rules.spell, two_faced=len(rules.faces) > 1)}],
@@ -43,4 +45,5 @@ class LlmPowerScore:
         )
         if response.parsed_output is None:
             raise RuntimeError(f"no score for {card.name} (stop_reason={response.stop_reason})")
-        return round(min(max(response.parsed_output.score, 0.0), 2.0), 2)  # the schema can't enforce the range
+        score = round(min(max(response.parsed_output.score, 0.0), 2.0), 2)  # the schema can't enforce the range
+        return Scoring(score, estimate_cost(self.name, response.usage.input_tokens, response.usage.output_tokens))

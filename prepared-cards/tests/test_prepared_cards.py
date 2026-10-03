@@ -18,6 +18,7 @@ from prepared_cards.adapters.scryfall_catalog import ScryfallCatalog, card_from_
 from prepared_cards.domain.card import Card
 from prepared_cards.domain.card_pool import CardPool
 from prepared_cards.domain.card_rules import CardFace, CardRules
+from prepared_cards.domain.power_score import RankingEffort, Scoring
 from prepared_cards.domain.selection import Selection
 from prepared_cards.orchestration.http_app import ranked_to_json
 from prepared_cards.orchestration.use_cases import CardPicker
@@ -51,23 +52,64 @@ class CardPoolTest(unittest.TestCase):
 
 
 class RandomPowerScoreTest(unittest.TestCase):
-    def test_scores_fall_between_0_and_2(self):
+    def test_scores_fall_between_0_and_2_and_cost_nothing(self):
         power = RandomPowerScore(random.Random(1))
-        self.assertTrue(all(0 <= power.score(card("A", 1.0)) <= 2 for _ in range(100)))
+        scorings = [power.scoring(card("A", 1.0)) for _ in range(100)]
+        self.assertTrue(all(0 <= s.score <= 2 and s.cost_usd == 0.0 for s in scorings))
+
+
+class FixedScorer:
+    """A Scorer that reads scores from a dict, charges a fixed cost per card, and counts its calls."""
+
+    name = "fixed"
+
+    def __init__(self, scores, cost_usd=0.01):
+        self.scores = scores
+        self.cost_usd = cost_usd
+        self.calls = []
+
+    def scoring(self, c):
+        self.calls.append(c.name)
+        return Scoring(self.scores[c.name], self.cost_usd)
 
 
 class CachedPowerScoreTest(unittest.TestCase):
     def test_scores_each_card_once_and_remembers_across_restarts(self):
         with tempfile.TemporaryDirectory() as d:
             path = os.path.join(d, "scores.json")
-            source = FixedScores({"A": 1.5})
+            source = FixedScorer({"A": 1.5})
             cached = CachedPowerScore(source, path)
             self.assertEqual(cached.score(card("A", 1.0)), 1.5)
             self.assertEqual(cached.score(card("A", 1.0)), 1.5)
             self.assertEqual(source.calls, ["A"])
-            later = FixedScores({})
+            later = FixedScorer({})
             self.assertEqual(CachedPowerScore(later, path).score(card("A", 1.0)), 1.5)
             self.assertEqual(later.calls, [])
+
+    def test_effort_adds_up_the_time_and_cost_of_the_cards_asked_about_and_survives_restarts(self):
+        ticks = iter([0.0, 2.0, 10.0, 13.0, 20.0, 21.0])  # three cards took 2, 3, and 1 seconds
+        with tempfile.TemporaryDirectory() as d:
+            path = os.path.join(d, "scores.json")
+            cached = CachedPowerScore(FixedScorer({"A": 1.0, "B": 1.0, "C": 1.0}), path, clock=lambda: next(ticks))
+            for name in "ABC":
+                cached.score(card(name, 1.0))
+            effort = CachedPowerScore(FixedScorer({}), path).effort([card("A", 1.0), card("B", 1.0)])
+            self.assertEqual((effort.scorer, effort.seconds, effort.cost_usd), ("fixed", 5.0, 0.02))
+
+    def test_cost_is_unknown_when_any_card_cost_is_unknown(self):
+        with tempfile.TemporaryDirectory() as d:
+            cached = CachedPowerScore(FixedScorer({"A": 1.0}, cost_usd=None), os.path.join(d, "scores.json"))
+            cached.score(card("A", 1.0))
+            self.assertIsNone(cached.effort([card("A", 1.0)]).cost_usd)
+
+    def test_reads_an_older_file_of_bare_scores(self):
+        with tempfile.TemporaryDirectory() as d:
+            path = os.path.join(d, "scores.json")
+            with open(path, "w") as f:
+                json.dump({"A": 1.5}, f)
+            cached = CachedPowerScore(FixedScorer({}), path)
+            self.assertEqual(cached.score(card("A", 1.0)), 1.5)
+            self.assertIsNone(cached.effort([card("A", 1.0)]).cost_usd)
 
 
 class LlmPowerScoreTest(unittest.TestCase):
@@ -89,7 +131,8 @@ class LlmPowerScoreTest(unittest.TestCase):
         def parse(self, **request):
             self.requests.append(request)
             answer = type("A", (), {"reason": "because", "score": self._score})()
-            return type("R", (), {"parsed_output": answer if self._parsed else None, "stop_reason": "refusal"})()
+            usage = type("U", (), {"input_tokens": 1000, "output_tokens": 200})()
+            return type("R", (), {"parsed_output": answer if self._parsed else None, "stop_reason": "refusal", "usage": usage})()
 
     creature = CardFace("Trio", "{2}{G}", 3.0, "Creature", "Becomes prepared.", "3", "3")
     spell = CardFace("Brainstorm", "{U}", 1.0, "Instant", "Draw three cards.")
@@ -97,7 +140,7 @@ class LlmPowerScoreTest(unittest.TestCase):
     def test_judges_the_back_face_alone_with_the_spell_note(self):
         client = self.Client(1.7)
         scorer = LlmPowerScore(self.Rules(CardRules((self.creature, self.spell))), "m", client)
-        self.assertEqual(scorer.score(card("Trio // Brainstorm", 3.0)), 1.7)
+        self.assertEqual(scorer.scoring(card("Trio // Brainstorm", 3.0)).score, 1.7)
         sent = client.requests[0]["messages"][0]["content"]
         self.assertIn("Name: Brainstorm", sent)
         self.assertIn("mana value 1)", sent)
@@ -108,18 +151,27 @@ class LlmPowerScoreTest(unittest.TestCase):
 
     def test_a_one_face_card_gets_no_spell_note(self):
         client = self.Client(1.0)
-        LlmPowerScore(self.Rules(CardRules((self.spell,))), "m", client).score(card("Brainstorm", 1.0))
+        LlmPowerScore(self.Rules(CardRules((self.spell,))), "m", client).scoring(card("Brainstorm", 1.0))
         self.assertNotIn("Note:", client.requests[0]["messages"][0]["content"])
+
+    def test_prices_the_call_from_the_tokens_it_used(self):
+        scorer = LlmPowerScore(self.Rules(CardRules((self.spell,))), "claude-haiku-4-5", self.Client(1.0))
+        self.assertAlmostEqual(scorer.scoring(card("B", 1.0)).cost_usd, 0.002)  # 1000 in at $1/M + 200 out at $5/M
+        self.assertEqual(scorer.name, "claude-haiku-4-5")
+
+    def test_an_unknown_model_has_an_unknown_cost(self):
+        scorer = LlmPowerScore(self.Rules(CardRules((self.spell,))), "m", self.Client(1.0))
+        self.assertIsNone(scorer.scoring(card("B", 1.0)).cost_usd)
 
     def test_clamps_to_the_range(self):
         for said, want in [(3.4, 2.0), (-1.0, 0.0)]:
             scorer = LlmPowerScore(self.Rules(CardRules((self.spell,))), "m", self.Client(said))
-            self.assertEqual(scorer.score(card("B", 1.0)), want)
+            self.assertEqual(scorer.scoring(card("B", 1.0)).score, want)
 
     def test_no_parsed_answer_is_an_error(self):
         scorer = LlmPowerScore(self.Rules(CardRules((self.spell,))), "m", self.Client(1.0, parsed=False))
         with self.assertRaisesRegex(RuntimeError, "no score"):
-            scorer.score(card("B", 1.0))
+            scorer.scoring(card("B", 1.0))
 
 
 class JevPowerScoreTest(unittest.TestCase):
@@ -130,15 +182,16 @@ class JevPowerScoreTest(unittest.TestCase):
         def post(url, body, key):
             if posts is not None:
                 posts.append((url, body, key))
-            return {"answers": {"power_for_cost": {"type": "score", "score": said}}}
+            return {"answers": {"power_for_cost": {"type": "score", "score": said}}, "usage": {"input_tokens": 1000000, "output_tokens": 50}}
 
         return JevPowerScore(LlmPowerScoreTest.Rules(rules), post_json=post)
 
     def test_asks_a_three_level_score_question_about_the_back_face_alone(self):
         posts = []
         with unittest.mock.patch.dict(os.environ, {"TYPESAFE_API_KEY": "k"}):
-            got = self.scorer(CardRules((self.creature, self.spell)), posts=posts).score(card("Trio // Brainstorm", 3.0))
-        self.assertEqual(got, 1.43)
+            got = self.scorer(CardRules((self.creature, self.spell)), posts=posts).scoring(card("Trio // Brainstorm", 3.0))
+        self.assertEqual(got.score, 1.43)
+        self.assertAlmostEqual(got.cost_usd, 0.042)  # a million input tokens at $0.042/M; output is free
         url, body, key = posts[0]
         self.assertEqual((url, key, body["model"]), ("https://api.typesafe.ai/v1/systemone", "k", "jev-latest"))
         question = body["questions"]["power_for_cost"]
@@ -149,12 +202,12 @@ class JevPowerScoreTest(unittest.TestCase):
 
     def test_clamps_to_the_range(self):
         with unittest.mock.patch.dict(os.environ, {"TYPESAFE_API_KEY": "k"}):
-            self.assertEqual(self.scorer(CardRules((self.spell,)), said=2.6).score(card("B", 1.0)), 2.0)
+            self.assertEqual(self.scorer(CardRules((self.spell,)), said=2.6).scoring(card("B", 1.0)).score, 2.0)
 
     def test_a_missing_key_says_which_variable(self):
         with unittest.mock.patch.dict(os.environ, clear=True):
             with self.assertRaisesRegex(RuntimeError, "TYPESAFE_API_KEY"):
-                self.scorer(CardRules((self.spell,))).score(card("B", 1.0))
+                self.scorer(CardRules((self.spell,))).scoring(card("B", 1.0))
 
 
 class SelectionTest(unittest.TestCase):
@@ -317,6 +370,23 @@ class PageJsonTest(unittest.TestCase):
         ranked = CardPool.of([card("A", 3.0), card("B", 0.5)]).ranked(FixedScores({"A": 0.4, "B": 1.7}))
         data = ranked_to_json(ranked)
         self.assertEqual([(c["name"], c["score"]) for c in data["cards"]], [("B", 1.7), ("A", 0.4)])
+        self.assertNotIn("effort", data)
+
+    def test_says_who_ranked_them_and_what_it_took(self):
+        ranked = CardPool.of([card("A", 3.0)]).ranked(FixedScores({"A": 0.4}))
+        data = ranked_to_json(ranked, RankingEffort("claude-haiku-4-5", 41.25, 0.0312))
+        self.assertEqual(data["effort"], {"scorer": "claude-haiku-4-5", "seconds": 41.25, "costUsd": 0.0312})
+        self.assertIsNone(ranked_to_json(ranked, RankingEffort("x", 1.0, None))["effort"]["costUsd"])
+
+    def test_picker_asks_its_ledger_about_the_ranked_cards(self):
+        class Ledger:
+            def effort(self, cards):
+                return RankingEffort("ledger", float(len(list(cards))), 0.5)
+
+        pool = CardPool.of([card("A", 1.0), card("B", 1.0)])
+        picker = CardPicker(None, FixedScores({"A": 0.1, "B": 0.9}), store=None, ledger=Ledger())
+        self.assertEqual(picker.effort(pool.ranked(FixedScores({"A": 0.1, "B": 0.9}))), RankingEffort("ledger", 2.0, 0.5))
+        self.assertIsNone(CardPicker(None, FixedScores({}), store=None).effort(()))
 
     def test_picker_ranks_the_catalog_through_the_power_score(self):
         class Catalog:

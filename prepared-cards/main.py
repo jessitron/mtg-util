@@ -27,7 +27,7 @@ def main():
     scorer = JevPowerScore(rules_text, MODEL) if MODEL.startswith("jev") else LlmPowerScore(rules_text, MODEL)
     power = CachedPowerScore(scorer, os.path.join(HERE, f"power-scores-{MODEL}.json"))  # named for the model, so scores from different scorers never mix
     selection_file = ArchidektImportFile(os.path.join(HERE, "selected.txt"))
-    picker = CardPicker(catalog, power, selection_file)
+    picker = CardPicker(catalog, power, selection_file, ledger=power)  # the cache is also where each score's time and cost are kept
     try:
         server = make_server(picker, QUERY, PORT, selection_file.path)
     except OSError:

@@ -20,6 +20,7 @@
   <strong id="count"></strong>
   <button id="copy">Copy selection to clipboard</button>
   <span id="status"></span>
+  <span id="ranking"></span>
 </header>
 <main id="main"></main>
 <script>
@@ -77,6 +78,10 @@ async function init() {
   ]);
   saved.forEach(name => picked.add(name));
   document.title = pool.title;
+  if (pool.effort) {  // what scoring took when the scores were made, remembered across restarts
+    const {scorer, seconds, costUsd} = pool.effort;
+    $("ranking").textContent = `Ranked by ${scorer} in ${seconds.toFixed(1)} seconds for ${costUsd === null ? "an unknown cost" : "$" + Number(costUsd.toPrecision(2))}`;  // two significant digits: $0.0015 for Jev, $0.031 for Haiku
+  }
   const row = document.createElement("div");  // the server sends them most powerful first
   row.className = "row";
   row.append(...pool.cards.map(cardView));
