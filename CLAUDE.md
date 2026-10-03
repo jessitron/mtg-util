@@ -5,7 +5,7 @@ A collection of MTG-related utility scripts, plus accumulated knowledge about Sc
 ## Layout
 
 - `README.md`: top-level index. Lists every script with a one-line description.
-- `<script-name>/`: one directory per script, each with its own `README.md`.
+- `<script-name>/`: one directory per script, each with its own `README.md`. A script's working notes (keys, ports, test procedures) go in its own `CLAUDE.md`, which loads only when you work there.
 - `reference/`: API notes and resource docs (one file per API or resource; indexed in `reference/README.md`).
 
 ## Conventions
@@ -13,15 +13,12 @@ A collection of MTG-related utility scripts, plus accumulated knowledge about Sc
 - **Every script gets a directory and a README.** When you add one, also add it to the table in the main `README.md`.
 - **Capture API knowledge.** When you learn something about an API (endpoint shape, rate limit, auth, quirk), write it in `reference/` rather than leaving it in a script comment or in your head. Link to it from the script's README.
 - **Top-level `./run`.** If a script needs a launcher, keep it simple and document it in that script's README.
-- **Be a good API citizen.** Scryfall asks for a `User-Agent` and `Accept` header, a delay of 50-100ms between requests, and use of bulk data for large jobs. Cache responses locally when practical.
-
-- **Verify outside links in a browser.** Sites like Gatherer are JS apps that answer 200 to any URL, so `curl` proves nothing. Open the link in Chrome before committing it.
-- **API keys live in an untracked `.be` file at the repo root** (`export NAME=...` lines; globally git-ignored). Run `source .be` before a script that calls a paid API. Never print the values; list names only (`sed -E 's/=.*/=<redacted>/' .be`).
-- **Chrome (the claude-in-chrome tools) refuses `file://` URLs.** To check a generated page in a browser, serve a copy over http on a throwaway port (`python3 -m http.server <port> --bind 127.0.0.1` from a temp directory). Check that the port is free first (`lsof -i :<port>`); Jess often has her own servers running. Afterward: clear `localStorage` on that origin, close the tab, stop the server, delete the copy.
-- **Ports in use.** prepared-cards defaults to 8765, spell-power-eval `--serve` to 8780, and Jess runs another server on 8799. Pick a different throwaway port for browser checks, stop the server afterward, and close the tab. Chrome blocks `file://`, so serve over http.
+- **Be a good API citizen.** Send the headers, pace requests, use bulk data for large jobs, and cache locally. Scryfall's specifics are in [reference/scryfall.md](reference/scryfall.md).
+- **Verify outside links in a browser.** Gatherer and similar JS apps answer 200 to any URL, so `curl` proves nothing ([reference/gatherer.md](reference/gatherer.md)).
+- **No secrets in the repo.** API keys live in an untracked `.be` file at the repo root; never print the values. Details are in the script that needs them.
+- **Browser checks need http.** Chrome (the claude-in-chrome tools) refuses `file://`, so serve a copy on a throwaway port. Ports taken: 8765 prepared-cards, 8780 spell-power-eval `--serve`, 8799 Jess's own server. Each script's `CLAUDE.md` has the procedure.
 - **Worktree sessions refuse compound shell commands.** A Bash call that mixes the word "git", `$VARS`, or a `cd` with other commands can be rejected, even inside a heredoc. Use literal paths, one plain command per call, and the Edit tool for text with such words. `CLAUDE_JOB_DIR` is `/Users/jessitron/.claude-personal/jobs/<id>`.
 - **Main may move while you work in a worktree.** Rebase the worktree branch onto main (enter it with `EnterWorktree` and `path`) before the fast-forward, or the merge fails.
-- **Checking Honeycomb through the MCP.** Team `modernity`, environment `local`, dataset `spell-power-eval`. Call `get_dataset_columns` before `run_query`, because column names are namespaced and a missing one fails the query. Read-only checks send no data. What arrives, and the quirks, are in [reference/honeycomb.md](reference/honeycomb.md).
 
 ## Card database (mtgjson)
 
