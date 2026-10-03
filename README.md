@@ -10,7 +10,7 @@ Each script lives in its own directory with its own README.
 
 | Script | What it does |
 | ------ | ------------ |
-| [prepared-cards](prepared-cards/README.md) | Browse Scryfall's `o:prepared` cards by mana value, check the ones you want, export an Archidekt import list. |
+| [prepared-cards](prepared-cards/README.md) | Browse Scryfall's `o:prepared` cards ranked by an LLM's power score (Claude or Jev), check the ones you want, export an Archidekt import list. |
 | [spell-power-eval](spell-power-eval/README.md) | Compare Claude and Jev against your hand labels of whether MTG spells are weak, balanced, or powerful for their cost. |
 | [mtgjson](mtgjson/README.md) | Local read-only SQLite copy of MTGJSON's full card database, with absolute-path query scripts (`mtgjson-card`, `mtgjson-query`, `mtgjson-schema`) for agents and other scripts. |
 

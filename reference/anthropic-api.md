@@ -23,3 +23,4 @@ Look up current prices and capabilities with `client.models.list()` or `client.m
 
 ## Used by
 - [spell-power-eval](../spell-power-eval/README.md)
+- [prepared-cards](../prepared-cards/README.md): `LlmPowerScore` calls `messages.parse` (structured output) once per card. Measured 2026-10-03 with `claude-haiku-4-5`: 75 prepared spells took 118 s and about $0.063 (output tokens include thinking).

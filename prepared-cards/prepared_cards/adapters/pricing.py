@@ -1,5 +1,6 @@
 """What a scorer's tokens cost. Prices ($ per million input/output tokens) were cached 2026-09-25; see ../../../reference/anthropic-api.md and jev.md.
-An estimate, since the prices are remembered, not asked for."""
+An estimate, since the prices are remembered, not asked for.
+spell-power-eval keeps its own copy (spell_power_eval/domain/pricing.py); when a price changes, update both."""
 from typing import Optional
 
 PRICES = {
