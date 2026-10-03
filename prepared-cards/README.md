@@ -20,7 +20,8 @@ Opens a tiny local server (Python 3; `uv` installs the `anthropic` SDK, see `pyp
 
 - `QUERY`: Scryfall search. Default `o:prepared`.
 - `PORT`: default `8765`.
-- `POWER_MODEL`: the Claude model that scores. Default `claude-haiku-4-5` (about as close to Jess's labels as Sonnet in the PoC, and the fastest).
+- `POWER_MODEL`: the model that scores. Default `claude-haiku-4-5` (about as close to Jess's labels as Sonnet in the PoC, and the fastest). `jev-latest` uses TypeSafe's Jev (its `score` question on the same rubric) instead; any other value goes to Claude. The cache file is named for it (`power-scores-jev-latest.json`).
+- `TYPESAFE_API_KEY`: for Jev, from `../.be`.
 - `MTGJSON_DB`: path to `AllPrintings.sqlite`. Default is the main checkout's copy.
 - `ANTHROPIC_API_KEY`: from `../.be`, or an `ant auth login` profile.
 
@@ -40,9 +41,9 @@ Three tiers; dependencies point downward only.
 | ---- | ------- | ---------------- |
 | I. Orchestration | `prepared_cards/orchestration` | `CardPicker` use cases; the HTTP server and page that drive them. |
 | II. Domain | `prepared_cards/domain` | `Card`, `CardPool` (`ranked` orders it by a `PowerScore`, the only ordering), `ScoredCard`, `Selection`, `CardRules` (every face with its own cost and text; `spell` is the last face), and the ports `PowerScore`, `CardCatalog`, `RulesText`, and `SelectionStore`. No I/O. |
-| III. Interface | `prepared_cards/adapters` | `ScryfallCatalog` (anti-corruption layer for Scryfall JSON), `CachedCatalog` (JSON file decorator), `LlmPowerScore` (the real scorer: asks Claude about `rules.spell`, which it gets from a `RulesText`), `RandomPowerScore` (a fake scorer for offline work; `main.py` no longer uses it), `CachedPowerScore` (JSON file decorator: card name to score, written after each new score), `MtgjsonRulesText` (the `RulesText` adapter: finds a card's faces in the local MTGJSON database by Scryfall id), `ArchidektImportFile` (the import-format file). |
+| III. Interface | `prepared_cards/adapters` | `ScryfallCatalog` (anti-corruption layer for Scryfall JSON), `CachedCatalog` (JSON file decorator), `LlmPowerScore` (the real scorer: asks Claude about `rules.spell`, which it gets from a `RulesText`), `JevPowerScore` (the same question put to TypeSafe's Jev over HTTP; both LLM scorers share `spell_rubric`: the question, the three levels, and the text of the spell), `RandomPowerScore` (a fake scorer for offline work; `main.py` no longer uses it), `CachedPowerScore` (JSON file decorator: card name to score, written after each new score), `MtgjsonRulesText` (the `RulesText` adapter: finds a card's faces in the local MTGJSON database by Scryfall id), `ArchidektImportFile` (the import-format file). |
 
-`main.py` is the composition root: it picks the adapters and wires them to `CardPicker`. `LlmPowerScore` takes the `RulesText` and sends only the spell face.
+`main.py` is the composition root: it picks the adapters and wires them to `CardPicker`. `LlmPowerScore` and `JevPowerScore` take the `RulesText` and send only the spell face. `POWER_MODEL` picks between them.
 
 `Card.scryfall_id` is how `MtgjsonRulesText` finds a card; one id covers every face of a printing. A `scryfall-cache.json` from before that field existed is refetched on the next run. The database is `../mtgjson/data/AllPrintings.sqlite` in the main checkout, opened read-only. All 75 `o:prepared` cards are in it. See [../reference/mtgjson.md](../reference/mtgjson.md).
 

@@ -46,3 +46,4 @@ A DEV Community article showed an OpenRouter call (`typesafe/jev-1.13`) with `qu
 ## Used by
 
 - [spell-power-eval](../spell-power-eval/README.md)
+- [prepared-cards](../prepared-cards/README.md): `JevPowerScore` asks the `score` question about a prepared spell. Live check 2026-10-03: three cards scored 0.72, 1.23, 0.24 on `jev-latest`.

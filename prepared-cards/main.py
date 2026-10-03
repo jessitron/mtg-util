@@ -6,6 +6,7 @@ import sys
 from prepared_cards.adapters.archidekt_file import ArchidektImportFile
 from prepared_cards.adapters.cached_catalog import CachedCatalog
 from prepared_cards.adapters.cached_power_score import CachedPowerScore
+from prepared_cards.adapters.jev_power_score import JevPowerScore
 from prepared_cards.adapters.llm_power_score import LlmPowerScore
 from prepared_cards.adapters.mtgjson_rules_text import MtgjsonRulesText
 from prepared_cards.adapters.scryfall_catalog import ScryfallCatalog
@@ -22,10 +23,9 @@ MTGJSON_DB = os.environ.get("MTGJSON_DB", "/Users/jessitron/code/jessitron/mtg-u
 
 def main():
     catalog = CachedCatalog(ScryfallCatalog(QUERY), os.path.join(HERE, "scryfall-cache.json"))
-    power = CachedPowerScore(
-        LlmPowerScore(MtgjsonRulesText(MTGJSON_DB), MODEL),
-        os.path.join(HERE, f"power-scores-{MODEL}.json"),  # named for the model, so scores from different scorers never mix
-    )
+    rules_text = MtgjsonRulesText(MTGJSON_DB)
+    scorer = JevPowerScore(rules_text, MODEL) if MODEL.startswith("jev") else LlmPowerScore(rules_text, MODEL)
+    power = CachedPowerScore(scorer, os.path.join(HERE, f"power-scores-{MODEL}.json"))  # named for the model, so scores from different scorers never mix
     selection_file = ArchidektImportFile(os.path.join(HERE, "selected.txt"))
     picker = CardPicker(catalog, power, selection_file)
     try:

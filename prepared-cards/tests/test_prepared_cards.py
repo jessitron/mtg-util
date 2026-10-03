@@ -4,11 +4,13 @@ import random
 import sqlite3
 import tempfile
 import unittest
+import unittest.mock
 from dataclasses import replace
 
 from prepared_cards.adapters.archidekt_file import ArchidektImportFile
 from prepared_cards.adapters.cached_catalog import CachedCatalog
 from prepared_cards.adapters.cached_power_score import CachedPowerScore
+from prepared_cards.adapters.jev_power_score import JevPowerScore
 from prepared_cards.adapters.llm_power_score import LlmPowerScore
 from prepared_cards.adapters.mtgjson_rules_text import MtgjsonRulesText
 from prepared_cards.adapters.random_power_score import RandomPowerScore
@@ -118,6 +120,41 @@ class LlmPowerScoreTest(unittest.TestCase):
         scorer = LlmPowerScore(self.Rules(CardRules((self.spell,))), "m", self.Client(1.0, parsed=False))
         with self.assertRaisesRegex(RuntimeError, "no score"):
             scorer.score(card("B", 1.0))
+
+
+class JevPowerScoreTest(unittest.TestCase):
+    creature = LlmPowerScoreTest.creature
+    spell = LlmPowerScoreTest.spell
+
+    def scorer(self, rules, said=1.43, posts=None):
+        def post(url, body, key):
+            if posts is not None:
+                posts.append((url, body, key))
+            return {"answers": {"power_for_cost": {"type": "score", "score": said}}}
+
+        return JevPowerScore(LlmPowerScoreTest.Rules(rules), post_json=post)
+
+    def test_asks_a_three_level_score_question_about_the_back_face_alone(self):
+        posts = []
+        with unittest.mock.patch.dict(os.environ, {"TYPESAFE_API_KEY": "k"}):
+            got = self.scorer(CardRules((self.creature, self.spell)), posts=posts).score(card("Trio // Brainstorm", 3.0))
+        self.assertEqual(got, 1.43)
+        url, body, key = posts[0]
+        self.assertEqual((url, key, body["model"]), ("https://api.typesafe.ai/v1/systemone", "k", "jev-latest"))
+        question = body["questions"]["power_for_cost"]
+        self.assertEqual((question["type"], len(question["criteria"])), ("score", 3))
+        self.assertIn("Name: Brainstorm", body["state"])
+        self.assertIn("Ignore the creature", body["state"])
+        self.assertNotIn("Trio", body["state"])
+
+    def test_clamps_to_the_range(self):
+        with unittest.mock.patch.dict(os.environ, {"TYPESAFE_API_KEY": "k"}):
+            self.assertEqual(self.scorer(CardRules((self.spell,)), said=2.6).score(card("B", 1.0)), 2.0)
+
+    def test_a_missing_key_says_which_variable(self):
+        with unittest.mock.patch.dict(os.environ, clear=True):
+            with self.assertRaisesRegex(RuntimeError, "TYPESAFE_API_KEY"):
+                self.scorer(CardRules((self.spell,))).score(card("B", 1.0))
 
 
 class SelectionTest(unittest.TestCase):
