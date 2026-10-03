@@ -9,11 +9,13 @@ from dataclasses import replace
 from prepared_cards.adapters.archidekt_file import ArchidektImportFile
 from prepared_cards.adapters.cached_catalog import CachedCatalog
 from prepared_cards.adapters.cached_power_score import CachedPowerScore
+from prepared_cards.adapters.llm_power_score import LlmPowerScore
 from prepared_cards.adapters.mtgjson_rules_text import MtgjsonRulesText
 from prepared_cards.adapters.random_power_score import RandomPowerScore
 from prepared_cards.adapters.scryfall_catalog import ScryfallCatalog, card_from_scryfall
 from prepared_cards.domain.card import Card
 from prepared_cards.domain.card_pool import CardPool
+from prepared_cards.domain.card_rules import CardFace, CardRules
 from prepared_cards.domain.selection import Selection
 from prepared_cards.orchestration.http_app import ranked_to_json
 from prepared_cards.orchestration.use_cases import CardPicker
@@ -64,6 +66,58 @@ class CachedPowerScoreTest(unittest.TestCase):
             later = FixedScores({})
             self.assertEqual(CachedPowerScore(later, path).score(card("A", 1.0)), 1.5)
             self.assertEqual(later.calls, [])
+
+
+class LlmPowerScoreTest(unittest.TestCase):
+    class Rules:
+        def __init__(self, rules):
+            self.rules = rules
+
+        def rules_for(self, c):
+            return self.rules
+
+    class Client:
+        """Stands in for anthropic.Anthropic: records the request, answers with a canned score."""
+
+        def __init__(self, score, parsed=True):
+            self.requests = []
+            self.messages = self
+            self._score, self._parsed = score, parsed
+
+        def parse(self, **request):
+            self.requests.append(request)
+            answer = type("A", (), {"reason": "because", "score": self._score})()
+            return type("R", (), {"parsed_output": answer if self._parsed else None, "stop_reason": "refusal"})()
+
+    creature = CardFace("Trio", "{2}{G}", 3.0, "Creature", "Becomes prepared.", "3", "3")
+    spell = CardFace("Brainstorm", "{U}", 1.0, "Instant", "Draw three cards.")
+
+    def test_judges_the_back_face_alone_with_the_spell_note(self):
+        client = self.Client(1.7)
+        scorer = LlmPowerScore(self.Rules(CardRules((self.creature, self.spell))), "m", client)
+        self.assertEqual(scorer.score(card("Trio // Brainstorm", 3.0)), 1.7)
+        sent = client.requests[0]["messages"][0]["content"]
+        self.assertIn("Name: Brainstorm", sent)
+        self.assertIn("mana value 1)", sent)
+        self.assertIn("Draw three cards.", sent)
+        self.assertIn("Ignore the creature", sent)
+        self.assertNotIn("Trio", sent)
+        self.assertEqual(client.requests[0]["model"], "m")
+
+    def test_a_one_face_card_gets_no_spell_note(self):
+        client = self.Client(1.0)
+        LlmPowerScore(self.Rules(CardRules((self.spell,))), "m", client).score(card("Brainstorm", 1.0))
+        self.assertNotIn("Note:", client.requests[0]["messages"][0]["content"])
+
+    def test_clamps_to_the_range(self):
+        for said, want in [(3.4, 2.0), (-1.0, 0.0)]:
+            scorer = LlmPowerScore(self.Rules(CardRules((self.spell,))), "m", self.Client(said))
+            self.assertEqual(scorer.score(card("B", 1.0)), want)
+
+    def test_no_parsed_answer_is_an_error(self):
+        scorer = LlmPowerScore(self.Rules(CardRules((self.spell,))), "m", self.Client(1.0, parsed=False))
+        with self.assertRaisesRegex(RuntimeError, "no score"):
+            scorer.score(card("B", 1.0))
 
 
 class SelectionTest(unittest.TestCase):

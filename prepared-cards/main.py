@@ -6,7 +6,8 @@ import sys
 from prepared_cards.adapters.archidekt_file import ArchidektImportFile
 from prepared_cards.adapters.cached_catalog import CachedCatalog
 from prepared_cards.adapters.cached_power_score import CachedPowerScore
-from prepared_cards.adapters.random_power_score import RandomPowerScore
+from prepared_cards.adapters.llm_power_score import LlmPowerScore
+from prepared_cards.adapters.mtgjson_rules_text import MtgjsonRulesText
 from prepared_cards.adapters.scryfall_catalog import ScryfallCatalog
 from prepared_cards.orchestration.http_app import make_server
 from prepared_cards.orchestration.use_cases import CardPicker
@@ -14,11 +15,17 @@ from prepared_cards.orchestration.use_cases import CardPicker
 HERE = os.path.dirname(os.path.abspath(__file__))
 QUERY = os.environ.get("QUERY", "o:prepared")
 PORT = int(os.environ.get("PORT", "8765"))
+MODEL = os.environ.get("POWER_MODEL", "claude-haiku-4-5")
+# The MTGJSON database lives in the main checkout; worktrees don't have it.
+MTGJSON_DB = os.environ.get("MTGJSON_DB", "/Users/jessitron/code/jessitron/mtg-util/mtgjson/data/AllPrintings.sqlite")
 
 
 def main():
     catalog = CachedCatalog(ScryfallCatalog(QUERY), os.path.join(HERE, "scryfall-cache.json"))
-    power = CachedPowerScore(RandomPowerScore(), os.path.join(HERE, "power-scores-random.json"))
+    power = CachedPowerScore(
+        LlmPowerScore(MtgjsonRulesText(MTGJSON_DB), MODEL),
+        os.path.join(HERE, f"power-scores-{MODEL}.json"),  # named for the model, so scores from different scorers never mix
+    )
     selection_file = ArchidektImportFile(os.path.join(HERE, "selected.txt"))
     picker = CardPicker(catalog, power, selection_file)
     try:

@@ -5,13 +5,14 @@ Pick cards from a Scryfall search (default `o:prepared`) on a web page, and copy
 ## Usage
 
 ```
+source ../.be   # ANTHROPIC_API_KEY
 ./run
 ```
 
-Opens a tiny local server (Python 3, standard library only) at http://localhost:8765. If an earlier copy is still listening on the port, `./run` stops it first.
+Opens a tiny local server (Python 3; `uv` installs the `anthropic` SDK, see `pyproject.toml`) at http://localhost:8765. If an earlier copy is still listening on the port, `./run` stops it first.
 
 1. First run fetches the search from Scryfall and caches it in `scryfall-cache.json`. Delete that file, or visit `/api/refresh`, to refetch.
-2. The page shows every card in one list, most powerful first, each with its power score (0 weak to 2 powerful) and a bar. Scores come from a `PowerScore` when the page loads, and `power-scores-random.json` remembers them (delete it to rescore). **Right now the scorer is a stand-in that makes up a random score**, so the order means nothing yet; the real LLM scorer replaces `RandomPowerScore` in `main.py`. Tick a card's checkbox to pick it. Clicking the card itself opens its Gatherer search in a new window.
+2. The page shows every card in one list, most powerful first, each with its power score (0 weak to 2 powerful) and a bar. Scores come from a `PowerScore` when the page loads: `LlmPowerScore` asks Claude to rate each card's spell (the back face, judged alone at its own cost, not the creature). `power-scores-<model>.json` remembers them, one file per model so scores from different scorers never mix (delete it to rescore). The first load makes one API call per card (75 for `o:prepared`) and the page waits for them; after that it is instant. The prompt and rubric come from the [spell-power-eval](../spell-power-eval/README.md) PoC, copied here, with no dependency on it. Tick a card's checkbox to pick it. Clicking the card itself opens its Gatherer search in a new window.
 3. "Copy selection to clipboard" puts one `1 Card Name` per line in the clipboard (it works on `http://localhost`, which browsers treat as a secure context). It also writes `selected.txt`, so picks reload when you reopen the page.
 4. In Archidekt, use the deck's import feature and paste.
 
@@ -19,14 +20,17 @@ Opens a tiny local server (Python 3, standard library only) at http://localhost:
 
 - `QUERY`: Scryfall search. Default `o:prepared`.
 - `PORT`: default `8765`.
+- `POWER_MODEL`: the Claude model that scores. Default `claude-haiku-4-5` (about as close to Jess's labels as Sonnet in the PoC, and the fastest).
+- `MTGJSON_DB`: path to `AllPrintings.sqlite`. Default is the main checkout's copy.
+- `ANTHROPIC_API_KEY`: from `../.be`, or an `ant auth login` profile.
 
 ## Tests
 
 ```
-python3 -m unittest discover -s tests -t .
+uv run python -m unittest discover -s tests -t .
 ```
 
-No network needed.
+No network needed; the LLM adapter is tested with a fake client.
 
 ## Design
 
@@ -36,9 +40,9 @@ Three tiers; dependencies point downward only.
 | ---- | ------- | ---------------- |
 | I. Orchestration | `prepared_cards/orchestration` | `CardPicker` use cases; the HTTP server and page that drive them. |
 | II. Domain | `prepared_cards/domain` | `Card`, `CardPool` (`ranked` orders it by a `PowerScore`, the only ordering), `ScoredCard`, `Selection`, `CardRules` (every face with its own cost and text; `spell` is the last face), and the ports `PowerScore`, `CardCatalog`, `RulesText`, and `SelectionStore`. No I/O. |
-| III. Interface | `prepared_cards/adapters` | `ScryfallCatalog` (anti-corruption layer for Scryfall JSON), `CachedCatalog` (JSON file decorator), `RandomPowerScore` (the fake scorer), `CachedPowerScore` (JSON file decorator: card name to score, written after each new score), `MtgjsonRulesText` (the `RulesText` adapter: finds a card's faces in the local MTGJSON database by Scryfall id), `ArchidektImportFile` (the import-format file). |
+| III. Interface | `prepared_cards/adapters` | `ScryfallCatalog` (anti-corruption layer for Scryfall JSON), `CachedCatalog` (JSON file decorator), `LlmPowerScore` (the real scorer: asks Claude about `rules.spell`, which it gets from a `RulesText`), `RandomPowerScore` (a fake scorer for offline work; `main.py` no longer uses it), `CachedPowerScore` (JSON file decorator: card name to score, written after each new score), `MtgjsonRulesText` (the `RulesText` adapter: finds a card's faces in the local MTGJSON database by Scryfall id), `ArchidektImportFile` (the import-format file). |
 
-`main.py` is the composition root: it picks the adapters and wires them to `CardPicker`. Nothing uses `RulesText` yet; it is for the LLM scorer, which will read each card's rules from it.
+`main.py` is the composition root: it picks the adapters and wires them to `CardPicker`. `LlmPowerScore` takes the `RulesText` and sends only the spell face.
 
 `Card.scryfall_id` is how `MtgjsonRulesText` finds a card; one id covers every face of a printing. A `scryfall-cache.json` from before that field existed is refetched on the next run. The database is `../mtgjson/data/AllPrintings.sqlite` in the main checkout, opened read-only. All 75 `o:prepared` cards are in it. See [../reference/mtgjson.md](../reference/mtgjson.md).
 

@@ -1,0 +1,9 @@
+[project]
+name = "prepared-cards"
+version = "0.1.0"
+description = "Pick prepared cards from a Scryfall search, ranked by an LLM's power score."
+requires-python = ">=3.10"
+dependencies = ["anthropic"]
+
+[tool.uv]
+package = false
