@@ -9,7 +9,9 @@ Notes for working in this directory. Usage is in [README.md](README.md).
 
 ## Checking the results page in a browser
 
-- **Chrome (the claude-in-chrome tools) refuses `file://` URLs.** Serve a copy over http on a throwaway port (`python3 -m http.server <port> --bind 127.0.0.1` from a temp directory). `--serve` defaults to 8780 and Jess runs another server on 8799, so pick a different port and check it is free first (`lsof -i :<port>`). Afterward: clear `localStorage` on that origin, close the tab, stop the server, delete the copy.
+- **Chrome (the claude-in-chrome tools) refuses `file://` URLs.** Serve over http on a throwaway port. For the results page, run the real server from the worktree: `PORT=8791 ./run --serve` (the port is an environment variable; there is no `--port` flag). It reads the HTML on each request, so edits show on refresh. For a static page, use `python3 -m http.server <port> --bind 127.0.0.1` from a temp directory. `--serve` defaults to 8780 and Jess runs another server on 8799, so pick a different port and check it is free first (`lsof -i :<port>`).
+- **Afterward:** clear `localStorage` on that origin, close the tab, delete any fixture or copy, and stop the server. `pkill -f` on the command line did not find it; use `lsof -ti :<port> -sTCP:LISTEN` and kill that pid, then check the port is quiet.
+- **Test a sort or render change by reading the DOM.** `javascript_tool` can click a control and return the card names in row order (`#where .grid-row:not(.grid-head) .name`) next to `state.run`, which shows the order is right without a screenshot.
 - **Page tests with fixtures.** Copy `tests/fixtures/sample_run.json` into `results/` under a throwaway *timestamp-style* name such as `29991231T000000Z.json` (the server lists only those; `zz-x.json` is silently missing from the menu), then delete it. The fixture has costs; the real run in `results/` predates cost tracking and shows dashes. Never run a paid arm just to get data.
 
 ## Design
