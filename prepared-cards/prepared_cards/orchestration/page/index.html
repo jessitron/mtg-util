@@ -22,7 +22,7 @@
   <span id="status"></span>
   <span id="ranking"></span>
 </header>
-<main id="main"></main>
+<main id="main"><p id="loading" style="padding: 1rem"></p></main>
 <script>
 const picked = new Set();
 const $ = id => document.getElementById(id);
@@ -72,10 +72,24 @@ function cardView(card) {
 }
 
 async function init() {
-  const [pool, saved] = await Promise.all([
-    fetch("/api/cards").then(r => r.json()),
-    fetch("/api/selection").then(r => r.json()),
-  ]);
+  // The server answers only after every card has a score, which can take minutes the first time (later loads read the cache), so say so.
+  const started = Date.now();
+  const tick = () => $("loading").textContent = `Ranking the cards… ${Math.round((Date.now() - started) / 1000)}s so far. Cards scored before load instantly; new ones take a moment each.`;
+  tick();
+  const timer = setInterval(tick, 1000);
+  let pool, saved;
+  try {
+    [pool, saved] = await Promise.all([
+      fetch("/api/cards").then(r => { if (!r.ok) throw new Error(`the server answered ${r.status}`); return r.json(); }),
+      fetch("/api/selection").then(r => r.json()),
+    ]);
+  } catch (e) {
+    clearInterval(timer);
+    $("loading").textContent = `Could not rank the cards: ${e.message}. See the terminal running ./run, then reload.`;
+    return;
+  }
+  clearInterval(timer);
+  $("loading").remove();
   saved.forEach(name => picked.add(name));
   document.title = pool.title;
   if (pool.effort) {  // what scoring took when the scores were made, remembered across restarts
